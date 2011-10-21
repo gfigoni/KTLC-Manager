@@ -1,0 +1,23 @@
+#{extends 'main.html' /}
+#{set title:player?.name /}
+
+#{if player}
+<div class="player-metadata">
+    <span class="playerName">${player.name}</span>
+</div>
+<br/>
+#{list items:results, as:'result'}
+<div class="player-ktlcResults">
+    <span class="ktlc-title">
+            #{a @Application.ktlc(result.ktlc.number)}KTLC #${result.ktlc.number}#{/a}
+    </span>
+    <span class="ktlc-result-playerRank">${result.rank}</span>
+    <span class="ktlc-result-playerScore">${result.score}</span>
+</div>
+#{/list}
+#{/if}
+#{else}
+<div class="empty">
+    Joueur inconnu
+</div>
+#{/else}

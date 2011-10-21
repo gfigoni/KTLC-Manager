@@ -1,0 +1,38 @@
+#{extends 'main.html' /}
+#{set title:'KTLC' /}
+
+#{if ktlcs.size()}
+#{list items:ktlcs, as:'ktlc'}
+<div class="ktlc">
+    <div class="ktlc-metadata">
+        <span class="ktlc-title">
+            #{a @Application.ktlc(ktlc.number)}KTLC #${ktlc.number}#{/a}
+        </span>
+        <span class="ktlc-date">${ktlc.date.format()}</span>
+    </div>
+    <div class="ktlc-races">
+        #{list ktlc.races, as:'race'}
+        <span class="map-name">${race.map.name}</span>
+        <span class="map-env">${race.map.environment}</span>
+        <span class="map-author">${race.map.author.name}</span>
+        </br>
+        #{/list}
+    </div>
+    <div class="ktlc-result">
+        #{list ktlc.results, as:'result'}
+        #{if result_index <= 3}
+        <span class="ktlc-result-playerRank">${result.rank}</span>
+        <span class="ktlc-result-playerName">#{a @Application.player(result.player.login)}${result.player.name}#{/a}</span>
+        </br>
+        #{/if}
+        #{/list}
+    </div>
+</div>
+<br/>
+#{/list}
+#{/if}
+#{else}
+<div class="empty">
+    There is currently no KTLC available.
+</div>
+#{/else}

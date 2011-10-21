@@ -1,0 +1,126 @@
+# you describe your data using the YAML notation here
+# and then load them using Fixtures.load("data.yml")
+  
+Player(arkone):
+  login: arkone
+  name: Arkone
+  
+Player(jer27):
+  login: jer27
+  name: Jer27
+  
+Player(furious):
+  login: fufu
+  name: Furious
+  
+Player(dengel):
+  login: 
+  name:
+ 
+Player(gued):
+  login: gued
+  name: Gued
+    
+Player(fda):
+  login: fda
+  name: FDA
+    
+Player(fantaribo):
+  login: fantaribo
+  name: Fantaribo
+    
+Player(toubib):
+  login: toubib
+  name: Toubib
+    
+Player(jerem):
+  login: j3r3m3
+  name: MERJ
+    
+Player(schum):
+  login: schumissimo
+  name: Schum
+    
+Player(vrt):
+  login: vrt1983
+  name: VRT
+    
+Player(charrety):
+  login: charrety
+  name: Charrety
+    
+Player(nairolf):
+  login: nairolf1987
+  name: Nairolf
+    
+Player(kypon):
+  login: kypon
+  name: Kypon
+    
+Player(mgi):
+  login: mgi
+  name: MGI
+    
+Player(moun):
+  login: moun
+  name: moun
+    
+Player(kent1):
+  login: kent1kent1kent1
+  name: Kent1
+    
+Player(slig):
+  login: slig
+  name: Slig
+    
+Player(hemisch):
+  login: hemisch
+  name: Hemisch
+    
+Player(oliver):
+  login: oliverparisis
+  name: Oliver
+    
+Player(hebus):
+  login: 6hebus9
+  name: Hebus
+    
+Player(maka):
+  login: maka
+  name: MaKa
+    
+Player(polobob):
+  login: polobob_fr
+  name: polobob
+    
+Player(pho):
+  login: phoephoe
+  name: Pho
+    
+Player(grokon):
+  login: grokon
+  name: Grokon
+    
+Player(winnie):
+  login: winnie
+  name: Winnie
+    
+Player(evolm):
+  login: evolm
+  name: evolm
+    
+Player(delnuelo):
+  login: delnuelo
+  name: DelNuelo
+    
+Player(cathy):
+  login: cathynoux
+  name: Cathy
+    
+Player(snake):
+  login: snakekill
+  name: S.n.a.k.e.
+    
+Player(nicof):
+  login: nicof
+  name: Nicof

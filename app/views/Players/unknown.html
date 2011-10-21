@@ -1,0 +1,27 @@
+#{extends 'CRUD/layout.html' /}
+#{set title:'import players' /}
+
+#{if players}
+<div>
+    <h2>Ajout des nouveaux joueurs pour la KTLC #${number} (${date.format()} - ${url})</h2>
+    #{form @Players.addPlayers()}
+    #{list items:players.keySet(), as:'login'}
+    <p>
+        <label for="${login}">${login}</label>
+        <input type="text" id="player.${login}" name="player.${login}" value="${players.get(login)}"/>
+    </p>
+    #{/list}
+    <p>
+        <input type="hidden" name="url" value="${url}" />
+        <input type="hidden" name="date" value="${date.format()}" />
+        <input type="hidden" name="number" value="${number}" />
+        <input type="submit" value="ajouter" />
+    </p>
+    #{/form}
+</div>
+#{/if}
+#{else}
+<div class="empty">
+    No players required.
+</div>
+#{/else}

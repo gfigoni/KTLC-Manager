@@ -1,0 +1,55 @@
+#{extends 'main.html' /}
+#{set title:'KTLC #'+ktlc?.number /}
+
+#{if ktlc}
+<div class="ktlc-metadata">
+    <span class="ktlc-title">
+        KTLC #${ktlc.number}
+    </span>
+    <span class="ktlc-date">${ktlc.date.format()}</span>
+</div>
+<br/>
+<div class="ktlc-races">
+    #{list ktlc.races, as:'race'}
+    <span class="map-name">${race.map.name}</span>
+    <span class="map-env">${race.map.environment}</span>
+    <span class="map-author">${race.map.author.name}</span>
+    <br/>
+    #{/list}
+</div>
+<br/>
+<div class="ktlc-result">
+    #{list ktlc.results, as:'result'}
+    <span class="ktlc-result-playerRank">${result.rank}</span>
+    <span class="ktlc-result-playerName">#{a @Application.player(result.player.login)}${result.player.name}#{/a}</span>
+    <span class="ktlc-result-playerScore">${result.score}</span>
+    <span class="ktlc-result-nbRaces">${result.nbRaces}</span>
+    <br/>
+    #{/list}
+</div>
+<br/>
+#{list items:ktlc.races, as:'race'}
+<div class="ktlc-race">
+    <div class="ktlc-race-metadata">
+        <span class="map-name">${race.map.name}</span>
+        <span class="map-env">${race.map.environment}</span>
+        <span class="map-author">${race.map.author.name}</span>
+    </div>
+    <div class="ktlc-race-result">
+        #{list race.results, as:'result'}
+        <span class="ktlc-result-playerRank">${result.rank}</span>
+        <span class="ktlc-result-playerName">#{a @Application.player(result.player.login)}${result.player.name}#{/a}</span>
+        <span class="ktlc-result-playerScore">${result.score}</span>
+        <span class="ktlc-result-playerRoundsCount">${result.roundsCount}</span>
+        </br>
+        #{/list}
+    </div>
+</div>
+<br/>
+#{/list}
+#{/if}
+#{else}
+<div class="empty">
+    Edition KTLC inconnue
+</div>
+#{/else}
