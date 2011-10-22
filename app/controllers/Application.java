@@ -27,6 +27,12 @@ public class Application extends Controller {
         render(player, results);
     }
     
+    public static void players() {
+    	List<Player> players = Player.find("order by name asc").fetch();
+    	render(players);
+    }
+    
+    
     public static void ktlc(Integer number) {
         KTLCEdition ktlc = KTLCEdition.findByNumber(number);
         render(ktlc);

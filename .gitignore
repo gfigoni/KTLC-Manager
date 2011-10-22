@@ -4,3 +4,8 @@
 /test-result
 /logs
 /nbproject
+/.settings
+/.metadata
+/.classpath
+/.project
+/eclipse

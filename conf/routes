@@ -6,6 +6,7 @@
 GET     /                                       Application.index
 GET     /ktlc/{number}                          Application.ktlc
 GET     /player/{login}                         Application.player
+GET		/players								Application.players
 
 # Ignore favicon requests
 GET     /favicon.ico                            404

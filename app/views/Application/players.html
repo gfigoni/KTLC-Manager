@@ -1,0 +1,21 @@
+#{extends 'main.html' /}
+#{set title:'Joueurs' /}
+
+#{if players.size()}
+#{list items:players, as:'player'}
+<div class="players">
+    <div class="player">
+        <span class="player-name">
+        	#{a @Application.player(player.login)}${player.name}#{/a}
+        </span>
+        <span class="player-login">
+        	${player.login}
+        </span>
+    </div>
+#{/list}
+#{/if}
+#{else}
+<div class="empty">
+    There is currently no players available.
+</div>
+#{/else}
