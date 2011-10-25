@@ -39,7 +39,7 @@ public class Application extends Controller {
     }
 
     public static void ktlcs() {
-        List<KTLCEdition> ktlcs = KTLCEdition.find("order by date asc").fetch();
+        List<KTLCEdition> ktlcs = KTLCEdition.find("order by date desc").fetch();
         render(ktlcs);
     }
 }
