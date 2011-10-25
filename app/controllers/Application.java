@@ -11,8 +11,8 @@ import play.mvc.Controller;
 public class Application extends Controller {
 
     public static void index() {
-        List<KTLCEdition> ktlcs = KTLCEdition.find("order by date desc").fetch();
-        render(ktlcs);
+        KTLCEdition ktlc = KTLCEdition.find("order by date desc").first();
+        render(ktlc);
     }
 
     public static void player(String login) {
