@@ -1,55 +1,86 @@
 #{extends 'main.html' /}
 #{set title:'KTLC #'+ktlc?.number /}
+#{set page:'ktlc' /}
 
 #{if ktlc}
-<div class="ktlc-metadata">
-    <span class="ktlc-title">
-        KTLC #${ktlc.number}
-    </span>
-    <span class="ktlc-date">${ktlc.date.format()}</span>
+<div id="content_top">
+    <ul>
+        <li>#{a @Application.ktlc(ktlc.number)}KTLC #${ktlc.number} <span>${ktlc.date.format()}</span>#{/a}</li>
+    </ul>
 </div>
-<br/>
-<div class="ktlc-races">
-    #{list ktlc.races, as:'race'}
-    <span class="map-name">${race.map.name}</span>
-    <span class="map-env">${race.map.environment}</span>
-    <span class="map-author">${race.map.author.name}</span>
-    <br/>
-    #{/list}
-</div>
-<br/>
-<div class="ktlc-result">
-    #{list ktlc.results, as:'result'}
-    <span class="ktlc-result-playerRank">${result.rank}</span>
-    <span class="ktlc-result-playerName">#{a @Application.player(result.player.login)}${result.player.name}#{/a}</span>
-    <span class="ktlc-result-playerScore">${result.score}</span>
-    <span class="ktlc-result-nbRaces">${result.nbRaces}</span>
-    <br/>
-    #{/list}
-</div>
-<br/>
-#{list items:ktlc.races, as:'race'}
-<div class="ktlc-race">
-    <div class="ktlc-race-metadata">
-        <span class="map-name">${race.map.name}</span>
-        <span class="map-env">${race.map.environment}</span>
-        <span class="map-author">${race.map.author.name}</span>
-    </div>
-    <div class="ktlc-race-result">
-        #{list race.results, as:'result'}
-        <span class="ktlc-result-playerRank">${result.rank}</span>
-        <span class="ktlc-result-playerName">#{a @Application.player(result.player.login)}${result.player.name}#{/a}</span>
-        <span class="ktlc-result-playerScore">${result.score}</span>
-        <span class="ktlc-result-playerRoundsCount">${result.roundsCount}</span>
-        </br>
+<div id="main">
+    <div class="map">
+        #{list ktlc.races, as:'race'}
+        <ul>
+            <li>${race.map.name} by ${race.map.author.name}</li>
+            <li>${race.map.environment}</li>
+        </ul>
         #{/list}
     </div>
+    <div class="separator"></div>
+    <div id="content">
+        <div class="content_box">
+            <ul class="menu home">
+                <li class="rank menu home">Rank</li>
+                <li class="player menu home">Player</li>
+                <li class="score menu home">Score</li>
+                <li class="race menu home">Nb Races</li>
+            </ul>
+            #{list ktlc.results, as:'result'}
+            <ul class="home">
+                <li class="rank">${result.rank}</li>
+                <li class="player">#{a @Application.player(result.player.login)}${result.player.name}#{/a}</li>
+                <li class="score">${result.score}</li>
+                <li class="race">${result.nbRaces}</li>
+            </ul>
+            #{/list}
+        </div>
+    </div>
+    <div class="cleaner"></div>
+    <div id="race">
+        #{list items:ktlc.races, as:'race'}
+        <div class="race_content">
+            <div class="racemap">
+                <ul>
+                    <li>${race.map.name} by ${race.map.author.name}</li>
+                    <li>${race.map.environment}</li>
+                </ul>
+            </div>
+            <div class="raceresult">
+                <ul class="menu">
+                    <li class="menu rank">Rank</li>
+                    <li class="menu player">Player</li>
+                    <li class="menu score">Score</li>
+                    <li class="menu round">Round</li>
+                </ul>
+                #{list race.results, as:'result'}
+                <ul>
+                    <li class="rank">${result.rank}</li>
+                    <li class="player">#{a @Application.player(result.player.login)}${result.player.name}#{/a}</li>
+                    <li class="score">${result.score}</li>
+                    <li class="round">${result.roundsCount}</li>
+                </ul>
+                #{/list}
+            </div>
+        </div>
+        #{/list}
+    </div>
+    <div class="cleaner"></div>
 </div>
-<br/>
-#{/list}
 #{/if}
+
 #{else}
-<div class="empty">
-    Edition KTLC inconnue
+<div id="content_top">
+    <ul>
+        <li><h1><a href="#">No KTLC</a></h1></li>
+    </ul>
+</div>
+<div id="main">
+    <div id="content">
+        <div class="content_box">
+            This KTLC doesn't exist
+        </div>
+    </div>
+    <div class="cleaner"></div>
 </div>
 #{/else}

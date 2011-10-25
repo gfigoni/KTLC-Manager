@@ -11,10 +11,43 @@
         #{get 'moreScripts' /}
     </head>
     <body>
-        <div class="header">
-            <h1>#{a @Application.index()}KTLC#{/a}</h1>
+        <div id="wrapper">
+            <div id="header">
+                <div id="logo"></div>
+                <div id="menu">
+                    <ul>
+                        #{if page == 'home' }
+                            <li><a href="/" class="current">Home</a></li>
+                        #{/if}
+                        #{else}
+                            <li><a href="/">Home</a></li>
+                        #{/else}
+                        #{if page == 'ktlc' }
+                            <li><a href="/ktlc" class="current">KTLC List</a></li>
+                        #{/if}
+                        #{else}
+                            <li><a href="/ktlc">KTLC List</a></li>
+                        #{/else}
+                        #{if page == 'player' }
+                            <li><a href="/players" class="current">Player List</a></li>
+                        #{/if}
+                        #{else}
+                            <li><a href="/players">Player List</a></li>
+                        #{/else}
+                        <li><a href="http://forum.lsd-team.net">Forum</a></li>
+                        <li><a href="/admin">Administration</a></li>
+                    </ul>
+                </div>
+            </div>
+            #{doLayout /}
         </div>
-        
-        #{doLayout /}
+        <div id="footer_wrapper">
+            <div id="footer">
+                <a href="/">Home</a> | <a href="/ktlc">KTLC List</a> | <a href="/player">Player List</a> | <a href="http://forum.lsd-team.net">Forum</a>
+                <div class="cleaner h10"></div>
+                Copyright © 2011 <a href="http://www.lsd-team.net">lsd-team.net</a>
+                <div class="cleaner"></div>
+            </div>
+        </div>
     </body>
 </html>

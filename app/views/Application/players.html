@@ -1,21 +1,34 @@
 #{extends 'main.html' /}
-#{set title:'Joueurs' /}
+#{set title:'KTLC' /}
+#{set page:'player' /}
 
-#{if players.size()}
-#{list items:players, as:'player'}
-<div class="players">
-    <div class="player">
-        <span class="player-name">
-        	#{a @Application.player(player.login)}${player.name}#{/a}
-        </span>
-        <span class="player-login">
-        	${player.login}
-        </span>
-    </div>
-#{/list}
-#{/if}
-#{else}
-<div class="empty">
-    There is currently no players available.
+
+<div id="content_top">
+    <ul>
+        <li><h1><a href="/player">Player List</a></h1></li>
+    </ul>
 </div>
-#{/else}
+<div id="main">
+    <div id="content">
+        <div class="content_box">
+            <ul class="menu players">
+                <li class="menu player">Player</li>
+                <li class="menu player">Login</li>
+            </ul>
+            #{if players.size()}
+            #{list items:players, as:'player'}
+            #{if player}
+            <ul class="players">
+                <li class="player">#{a @Application.player(player.login)}${player.name}#{/a}</li>
+                <li class="player">${player.login}</li>
+            </ul>
+            #{/if}
+            #{/list}
+            #{/if}
+            #{else}
+                No player Available
+            #{/else}
+        </div>
+    </div>
+    <div class="cleaner"></div>
+</div>

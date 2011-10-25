@@ -1,4 +1,319 @@
 body {
-  margin: 0;
-  padding: 0;
+	margin: 30px 0 0 0;
+	padding: 0;
+	color: #666;
+	font-family: Tahoma, Geneva, sans-serif;
+	font-size: 12px;
+	line-height: 1.5em;
+	/*background: #ebe8e1 url(img/body.jpg) top center no-repeat;*/
+	background: #5B5B5B url(img/bg.gif) top repeat-x;
+	/*background-attachment: fixed;*/
 }
+
+h1, h2, h3, h4, h5, h6 { color: #ffde88; font-weight: normal }
+h1 { font-size: 26px; margin: 0 0 20px 0; padding: 5px 0; }
+h2 { font-size: 21px; margin: 0 0 15px; padding: 0; }
+h3 { font-size: 18px; margin: 0 0 15px; padding: 0; }
+h4 { font-size: 16px; margin: 0 0 10px; padding: 0; }
+h5 { font-size: 14px; margin: 0 0 5px; padding: 0; }
+h6 { font-size: 12px; margin: 0 0 3px; padding: 0; }
+
+.cleaner { clear: both }
+.h10 { height: 10px }
+.h20 { height: 20px }
+.h30 { height: 30px }
+.h40 { height: 40px }
+.h50 { height: 50px }
+.h60 { height: 60px }
+
+ul, li {
+	padding: 0;
+	margin: 0;
+}
+
+#wrapper {
+	width: 960px;
+	margin: 0 auto;
+}
+
+#header {
+	width: 960px;
+	height: 85px;
+	padding: 10px 0 20px 0;
+}
+
+#logo { 
+	float: left; 
+	background: url(img/logo.png) top no-repeat;
+	width: 170px;
+	height: 85px;
+}
+#logo h1 { margin: 0; padding: 0 }
+#logo h1 a {
+	display: block;
+	text-decoration: none;
+}
+
+#menu { float: right; margin-top: 70px; }
+#menu ul { padding: 0 0 0 20px; margin: 0; list-style: none; }
+#menu ul li { margin: 0; padding: 0; display: inline-block }
+#menu ul li a {
+	float: left;
+	display: block;
+	font-size: 18px;
+	/*color: #333;*/	
+	color: #fefadc;
+	padding: 3px 0 0 0;
+	margin: 0 20px 0 0;
+	text-decoration: none;
+	text-align: center;
+	width: 130px;
+	height: 27px;
+	
+}
+
+#menu ul li a:hover, #menu ul .current {
+	/*color: #fefadc;*/
+	/*background: url(img/button.png) top left no-repeat;*/
+	color: #f39400;
+}
+
+#content_top {
+	clear: both;
+	width: 900px;
+	height: 81px;
+	padding: 0 30px;
+    background:	url(img/content_top.jpg) no-repeat top center
+}
+
+#content_top ul {
+	float:left;
+	height: 56px;
+	/*width: 105px;*/
+	margin: 0;
+	padding: 25px 0 0 0;
+	list-style: none;
+}
+
+#content_top ul li {
+	padding: 0;
+	margin: 0;
+}
+
+#content_top ul li a {
+	height: 56px;
+	padding: 0 20px;
+	margin-right: 1px;
+	font-size: 14px;
+	color: #b1b1b1;	
+	text-align: center;
+	text-decoration: none;
+	font-weight: bold;
+	outline: none;
+	border: none;
+}
+
+#content_top ul li a span {
+	display: block;
+	font-size: 11px;
+	font-weight: normal;
+	color: #fefadc;
+	padding: 0 20px;
+	text-align: center;
+}
+
+
+
+#content_top ul li a:hover, #content_top ul .current {
+	color: #f39400;
+}
+
+#main {
+	width: 900px;
+	padding: 0 30px;
+    background:	url(img/main.jpg) repeat-y;
+}
+
+.map {
+	padding: 0 10px;
+	height: 80px;
+	color: #bbb;
+}
+
+.map ul {
+	float:left;
+	display: inline;
+	width: 125px;
+	padding: 0;
+	height: 20px;
+	background: transparent url(img/list.jpg) no-repeat scroll 0 5px;
+}
+
+.map ul li {
+	padding: 0 10px;
+	list-style: none;
+}
+
+.separator {
+	height: 6px;
+	background: url(img/content_separator.jpg) top left repeat-x;
+}
+
+#content {
+	float: left;
+	width: 340px;
+	padding: 10px 30px;
+}
+
+.content_box { clear: both; margin-bottom: 30px; padding-bottom: 30px; }
+.last_content_box { margin: 0; padding: 0; border-bottom: 0 }
+
+#content ul {
+	width: 330px;
+	float: left;
+	display: block;
+	padding: 2px 10px;
+	margin: 0;
+}
+
+#content ul li {
+	list-style: none;
+	display: inline-block;
+	color: #fefadc;
+	padding: 0;
+	margin: 0;
+	border: 0;
+}
+
+.raceresult ul:nth-child(odd),
+#content ul:nth-child(odd){
+	background-color: #3d3b37;
+}
+
+.raceresult ul:nth-child(even),
+#content ul:nth-child(even){
+	background-color: #484742;
+}
+
+.raceresult ul li a,
+#content ul li a {
+	color: #ffde88;
+}
+
+#content ul.menu,
+.raceresult ul.menu {
+	background-color: #9dafb0;
+	border-bottom: 1px solid black;
+}
+
+#content ul.home {
+	width: 262px;
+}
+
+#content ul.ktlcs,
+#content ul.players {
+	width: 164px;
+}
+
+#content ul.player {
+	width: 208px;
+}
+
+#content ul li.menu,
+.raceresult ul li.menu {
+	font-weight: bold;
+	color: black;
+}
+
+#content ul li.rank {
+	width: 50px;
+}
+
+#content ul li.score,
+#content ul li.race,
+#content ul li.date {
+	width: 60px;
+	text-align: center;
+}
+
+#content ul li.ktlcnbr {
+	width: 90px;
+}
+
+#content ul li.player {
+	width: 80px;
+}
+
+#race {
+	float: left;
+	width: 840px;
+	padding: 10px 30px;
+}
+
+.race_content { float:left; width: 197px; padding: 0 5px; margin-top: 20px; }
+
+.racemap {
+	height: 60px;
+	color: #bbb;
+}
+
+.racemap ul {
+	float:left;
+	display: inline;
+	padding: 0;
+	height: 20px;
+	background: transparent url(img/list.jpg) no-repeat scroll 0 5px;
+}
+
+.racemap ul li {
+	padding: 0 10px;
+	list-style: none;
+}
+
+.raceresult {
+	clear: both;
+}
+
+.raceresult ul {
+	width: 197px;
+	float: left;
+	display: block;
+	margin: 0;
+	padding: 0 2px;
+}
+
+.raceresult ul li{
+	list-style: none;
+	display: inline-block;
+	color: #fefadc;
+	padding: 0;
+	margin: 0;
+}
+
+.raceresult ul li.rank,
+.raceresult ul li.score {
+	width: 35px;
+}
+
+.raceresult ul li.round {
+	width: 41px;
+}
+
+.raceresult ul li.player {
+	width: 74px;
+}
+
+
+/*#footer_wrapper { width: 100%; background: url(img/footer.jpg) bottom center no-repeat; }*/
+#footer_wrapper { width: 100%; /*background: #000000 url(img/blackfooter.jpg) top repeat-x;*/ }
+
+#footer {
+		width: 900px;
+		text-align: center;
+		margin: 0 auto;
+		padding: 40px 30px 20px;
+		color: #fff;
+		background: url(img/footer_top.jpg) top center no-repeat;
+}
+	
+#footer a { color: #f39400 }

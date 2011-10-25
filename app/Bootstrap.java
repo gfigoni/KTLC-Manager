@@ -21,16 +21,16 @@ public class Bootstrap extends Job {
 //        System.setProperty("http.proxyHost", "localhost");
 //        System.setProperty("http.proxyPort", "5865");
         
-//        Fixtures.deleteDatabase();
-//        if (Player.count() == 0) {
-//            Fixtures.loadModels("players.yml");
-//            importKTLC(1, new Date(111, 7, 25));
-//            importKTLC(2, new Date(111, 8, 1));
-//            importKTLC(3, new Date(111, 8, 15));
-//            importKTLC(4, new Date(111, 8, 22));
+        Fixtures.deleteDatabase();
+        if (Player.count() == 0) {
+            Fixtures.loadModels("players.yml");
+            importKTLC(1, new Date(111, 7, 25));
+            importKTLC(2, new Date(111, 8, 1));
+            importKTLC(3, new Date(111, 8, 15));
+            importKTLC(4, new Date(111, 8, 22));
 //            importKTLC(5, new Date(111, 8, 29));
 //            importKTLC(6, new Date(111, 9, 13));
-//        }
+        }
     }
 
     private void importKTLC(int num, Date date) throws Exception {

@@ -1,0 +1,34 @@
+#{extends 'main.html' /}
+#{set title:'KTLC' /}
+#{set page:'ktlc' /}
+
+
+<div id="content_top">
+    <ul>
+        <li><h1><a href="#">KTLC² List</a></h1></li>
+    </ul>
+</div>
+<div id="main">
+    <div id="content">
+        <div class="content_box">
+            <ul class="menu ktlcs">
+                <li class="ktlcnbr menu ktlcs">KTLC Number</li>
+                <li class="date menu ktlcs">Date</li>
+            </ul>
+            #{if ktlcs.size()}
+            #{list items:ktlcs, as:'ktlc'}
+            #{if ktlc}
+            <ul class="ktlcs">
+                <li class="ktlcnbr">#{a @Application.ktlc(ktlc.number)}KTLC #${ktlc.number}#{/a}</li>
+                <li class="date">${ktlc.date.format()}</li>
+            </ul>
+            #{/if}
+            #{/list}
+            #{/if}
+            #{else}
+                No KTLC Available
+            #{/else}
+        </div>
+    </div>
+    <div class="cleaner"></div>
+</div>
