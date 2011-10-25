@@ -3,11 +3,13 @@ package controllers;
 import java.util.Date;
 import java.util.Map;
 import models.Player;
+import play.mvc.With;
 
 /**
  *
  * @author gehef
  */
+@With(Secure.class)
 public class Players extends CRUD {
 
     /**

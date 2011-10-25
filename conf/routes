@@ -18,5 +18,8 @@ GET     /public/                                staticDir:public
 # Import CRUD routes
 *       /admin                                  module:crud
 
+# Import Secure routes
+*       /                                       module:secure
+
 # Catch all
 *       /{controller}/{action}                  {controller}.{action}

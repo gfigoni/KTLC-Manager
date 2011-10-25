@@ -14,11 +14,13 @@ import models.UnknownPlayerException;
 import play.Logger;
 import play.data.validation.Min;
 import play.data.validation.Required;
+import play.mvc.With;
 
 /**
  *
  * @author gehef
  */
+@With(Secure.class)
 public class KTLCEditions extends CRUD {
 
     public static void importKTLC(
