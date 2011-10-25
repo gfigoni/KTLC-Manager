@@ -1,11 +1,11 @@
 #{extends 'main.html' /}
-#{set title:'KTLC #'+ktlc?.number /}
+#{set title:messages.get('title.ktlc', ktlc?.number) /}
 #{set page:'ktlc' /}
 
 #{if ktlc}
 <div id="content_top">
     <ul>
-        <li>#{a @Application.ktlc(ktlc.number)}KTLC #${ktlc.number} <span>${ktlc.date.format()}</span>#{/a}</li>
+        <li>#{a @Application.ktlc(ktlc.number)}&{'ktlc.number', ktlc.number} <span>${ktlc.date.format()}</span>#{/a}</li>
     </ul>
 </div>
 <div id="main">
@@ -13,7 +13,7 @@
         #{list ktlc.races, as:'race'}
         <ul>
             <li>${race.map.name}</li>
-            <li>by ${race.map.author.name}</li>
+            <li>${race.map.author.name}</li>
             <li>${race.map.environment}</li>
         </ul>
         #{/list}
@@ -22,10 +22,10 @@
     <div id="content">
         <div class="content_box">
             <ul class="menu home">
-                <li class="rank menu home">Rank</li>
-                <li class="player menu home">Player</li>
-                <li class="score menu home">Score</li>
-                <li class="race menu home">Nb Races</li>
+                <li class="rank menu home">&{'player.rank'}</li>
+                <li class="player menu home">&{'player'}</li>
+                <li class="score menu home">&{'player.score'}</li>
+                <li class="race menu home">&{'player.nbraces'}</li>
             </ul>
             #{list ktlc.results, as:'result'}
             <ul class="home">
@@ -44,16 +44,16 @@
             <div class="racemap">
                 <ul>
                     <li>${race.map.name}</li>
-                    <li>by ${race.map.author.name}</li>
+                    <li>${race.map.author.name}</li>
                     <li>${race.map.environment}</li>
                 </ul>
             </div>
             <div class="raceresult">
                 <ul class="menu">
-                    <li class="menu rank">Rank</li>
-                    <li class="menu player">Player</li>
-                    <li class="menu score">Score</li>
-                    <li class="menu round">Round</li>
+                    <li class="menu rank">&{'player.rank'}</li>
+                    <li class="menu player">&{'player'}</li>
+                    <li class="menu score">&{'player.score'}</li>
+                    <li class="menu round">&{'player.rounds'}</li>
                 </ul>
                 #{list race.results, as:'result'}
                 <ul>
@@ -74,13 +74,13 @@
 #{else}
 <div id="content_top">
     <ul>
-        <li><h1><a href="#">No KTLC</a></h1></li>
+        <li><h1><a>&{'error.noktlc'}</a></h1></li>
     </ul>
 </div>
 <div id="main">
     <div id="content">
         <div class="content_box">
-            This KTLC doesn't exist
+            &{'error.wrongktlc'}
         </div>
     </div>
     <div class="cleaner"></div>

@@ -1,32 +1,28 @@
 #{extends 'main.html' /}
-#{set title:'KTLC' /}
+#{set title:messages.get('title.default') /}
 #{set page:'ktlc' /}
 
 
 <div id="content_top">
     <ul>
-        <li><h1><a>KTLC List</a></h1></li>
+        <li><h1><a>&{'main.ktlcs'}</a></h1></li>
     </ul>
 </div>
 <div id="main">
     <div id="content">
         <div class="content_box">
             <ul class="menu ktlcs">
-                <li class="ktlcnbr menu ktlcs">KTLC Number</li>
-                <li class="date menu ktlcs">Date</li>
+                <li class="ktlcnbr menu ktlcs">&{'ktlc.number.title'}</li>
+                <li class="date menu ktlcs">&{'ktlc.date'}</li>
             </ul>
-            #{if ktlcs.size()}
             #{list items:ktlcs, as:'ktlc'}
-            #{if ktlc}
             <ul class="ktlcs">
-                <li class="ktlcnbr">#{a @Application.ktlc(ktlc.number)}KTLC #${ktlc.number}#{/a}</li>
+                <li class="ktlcnbr">#{a @Application.ktlc(ktlc.number)}&{'ktlc.number', ktlc.number}#{/a}</li>
                 <li class="date">${ktlc.date.format()}</li>
             </ul>
-            #{/if}
             #{/list}
-            #{/if}
             #{else}
-                No KTLC Available
+                &{'error.noktlc'}
             #{/else}
         </div>
     </div>

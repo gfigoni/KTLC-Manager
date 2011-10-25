@@ -1,0 +1,30 @@
+title.default = Kill The Last Cup
+title.ktlc = Kill The Last Cup | édition #%s
+title.players = Kill The Last Cup | joueurs
+title.player = Kill The Last Cup | %s
+
+main.home = Accueil
+main.players = Joueurs
+main.ktlcs = éditions KTLC
+main.forum = Forum
+main.admin = Administration
+
+ktlc = KTLC
+ktlc.number = KTLC #%s
+ktlc.number.title = KTLC #
+ktlc.date = Date
+
+player = Joueur
+player.login = Login
+player.rank = Place
+player.score = Score
+player.nbraces = Courses
+player.rounds = Tours
+
+error.wrongktlc = Cette KTLC n'existe pas.
+error.noktlc = Pas de KTLC
+error.wrongplayer = Ce joueur n'existe pas.
+error.noplayer = Pas de joueur
+
+# administration
+validation.required = %s est obligatoire

@@ -17,25 +17,25 @@
                 <div id="menu">
                     <ul>
                         #{if page == 'home' }
-                            <li><a href="@{Application.index()}" class="current">Home</a></li>
+                            <li><a href="@{Application.index()}" class="current">&{'main.home'}</a></li>
                         #{/if}
                         #{else}
-                            <li><a href="@{Application.index()}">Home</a></li>
+                            <li><a href="@{Application.index()}">&{'main.home'}</a></li>
                         #{/else}
                         #{if page == 'ktlc' }
-                            <li><a href="@{Application.ktlcs()}" class="current">KTLC List</a></li>
+                            <li><a href="@{Application.ktlcs()}" class="current">&{'main.ktlcs'}</a></li>
                         #{/if}
                         #{else}
-                            <li><a href="@{Application.ktlcs()}">KTLC List</a></li>
+                            <li><a href="@{Application.ktlcs()}">&{'main.ktlcs'}</a></li>
                         #{/else}
                         #{if page == 'player' }
-                            <li><a href="@{Application.players()}" class="current">Player List</a></li>
+                            <li><a href="@{Application.players()}" class="current">&{'main.players'}</a></li>
                         #{/if}
                         #{else}
-                            <li><a href="@{Application.players()}">Player List</a></li>
+                            <li><a href="@{Application.players()}">&{'main.players'}</a></li>
                         #{/else}
-                        <li><a href="http://forum.lsd-team.net">Forum</a></li>
-                        <li><a href="@{CRUD.index()}">Administration</a></li>
+                        <li><a href="http://forum.lsd-team.net">&{'main.forum'}</a></li>
+                        <li><a href="@{CRUD.index()}">&{'main.admin'}</a></li>
                     </ul>
                 </div>
             </div>
@@ -43,7 +43,7 @@
         </div>
         <div id="footer_wrapper">
             <div id="footer">
-                <a href="@{Application.index()}">Home</a> | <a href="@{Application.ktlcs()}">KTLC List</a> | <a href="@{Application.players()}">Player List</a> | <a href="http://forum.lsd-team.net">Forum</a>
+                <a href="@{Application.index()}">&{'main.home'}</a> | <a href="@{Application.ktlcs()}">&{'main.ktlcs'}</a> | <a href="@{Application.players()}">&{'main.players'}</a> | <a href="http://forum.lsd-team.net">&{'main.forum'}</a>
                 <div class="cleaner h10"></div>
                 Copyright © 2011 <a href="http://www.lsd-team.net">lsd-team.net</a>
                 <div class="cleaner"></div>

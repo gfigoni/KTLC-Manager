@@ -1,46 +1,45 @@
 #{extends 'main.html' /}
-#{set title:player?.name /}
+#{set title:messages.get('title.player', player?.name) /}
 #{set page:'player' /}
 
 #{if player}
 <div id="content_top">
-	<ul>
-		<li><h1><a>${player.name}</a></h1></li>
-	</ul>
+    <ul>
+        <li><h1><a>${player.name}</a></h1></li>
+    </ul>
 </div>
 <div id="main">
-	<div id="content">
-		<div class="content_box">
-			<ul class="menu player">
-				<li class="menu ktlcnbr">KTLC Number</li>
-				<li class="menu rank">Rank</li>
-				<li class="menu score">Score</li>
-			</ul>
-			#{list items:results, as:'result'}
-			<ul class="player">
-				<li class="ktlcnbr">#{a @Application.ktlc(result.ktlc.number)}KTLC #${result.ktlc.number}#{/a}</li>
-				<li class="rank">${result.rank}</li>
-				<li class="score">${result.score}</li>
-			</ul>
-			#{/list}
-		</div>
-	</div>
-	<div class="cleaner"></div>
+    <div id="content">
+        <div class="content_box">
+            <ul class="menu player">
+                <li class="menu ktlcnbr">&{'ktlc.number.title'}</li>
+                <li class="menu rank">&{'player.rank'}</li>
+                <li class="menu score">&{'player.score'}</li>
+            </ul>
+            #{list items:results, as:'result'}
+            <ul class="player">
+                <li class="ktlcnbr">#{a @Application.ktlc(result.ktlc.number)}&{'ktlc.number', result.ktlc.number}#{/a}</li>
+                <li class="rank">${result.rank}</li>
+                <li class="score">${result.score}</li>
+            </ul>
+            #{/list}
+        </div>
+    </div>
+    <div class="cleaner"></div>
 </div>
 #{/if}
-
 #{else}
 <div id="content_top">
-	<ul>
-		<li><h1><a href="#">No player</a></h1></li>
-	</ul>
+    <ul>
+        <li><h1><a>&{'error.noplayer'}</a></h1></li>
+    </ul>
 </div>
 <div id="main">
-	<div id="content">
-		<div class="content_box">
-			This player doesn't exist
-		</div>
-	</div>
-	<div class="cleaner"></div>
+    <div id="content">
+        <div class="content_box">
+            &{'error.wrongplayer'}
+        </div>
+    </div>
+    <div class="cleaner"></div>
 </div>
 #{/else}

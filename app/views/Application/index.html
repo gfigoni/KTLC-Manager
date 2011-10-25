@@ -1,11 +1,11 @@
 #{extends 'main.html' /}
-#{set title:'KTLC' /}
+#{set title:messages.get('title.default') /}
 #{set page:'home' /}
 
 #{if ktlc}
 <div id="content_top">
     <ul>
-        <li>#{a @Application.ktlc(ktlc.number)}KTLC #${ktlc.number} <span>${ktlc.date.format()}</span>#{/a}</li>
+        <li>#{a @Application.ktlc(ktlc.number)}&{'ktlc.number', ktlc.number} <span>${ktlc.date.format()}</span>#{/a}</li>
     </ul>
 </div>
 <div id="main">
@@ -13,7 +13,7 @@
         #{list ktlc.races, as:'race'}
         <ul>
             <li>${race.map.name}</li>
-            <li>by ${race.map.author.name}</li>
+            <li>${race.map.author.name}</li>
             <li>${race.map.environment}</li>
         </ul>
         #{/list}
@@ -22,10 +22,10 @@
     <div id="content">
         <div class="content_box">
             <ul class="menu home">
-                <li class="rank menu home">Rank</li>
-                <li class="player menu home">Player</li>
-                <li class="score menu home">Score</li>
-                <li class="race menu home">Nb Races</li>
+                <li class="rank menu home">&{'player.rank'}</li>
+                <li class="player menu home">&{'player'}</li>
+                <li class="score menu home">&{'player.score'}</li>
+                <li class="race menu home">&{'player.nbraces'}</li>
             </ul>
             #{list ktlc.results, as:'result'}
             <ul class="home">
@@ -43,7 +43,7 @@
 #{else}
 <div id="content_top">
     <ul>
-        <li><h1><a href="#">No KTLC available</a></h1></li>
+        <li><h1><a>&{'error.noktlc'}</a></h1></li>
     </ul>
 </div>
 <div id="main">

@@ -1,32 +1,28 @@
 #{extends 'main.html' /}
-#{set title:'KTLC' /}
+#{set title:messages.get('title.players') /}
 #{set page:'player' /}
 
 
 <div id="content_top">
     <ul>
-        <li><h1><a>Player List</a></h1></li>
+        <li><h1><a>&{'main.players'}</a></h1></li>
     </ul>
 </div>
 <div id="main">
     <div id="content">
         <div class="content_box">
             <ul class="menu players">
-                <li class="menu player">Player</li>
-                <li class="menu player">Login</li>
+                <li class="menu player">&{'player'}</li>
+                <li class="menu player">&{'player.login'}</li>
             </ul>
-            #{if players.size()}
             #{list items:players, as:'player'}
-            #{if player}
             <ul class="players">
                 <li class="player">#{a @Application.player(player.login)}${player.name}#{/a}</li>
                 <li class="player">${player.login}</li>
             </ul>
-            #{/if}
             #{/list}
-            #{/if}
             #{else}
-                No player available
+                &{'error.noplayer'}
             #{/else}
         </div>
     </div>
