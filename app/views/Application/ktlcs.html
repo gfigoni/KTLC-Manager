@@ -2,7 +2,7 @@
 #{set title:messages.get('title.default') /}
 #{set page:'ktlc' /}
 
-
+#{if ktlcs.size()}
 <div id="content_top">
     <ul>
         <li><h1><a>&{'main.ktlcs'}</a></h1></li>
@@ -28,3 +28,17 @@
     </div>
     <div class="cleaner"></div>
 </div>
+#{/if}
+#{else}
+<div id="content_top">
+    <ul>
+        <li><h1><a>&{'error.noktlc'}</a></h1></li>
+    </ul>
+</div>
+<div id="main">
+    <div id="content">
+        <div class="content_box" ></div>
+    </div>
+        <div class="cleaner" ></div>
+</div>
+#{/else}
