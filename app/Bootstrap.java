@@ -1,4 +1,3 @@
-
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -12,7 +11,8 @@ import play.jobs.Job;
 import play.jobs.OnApplicationStart;
 import play.test.Fixtures;
 
-@OnApplicationStart
+// à décommenter pour les tests, afin d'initialiser l'application avec un jeu de données
+//@OnApplicationStart
 public class Bootstrap extends Job {
 
     @Override
