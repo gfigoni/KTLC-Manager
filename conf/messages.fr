@@ -5,7 +5,7 @@ title.player = Kill The Last Cup | %s
 
 main.home = Accueil
 main.players = Joueurs
-main.ktlcs = éditions KTLC
+main.ktlcs = Editions KTLC
 main.forum = Forum
 main.admin = Administration
 
