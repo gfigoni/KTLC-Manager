@@ -205,7 +205,10 @@ ul, li {
 	width: 262px;
 }
 
-#content ul.ktlcs,
+#content ul.ktlcs {
+	width: 238px;	
+}
+
 #content ul.players {
 	width: 164px;
 }
@@ -226,13 +229,19 @@ ul, li {
 
 #content ul li.score,
 #content ul li.race,
-#content ul li.date {
+#content ul li.size {
 	width: 60px;
 	text-align: center;
 }
 
+
 #content ul li.ktlcnbr {
 	width: 90px;
+}
+
+#content ul li.date {
+	width: 80px;
+	text-align: center;	
 }
 
 #content ul li.player {
