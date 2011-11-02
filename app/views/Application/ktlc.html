@@ -2,6 +2,9 @@
 #{set title:messages.get('title.ktlc', ktlc?.number) /}
 #{set page:'ktlc' /}
 
+<script src="@{'/public/javascripts/jquery-ui-1.8.16.custom.min.js'}" type="text/javascript" charset="${_response_encoding}"></script>
+<script src="@{'/public/javascripts/slider.js'}" type="text/javascript" charset="${_response_encoding}"></script>
+
 #{if ktlc}
 <div id="content_top">
     <ul>
@@ -13,7 +16,7 @@
         #{list ktlc.races, as:'race'}
         <ul>
             <li>${race.map.name}</li>
-            <li>${race.map.author.name}</li>
+            <li><strong>${race.map.author.name}</strong></li>
             <li>${race.map.environment}</li>
         </ul>
         #{/list}
@@ -39,36 +42,46 @@
     </div>
     <div class="cleaner"></div>
     <div id="race">
-        #{list items:ktlc.races, as:'race'}
-        <div class="race_content">
-            <div class="racemap">
-                <ul>
-                    <li>${race.map.name}</li>
-                    <li>${race.map.author.name}</li>
-                    <li>${race.map.environment}</li>
-                </ul>
-            </div>
-            <div class="raceresult">
-                <ul class="menu">
-                    <li class="menu rank">&{'player.rank'}</li>
-                    <li class="menu player">&{'player'}</li>
-                    <li class="menu score">&{'player.score'}</li>
-                    <li class="menu round">&{'player.rounds'}</li>
-                </ul>
-                #{list race.results, as:'result'}
-                <ul>
-                    <li class="rank">${result.rank}</li>
-                    <li class="player">#{a @Application.player(result.player.login)}${result.player.name}#{/a}</li>
-                    <li class="score">${result.score}</li>
-                    <li class="round">${result.roundsCount}</li>
-                </ul>
-                #{/list}
+        <div class="scroll-container">
+            <div class="scroll-slider"></div> 
+            <div class="scroll-content">
+                <div class="content-holder">
+                    #{list items:ktlc.races, as:'race'}
+                    <div class="race_content">
+                        <div class="racemap">
+                            <ul>
+                                <li>${race.map.name}</li>
+                                <li><strong>${race.map.author.name}</strong></li>
+                                <li>${race.map.environment}</li>
+                            </ul>
+                        </div>
+                        <div class="raceresult">
+                            <ul class="menu">
+                                <li class="menu rank">&{'player.rank'}</li>
+                                <li class="menu player">&{'player'}</li>
+                                <li class="menu score">&{'player.score'}</li>
+                                <li class="menu round">&{'player.rounds'}</li>
+                            </ul>
+                            #{list race.results, as:'result'}
+                            <ul>
+                                <li class="rank">${result.rank}</li>
+                                <li class="player">#{a @Application.player(result.player.login)}${result.player.name}#{/a}</li>
+                                <li class="score">${result.score}</li>
+                                <li class="round">${result.roundsCount}</li>
+                            </ul>
+                            #{/list}
+                        </div>
+                    </div>
+                    #{/list}
+                </div>
             </div>
         </div>
-        #{/list}
     </div>
     <div class="cleaner"></div>
 </div>
+
+
+
 #{/if}
 
 #{else}
