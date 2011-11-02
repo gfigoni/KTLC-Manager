@@ -1,5 +1,4 @@
 $(document).ready(function(){
-
     // Variable to hold scroll type
     var slideDrag,
     // Width of .scroll-content ul
