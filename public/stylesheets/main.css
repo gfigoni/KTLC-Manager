@@ -34,6 +34,10 @@ ul, li {
 	margin: 0 auto;
 }
 
+/***********************************
+*             HEADER               *
+***********************************/
+
 #header {
 	width: 960px;
 	height: 85px;
@@ -53,7 +57,7 @@ ul, li {
 }
 
 #menu { position:relative; float:right; width: 760px; height: 40px; margin: 60px 0 0 0; }
-#menu ul { position:absolute; padding: 0; margin: 0; list-style: none; z-index:2; }
+#menu ul { position:absolute; padding: 0; margin: 0; list-style: none; z-index:2; top: 0; right: 50px; }
 #menu ul li { 
 	float:left;
 	margin: 0 0 0 50px;
@@ -71,8 +75,11 @@ ul, li {
 #menu #box .barre {
 	background: url(img/menu_hover.png) center bottom no-repeat;
 	height: 35px;
-
 }
+
+/***********************************
+*             CONTENT              *
+***********************************/
 
 #content_top {
 	clear: both;
@@ -116,8 +123,6 @@ ul, li {
 	padding: 0 20px;
 	text-align: center;
 }
-
-
 
 #content_top ul li a:hover, #content_top ul .current {
 	color: #f39400;
@@ -202,34 +207,35 @@ ul, li {
 }
 
 #content ul.home {
-	width: 262px;
+	width: 290px;
 }
 
 #content ul.ktlcs {
-	width: 238px;	
+	width: 520px;	
 }
 
 #content ul.players {
-	width: 164px;
+	width: 210px;
 }
 
 #content ul.player {
-	width: 208px;
+	width: 280px;
 }
 
 #content ul li.menu,
 .raceresult ul li.menu {
 	font-weight: bold;
 	color: black;
+	text-align: center;
 }
 
 #content ul li.rank {
 	width: 50px;
+	text-align: left;
 }
 
 #content ul li.score,
-#content ul li.race,
-#content ul li.size {
+#content ul li.race {
 	width: 60px;
 	text-align: center;
 }
@@ -237,28 +243,49 @@ ul, li {
 
 #content ul li.ktlcnbr {
 	width: 90px;
+	text-align: left;
 }
 
-#content ul li.date {
+#content ul li.date,
+#content ul li.size {
 	width: 80px;
 	text-align: center;	
 }
 
 #content ul li.player {
-	width: 80px;
+	width: 100px;
+}
+
+#content ul li.podium {
+	width: 250px;
 }
 
 #race {
-	float: left;
 	width: 840px;
-	padding: 10px 30px;
+	margin: 0 auto;
+	padding-top: 10px;
 }
+
+/**********************/
+/*** Slider Content ***/
+.scroll-container { margin: 0 auto; }
+
+.scroll-content{ width:840px; overflow:hidden; }
+
+.content-holder { width: 1479px; }
+
+.scroll-slider{ width:840px; height:6px; background:#ccc; position:relative; cursor:pointer }
+
+.ui-slider .ui-slider-handle{ width:16px; height:12px; position:absolute; top:-3px; background:#f39400; border:1px solid black; }
+
+/*** Fin Slider Content ***/
+/**************************/
 
 .race_content { float:left; width: 197px; padding: 0 5px; margin-top: 20px; }
 
 .racemap {
 	height: 60px;
-	color: #bbb;
+	color: #aaa;
 }
 
 .racemap ul {
@@ -294,18 +321,27 @@ ul, li {
 	margin: 0;
 }
 
-.raceresult ul li.rank,
+.raceresult ul li.rank {
+	width: 35px;
+}
+
 .raceresult ul li.score {
 	width: 35px;
+	text-align: center;
 }
 
 .raceresult ul li.round {
 	width: 41px;
+	text-align: center;
 }
 
 .raceresult ul li.player {
 	width: 74px;
 }
+
+/***********************************
+*             FOOTER               *
+***********************************/
 
 #footer_wrapper { width: 100%; }
 

@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-
 <html>
     <head>
         <title>#{get 'title' /}</title>
@@ -9,6 +8,7 @@
         <link rel="shortcut icon" type="image/png" href="@{'/public/images/favicon.png'}">
         <script src="@{'/public/javascripts/jquery-1.5.2.min.js'}" type="text/javascript" charset="${_response_encoding}"></script>
         <script src="@{'/public/javascripts/jquery.easing.1.3.js'}" type="text/javascript" charset="${_response_encoding}"></script>
+
         <script type="text/javascript">
             $(document).ready(function() {
                 
@@ -45,24 +45,9 @@
                 <div id="logo"></div>
                 <div id="menu">
                     <ul>
-                        #{if page == 'home' }
-                            <li class="current"><a href="@{Application.index()}">&{'main.home'}</a></li>
-                        #{/if}
-                        #{else}
-                            <li><a href="@{Application.index()}">&{'main.home'}</a></li>
-                        #{/else}
-                        #{if page == 'ktlc' }
-                            <li class="current"><a href="@{Application.ktlcs()}">&{'main.ktlcs'}</a></li>
-                        #{/if}
-                        #{else}
-                            <li><a href="@{Application.ktlcs()}">&{'main.ktlcs'}</a></li>
-                        #{/else}
-                        #{if page == 'player' }
-                            <li class="current"><a href="@{Application.players()}">&{'main.players'}</a></li>
-                        #{/if}
-                        #{else}
-                            <li><a href="@{Application.players()}">&{'main.players'}</a></li>
-                        #{/else}
+                        <li ${ ("home".equals(page)) ? out.print("class='current'") : "" }><a href="@{Application.index()}">&{'main.home'}</a></li>
+                        <li ${ ("ktlc".equals(page)) ? out.print("class='current'") : "" }><a href="@{Application.ktlcs()}">&{'main.ktlcs'}</a></li>
+                        <li ${ ("player".equals(page)) ? out.print("class='current'") : "" }><a href="@{Application.players()}">&{'main.players'}</a></li>
                         <li><a href="http://forum.lsd-team.net">&{'main.forum'}</a></li>
                     </ul>
                     <div id="box">
