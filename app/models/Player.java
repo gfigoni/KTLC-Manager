@@ -1,6 +1,10 @@
 package models;
 
+import java.util.ArrayList;
+import java.util.List;
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.OneToMany;
 import play.data.validation.Required;
 import play.db.jpa.Model;
 
@@ -11,21 +15,20 @@ import play.db.jpa.Model;
 @Entity
 public class Player extends Model {
 
-    @Required
-    public String login;
+    @OneToMany(mappedBy = "player", cascade = CascadeType.ALL)
+    public List<Login> logins = new ArrayList<Login>();
 
     @Required
     public String name;
 
-    public Player(String login, String name) {
+    public Player(String name) {
         super();
-        this.login = login;
         this.name = name;                
     }
     
     @Override
     public String toString() {
-        return (name == null) ? login : name;
+        return name;
     }
     
     @Override
@@ -43,7 +46,14 @@ public class Player extends Model {
         return this.id.hashCode();
     }
     
+    public Player addLogin(String login) {
+        Login l = new Login(login, this).save();
+        this.logins.add(l);
+        this.save();
+        return this;
+    }
+    
     public static Player findByLogin(String login) {
-        return find("byLogin", login).first();
+        return Player.find("select p from Player p, Login l where l.id = ? and l.player = p", login).first();
     }
 }

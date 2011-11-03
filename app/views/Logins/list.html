@@ -10,14 +10,11 @@
     </div>
 
     <div id="crudListTable">
-        #{crud.table fields:['name', 'logins']}
-        #{crud.custom 'logins'}
-        #{list items:object.logins, as:'login'}
-        <a href="@{Logins.show(login.id)}">
-            ${login.id}
+        #{crud.table fields:['id', 'player']}
+        #{crud.custom 'player'}
+        <a href="@{Players.show(object.player.id)}">
+            ${object.player.name}
         </a>
-        #{if !login_isLast}<br/>#{/if}
-        #{/list}
         #{/crud.custom}
         #{/crud.table}
     </div>

@@ -1,8 +1,9 @@
 
+import models.Login;
 import models.Player;
 import org.junit.*;
-import play.Logger;
-import play.libs.I18N;
+import org.yaml.snakeyaml.JavaBeanDumper;
+import play.db.jpa.JPA;
 import play.test.*;
 
 public class BasicTest extends UnitTest {
@@ -14,27 +15,45 @@ public class BasicTest extends UnitTest {
 
     @Test
     public void createAndRetreivePlayer() {
-        new Player("gehef", "gehef").save();
+        Player p = new Player("gehef").save();
+        Login l = new Login("g", p).save();
 
-        Player gehef = Player.find("byLogin", "gehef").first();
+        JPA.em().clear();
+
+        Player gehef = Player.findByLogin("g");
         assertNotNull(gehef);
-        assertEquals("gehef", gehef.login);
         assertEquals("gehef", gehef.name);
+        assertEquals(1, gehef.logins.size());
     }
 
     @Test
-    public void checkPlayers() {
-        Fixtures.loadModels("players.yml");
-        Player evolm = Player.find("byLogin", "evolm").first();
-        assertNotNull(evolm);
-        assertEquals("evolm", evolm.login);
-        assertEquals("evolm", evolm.name);
+    public void addSeveralLogins() {
+        Player p = new Player("gehef").save();
+        p.addLogin("g");
+        p.addLogin("f");
+
+        JPA.em().clear();
+
+        Player gehef = Player.findByLogin("f");
+        assertNotNull(gehef);
+        assertEquals("gehef", gehef.name);
+        assertEquals(2, gehef.logins.size());
     }
 
     @Test
-    public void testI18N() {
-        System.out.println("date format:" + I18N.getDateFormat());
-        Logger.info("date format: %s", I18N.getDateFormat());
+    public void playerLoginCascadeConstraint() {
+        Player p = new Player("gehef").save();
+        p.addLogin("g");
+        p.addLogin("f");
 
+        JPA.em().clear();
+
+        assertEquals(2, Login.findAll().size());
+
+        Player gehef = Player.findByLogin("f");
+        gehef.delete();
+
+        assertEquals(0, Login.findAll().size());
     }
+    
 }

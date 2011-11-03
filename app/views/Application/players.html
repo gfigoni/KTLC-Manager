@@ -17,8 +17,13 @@
             </ul>
             #{list items:players, as:'player'}
             <ul class="players">
-                <li class="player">#{a @Application.player(player.login)}${player.name}#{/a}</li>
-                <li class="player">${player.login}</li>
+                <li class="player">#{a @Application.player(player.logins[0])}${player.name}#{/a}</li>
+                <li class="player">
+                    #{list items:player.logins, as:'login'}
+                    ${login}
+                    #{if !login_isLast}<br/>#{/if}
+                    #{/list}
+                </li>
             </ul>
             #{/list}
             #{else}

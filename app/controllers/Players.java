@@ -2,6 +2,7 @@ package controllers;
 
 import java.util.Date;
 import java.util.Map;
+import models.Login;
 import models.Player;
 import play.mvc.With;
 
@@ -20,7 +21,8 @@ public class Players extends CRUD {
     public static void addPlayers(Map<String, String> player, String url, Date date, Integer number) throws Exception {
         for (String login : player.keySet()) {
             String name = player.get(login);
-            new Player(login, name).save();
+            Player p = new Player(name).save();
+            new Login(login, p).save();
         }
 
         KTLCEditions.importKTLC(number, url, date);

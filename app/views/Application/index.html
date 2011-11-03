@@ -30,7 +30,7 @@
             #{list ktlc.results, as:'result'}
             <ul class="home">
                 <li class="rank">${result.rank}</li>
-                <li class="player">#{a @Application.player(result.player.login)}${result.player.name}#{/a}</li>
+                <li class="player">#{a @Application.player(result.player.logins[0])}${result.player.name}#{/a}</li>
                 <li class="score">${result.score}</li>
                 <li class="race">${result.nbRaces}</li>
             </ul>
