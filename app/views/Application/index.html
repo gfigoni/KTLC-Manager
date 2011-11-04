@@ -5,7 +5,9 @@
 #{if ktlc}
 <div id="content_top">
     <ul>
-        <li>#{a @Application.ktlc(ktlc.number)}&{'ktlc.number', ktlc.number} <span>${ktlc.date.format()}</span>#{/a}</li>
+        <li>#{a @Application.ktlc(ktlc.number)}&{'ktlc.number', ktlc.number}
+            <span>${ktlc.date.format()} - &{'ktlc.nbparticipants',ktlc.results.size()}</span>#{/a}
+        </li>
     </ul>
 </div>
 <div id="main">

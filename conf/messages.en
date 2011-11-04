@@ -14,6 +14,7 @@ ktlc.number = KTLC #%s
 ktlc.number.title = KTLC #
 ktlc.date = Date
 ktlc.size = Players
+ktlc.nbparticipants = %s players
 
 player = Player
 player.login = Login

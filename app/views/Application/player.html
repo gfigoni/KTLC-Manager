@@ -20,7 +20,7 @@
             #{list items:results, as:'result'}
             <ul class="player">
                 <li class="ktlcnbr">#{a @Application.ktlc(result.ktlc.number)}&{'ktlc.number', result.ktlc.number}#{/a}</li>
-                <li class="rank">${result.rank}</li>
+                <li class="rank">${result.rank} / ${result.ktlc.results.size()}</li>
                 <li class="score">${result.score}</li>
                 <li class="race">${result.nbRaces}</li>
             </ul>
