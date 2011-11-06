@@ -1,8 +1,6 @@
 package controllers;
 
 import java.util.Date;
-import java.util.Map;
-import models.Login;
 import models.Player;
 import play.mvc.With;
 
@@ -14,18 +12,30 @@ import play.mvc.With;
 public class Players extends CRUD {
 
     /**
-     * 
-     * @param players
-     * @throws Exception 
+     * Crée tous les joueurs déclarés dans le formulaire, ou rattache les logins
+     * à des joueurs existants selon le cas.
      */
-    public static void addPlayers(Map<String, String> player, String url, Date date, Integer number) throws Exception {
-        for (String login : player.keySet()) {
-            String name = player.get(login);
-            Player p = new Player(name).save();
-            new Login(login, p).save();
+    public static void addPlayers(String url, Date date, Integer number) throws Exception {
+        // Liste des logins à traiter
+        String[] logins = params.getAll("logins");
+
+        // Pour chaque login, on détermine s'il faut créer un nouveau joueur ou
+        // le rattacher à un joueur existant
+        for (String login : logins) {
+            String existingPlayerId = params.get("existingPlayer." + login);
+            String newPlayerName = params.get("newPlayer." + login);
+            Player p;
+            if (existingPlayerId == null || ("".equals(existingPlayerId.trim()))) {
+                // Si aucun joueur existant n'est déclaré, on en crée un nouveau
+                p = new Player(newPlayerName).save();
+            } else {
+                // Sinon on récupère le joueur existant
+                p = Player.findById(Long.parseLong(existingPlayerId));
+            }
+            // Dans tous les cas, on rattache le login au joueur
+            p.addLogin(login);
         }
 
         KTLCEditions.importKTLC(number, url, date);
-
     }
 }

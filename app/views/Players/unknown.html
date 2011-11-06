@@ -1,14 +1,26 @@
 #{extends 'CRUD/layout.html' /}
 #{set title:'import players' /}
 
-#{if players}
+#{if unknownPlayers}
 <div>
-    <h2>Ajout des nouveaux joueurs pour la KTLC #${number} (${date.format()} - ${url})</h2>
+    <h3>La déclaration des logins suivants est nécessaire pour l'import de la <a href="${url}" target="_blank">KTLC #${number}</a></h3>
+    Pour chacun des logins non actuellement déclarés, vous pouvez :
+    <ul>
+        <li>créer un nouveau joueur en précisant son nom</li>
+        <li>rattacher ce login à un joueur existant</li>
+    </ul>
     #{form @Players.addPlayers()}
-    #{list items:players.keySet(), as:'login'}
+    #{list items:unknownPlayers.keySet(), as:'login'}
     <p>
         <label for="${login}">${login}</label>
-        <input type="text" id="player.${login}" name="player.${login}" value="${players.get(login)}"/>
+        <input type="text" id="${login}" name="newPlayer.${login}" value="${unknownPlayers.get(login)}"/>
+        <select name="existingPlayer.${login}">
+            <option value="">-- joueur inconnu --</option>
+            #{list items:allPlayers, as:'player'}
+            <option value="${player.id}">${player.name}</option>
+            #{/list}
+        </select>
+        <input type="hidden" name="logins" value="${login}" />
     </p>
     #{/list}
     <p>

@@ -180,7 +180,7 @@ public class KTLCEdition extends Model {
                 Player p = Player.findByLogin(pid);
                 if (p == null) {
                     if (players.get(pid) == null) {
-                        players.put(pid, null);
+                        players.put(pid, pid);
                     }
                 }
             } else {

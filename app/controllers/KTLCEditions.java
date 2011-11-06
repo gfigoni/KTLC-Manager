@@ -8,8 +8,10 @@ import java.io.Reader;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 import models.KTLCEdition;
+import models.Player;
 import models.UnknownPlayerException;
 import play.Logger;
 import play.data.validation.Min;
@@ -40,18 +42,19 @@ public class KTLCEditions extends CRUD {
             con.connect();
             InputStream is = con.getInputStream();
             Reader r = null;
-            Map<String, String> players;
+            Map<String, String> unknownPlayers;
             try {
                 r = new BufferedReader(new InputStreamReader(is));
-                players = KTLCEdition.checkPlayers(r);
+                unknownPlayers = KTLCEdition.checkPlayers(r);
             } finally {
                 if (r != null) {
                     r.close();
                 }
             }
-            if (players != null && players.size() > 0) {
+            if (unknownPlayers != null && unknownPlayers.size() > 0) {
                 // il manque des joueurs
-                render("Players/unknown.html", players, number, date, url);
+                List<Player> allPlayers = Player.findAll();
+                render("Players/unknown.html", unknownPlayers, allPlayers, number, date, url);
             } else {
                 // tous les joueurs de la log sont déjà identifiés
                 con = u.openConnection();
