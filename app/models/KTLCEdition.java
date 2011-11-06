@@ -3,7 +3,6 @@ package models;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.Reader;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -28,9 +27,9 @@ public class KTLCEdition extends Model {
     @Required
     public Date date;
     @OneToMany(mappedBy = "ktlc", cascade = CascadeType.ALL)
-    public List<KTLCRace> races;
+    public List<KTLCRace> races = new ArrayList<KTLCRace>();
     @OneToMany(mappedBy = "ktlc", cascade = CascadeType.ALL)
-    public List<KTLCPlayerResult> results;
+    public List<KTLCResult> results;
 
     public KTLCEdition(Integer num, Date date) {
         super();
@@ -43,16 +42,16 @@ public class KTLCEdition extends Model {
         return number.toString();
     }
 
-    public KTLCEdition addRace(TMMap map) {
-        KTLCRace race = new KTLCRace(this, map);
+    public KTLCRace addRace(TMMap map) {
+        KTLCRace race = new KTLCRace(this, map).save();
         this.races.add(race);
         this.save();
-        return this;
+        return race;
     }
 
-    public static KTLCEdition createKTLCEdition(Integer num, Date date, Reader reader) throws UnknownPlayerException, IOException {
+    public static KTLCEdition createKTLCEdition(Integer num, Date date, Reader reader) throws UnknownLoginException, IOException {
         KTLCEdition ktlc = new KTLCEdition(num, date).save();
-        Set<Player> players = new HashSet<Player>(); // liste des joueurs de l'édition
+        Set<Login> logins = new HashSet<Login>(); // liste des joueurs de l'édition
         Set<KTLCRace> races = new HashSet<KTLCRace>(); // liste des courses de l'édition
 
         BufferedReader br = new BufferedReader(reader);
@@ -73,17 +72,18 @@ public class KTLCEdition extends Model {
                 // si la map n'existe pas, elle est créée
                 TMMap map = TMMap.findById(mapId);
                 if (map == null) {
-                    String pid = m.group(4);
+                    String loginName = m.group(4);
                     String mapName = m.group(1);
                     String environment = m.group(2);
-                    Player author = Player.findByLogin(pid);
-                    if (author == null) {
-                        throw new UnknownPlayerException(pid);
+                    Login login = Login.findByName(loginName);
+                    if (login == null) {
+                        throw new UnknownLoginException(loginName);
                     }
-                    map = new TMMap(mapId, mapName, author, TMEnvironment.getEnvironment(environment)).save();
+                    map = new TMMap(mapId, mapName, login, TMEnvironment.getEnvironment(environment)).save();
                 }
 
-                race = new KTLCRace(ktlc, map).save();
+                // création de la course
+                race = ktlc.addRace(map);
                 races.add(race);
 
                 // réinitialisation de l'index pour le début de log d'une nouvelle course
@@ -97,30 +97,30 @@ public class KTLCEdition extends Model {
                     int rank = index;
                     int score = KTLCUtils.getRankPoints(rank);
                     int round = Integer.parseInt(m.group(2));
-                    String pid = m.group(3);
+                    String loginName = m.group(3);
 
-                    Player p = Player.findByLogin(pid);
-                    if (p == null) {
-                        throw new UnknownPlayerException(pid);
+                    Login login = Login.findByName(loginName);
+                    if (login == null) {
+                        throw new UnknownLoginException(loginName);
                     }
-                    players.add(p);
+                    logins.add(login);
 
-                    new KTLCRacePlayerResult(race, p, rank, score, round).save();
+                    new KTLCRaceResult(race, login, rank, score, round).save();
                 }
             }
         }
 
         // Consolidation des résultats de la KTLC
-        List<KTLCPlayerResult> results = new ArrayList<KTLCPlayerResult>();
-        for (Player p : players) {
-            KTLCPlayerResult result = new KTLCPlayerResult(ktlc, p);
+        List<KTLCResult> results = new ArrayList<KTLCResult>();
+        for (Login login : logins) {
+            KTLCResult result = new KTLCResult(ktlc, login);
 
             int score = 0;
             double rank = 0d;
             int nbRace = 0;
 
             for (KTLCRace r : races) {
-                KTLCRacePlayerResult pr = r.findResult(p);
+                KTLCRaceResult pr = r.findResult(login);
                 if (pr != null) {
                     score += pr.score;
                     rank += pr.rank;
@@ -134,21 +134,20 @@ public class KTLCEdition extends Model {
         }
 
         // tri des resultats
-        KTLCPlayerResultScoreComparator comp = new KTLCPlayerResultScoreComparator();
-        Collections.sort(results, new KTLCPlayerResultScoreComparator());
+        Collections.sort(results);
 
         // affectation des rangs
         int nbAtTheSameRank = 1;
         int currentRank = 1;
-        KTLCPlayerResult previous = null;
-        for (KTLCPlayerResult current : results) {
+        KTLCResult previous = null;
+        for (KTLCResult current : results) {
             if (previous == null) {
                 // 1er joueur
                 current.rank = currentRank;
                 currentRank++;
             } else {
                 // autres joueurs
-                if (comp.compare(previous, current) == 0) {
+                if (previous.compareTo(current) == 0) {
                     // cas égalité entre le joueur courant et le précédent
                     current.rank = currentRank - 1;
                     nbAtTheSameRank++;
@@ -166,8 +165,13 @@ public class KTLCEdition extends Model {
         return ktlc;
     }
 
-    public static Map<String, String> checkPlayers(Reader r) throws IOException {
-        Map<String, String> players = new HashMap<String, String>();
+    /**
+     * Méthode permettant de vérifier que tous les logins déclarés dans la log FAST
+     * sont identifiés dans l'application.
+     * Retourne la liste des logins non déclarés, avec le nom par défaut du joueur à proposer.
+     */
+    public static Map<String, String> checkLogins(Reader r) throws IOException {
+        Map<String, String> logins = new HashMap<String, String>();
 
         BufferedReader br = new BufferedReader(r);
         String line;
@@ -176,11 +180,13 @@ public class KTLCEdition extends Model {
             if (m.matches()) {
                 // début de log pour une course
                 // auteur de la map
-                String pid = m.group(4);
-                Player p = Player.findByLogin(pid);
-                if (p == null) {
-                    if (players.get(pid) == null) {
-                        players.put(pid, pid);
+                String loginName = m.group(4);
+                Login login = Login.findByName(loginName);
+                if (login == null) {
+                    if (logins.get(login) == null) {
+                        // Dans le cas d'un auteur d'une map, aucun nom de joeuur par défaut n'est disponible.
+                        // On propose donc le login
+                        logins.put(loginName, loginName);
                     }
                 }
             } else {
@@ -188,18 +194,18 @@ public class KTLCEdition extends Model {
                 if (m.matches()) {
                     // détail de log pour une course
                     // joueur
-                    String pid = m.group(3);
-                    String pname = m.group(4);
+                    String loginName = m.group(3);
+                    String playerName = m.group(4);
 
-                    Player p = Player.findByLogin(pid);
-                    if (p == null) {
-                        players.put(pid, pname);
+                    Login login = Login.findByName(loginName);
+                    if (login == null) {
+                        logins.put(loginName, playerName);
                     }
                 }
             }
         }
 
-        return players;
+        return logins;
     }
 
     public static KTLCEdition findByNumber(Integer number) {

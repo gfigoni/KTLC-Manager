@@ -16,6 +16,7 @@
                 <li class="menu player">&{'player.login'}</li>
             </ul>
             #{list items:players, as:'player'}
+            #{if player.logins}
             <ul class="players">
                 <li class="player">#{a @Application.player(player.logins[0])}${player.name}#{/a}</li>
                 <li class="player">
@@ -25,9 +26,10 @@
                     #{/list}
                 </li>
             </ul>
+            #{/if}
             #{/list}
             #{else}
-                &{'error.noplayer'}
+            &{'error.noplayer'}
             #{/else}
         </div>
     </div>

@@ -1,10 +1,10 @@
 package models;
 
 import javax.persistence.Entity;
-import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import play.data.validation.Required;
-import play.db.jpa.GenericModel;
+import play.db.jpa.Model;
+
 
 /**
  * Trackmania player login
@@ -12,22 +12,31 @@ import play.db.jpa.GenericModel;
  * @author gehef
  */
 @Entity
-public class Login extends GenericModel {
-    @Id
-    public String id;
+public class Login extends Model {
+    @Required
+    public String name;
     
     @Required
     @ManyToOne
     public Player player;
     
-    public Login(String id, Player player) {
+    public Login(String name) {
         super();
-        this.id = id;
+        this.name = name;
+    }   
+
+    public Login(String name, Player player) {
+        super();
+        this.name = name;
         this.player = player;
     }   
     
     @Override
     public String toString() {
-        return id;
+        return name;
+    }
+    
+    public static Login findByName(String name) {
+        return find("byName", name).first();
     }
 }

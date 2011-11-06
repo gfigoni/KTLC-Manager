@@ -18,7 +18,7 @@
         #{list ktlc.races, as:'race'}
         <ul>
             <li>${race.map.name}</li>
-            <li><strong>${race.map.author.name}</strong></li>
+            <li><strong>${race.map.login.player.name}</strong></li>
             <li>${race.map.environment}</li>
         </ul>
         #{/list}
@@ -35,7 +35,7 @@
             #{list ktlc.results, as:'result'}
             <ul class="home">
                 <li class="rank">${result.rank}</li>
-                <li class="player">#{a @Application.player(result.player.logins[0])}${result.player.name}#{/a}</li>
+                <li class="player">#{a @Application.player(result.login)}${result.login.player.name}#{/a}</li>
                 <li class="score">${result.score}</li>
                 <li class="race">${result.nbRaces}</li>
             </ul>
@@ -53,7 +53,7 @@
                         <div class="racemap">
                             <ul>
                                 <li>${race.map.name}</li>
-                                <li><strong>${race.map.author.name}</strong></li>
+                                <li><strong>${race.map.login.player.name}</strong></li>
                                 <li>${race.map.environment}</li>
                             </ul>
                         </div>
@@ -67,7 +67,7 @@
                             #{list race.results, as:'result'}
                             <ul>
                                 <li class="rank">${result.rank}</li>
-                                <li class="player">#{a @Application.player(result.player.logins[0])}${result.player.name}#{/a}</li>
+                                <li class="player">#{a @Application.player(result.login)}${result.login.player.name}#{/a}</li>
                                 <li class="score">${result.score}</li>
                                 <li class="round">${result.roundsCount}</li>
                             </ul>

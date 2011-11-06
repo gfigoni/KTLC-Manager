@@ -54,6 +54,6 @@ public class Player extends Model {
     }
     
     public static Player findByLogin(String login) {
-        return Player.find("select p from Player p, Login l where l.id = ? and l.player = p", login).first();
+        return Player.find("select p from Player p, Login l where l.name = ? and l.player = p", login).first();
     }
 }

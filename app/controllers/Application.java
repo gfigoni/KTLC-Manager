@@ -1,10 +1,12 @@
 package controllers;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import models.KTLCEdition;
-import models.KTLCPlayerResult;
+import models.KTLCResult;
+import models.Login;
 import models.Player;
 import play.mvc.Controller;
 
@@ -15,13 +17,21 @@ public class Application extends Controller {
         render(ktlc);
     }
 
-    public static void player(String login) {
-        Player player = Player.findByLogin(login);
-        List<KTLCPlayerResult> results = KTLCPlayerResult.find("byPlayer", player).fetch();
-        // tri par date de KTLC
-        Collections.sort(results, new Comparator<KTLCPlayerResult>() {
+    public static void player(String loginName) {
+        // Récupération du joueur à partir du login
+        Player player = Player.findByLogin(loginName);
 
-            public int compare(KTLCPlayerResult o1, KTLCPlayerResult o2) {
+        // On itère sur tous les logins du joueur pour récupérer les résultats
+        List<KTLCResult> results = new ArrayList<KTLCResult>();
+        for (Login login : player.logins) {
+            List<KTLCResult> r = KTLCResult.findByLogin(login);
+            results.addAll(r);
+        }
+
+        // tri par date de KTLC
+        Collections.sort(results, new Comparator<KTLCResult>() {
+
+            public int compare(KTLCResult o1, KTLCResult o2) {
                 return o2.ktlc.date.compareTo(o1.ktlc.date);
             }
         });

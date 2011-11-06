@@ -6,11 +6,11 @@ import play.data.validation.Required;
 import play.db.jpa.Model;
 
 @Entity
-public class KTLCRacePlayerResult extends Model implements Comparable<KTLCRacePlayerResult>  {
+public class KTLCRaceResult extends Model implements Comparable<KTLCRaceResult>  {
 
     @Required
     @ManyToOne
-    public Player player;
+    public Login login;
     
     @Required
     @ManyToOne
@@ -25,17 +25,17 @@ public class KTLCRacePlayerResult extends Model implements Comparable<KTLCRacePl
     @Required
     public Integer roundsCount;
 
-    public KTLCRacePlayerResult(KTLCRace race, Player player, Integer rank, Integer score, Integer roundsCount) {
+    public KTLCRaceResult(KTLCRace race, Login login, Integer rank, Integer score, Integer roundsCount) {
         super();
         this.race = race;
-        this.player = player;
+        this.login = login;
         this.rank = rank;
         this.score = score;
         this.roundsCount = roundsCount;
     }
     
     @Override
-    public int compareTo(KTLCRacePlayerResult r) {
+    public int compareTo(KTLCRaceResult r) {
         return r.rank - rank;
     }
 }

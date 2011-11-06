@@ -10,7 +10,12 @@
     </div>
 
     <div id="crudListTable">
-        #{crud.table fields:['id', 'name', 'environment', 'author'] /}
+        #{crud.table fields:['id', 'name', 'environment', 'author']}
+        #{crud.custom 'author'}
+            ${object.login.player.name}
+        #{/crud.custom}
+        #{/crud.table}
+
     </div>
 
     <div id="crudListPagination">

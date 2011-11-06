@@ -20,7 +20,7 @@ public class KTLCRace extends Model {
     public TMMap map;
     
     @OneToMany(mappedBy = "race", cascade = CascadeType.ALL)
-    public List<KTLCRacePlayerResult> results;
+    public List<KTLCRaceResult> results;
 
     public KTLCRace(KTLCEdition ktlc, TMMap map) {
         super();
@@ -28,11 +28,11 @@ public class KTLCRace extends Model {
         this.map = map;
     }
     
-    public List<KTLCRacePlayerResult> findResults() {
-        return KTLCRacePlayerResult.find("byRace", this).fetch();
+    public List<KTLCRaceResult> findResults() {
+        return KTLCRaceResult.find("byRace", this).fetch();
     }
     
-    public KTLCRacePlayerResult findResult(Player p) {
-        return KTLCRacePlayerResult.find("race = ? and player = ?", this, p).first();
+    public KTLCRaceResult findResult(Login login) {
+        return KTLCRaceResult.find("race = ? and login = ?", this, login).first();
     }
 }

@@ -2,7 +2,6 @@
 import models.Login;
 import models.Player;
 import org.junit.*;
-import org.yaml.snakeyaml.JavaBeanDumper;
 import play.db.jpa.JPA;
 import play.test.*;
 

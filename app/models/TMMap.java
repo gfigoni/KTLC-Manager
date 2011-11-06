@@ -22,17 +22,17 @@ public class TMMap extends GenericModel {
     public String name;
     
     @ManyToOne
-    public Player author;
+    public Login login;
     
     @Required
     @Enumerated(EnumType.STRING)
     public TMEnvironment environment;
 
-    public TMMap(String id, String name, Player author, TMEnvironment env) {
+    public TMMap(String id, String name, Login login, TMEnvironment env) {
         super();
         this.id = id;
         this.name = name;
-        this.author = author;
+        this.login = login;
         this.environment = env;
     }
     

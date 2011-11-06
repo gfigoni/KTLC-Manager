@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Map;
 import models.KTLCEdition;
 import models.Player;
-import models.UnknownPlayerException;
+import models.UnknownLoginException;
 import play.Logger;
 import play.data.validation.Min;
 import play.data.validation.Required;
@@ -42,19 +42,19 @@ public class KTLCEditions extends CRUD {
             con.connect();
             InputStream is = con.getInputStream();
             Reader r = null;
-            Map<String, String> unknownPlayers;
+            Map<String, String> unknownLogins;
             try {
                 r = new BufferedReader(new InputStreamReader(is));
-                unknownPlayers = KTLCEdition.checkPlayers(r);
+                unknownLogins = KTLCEdition.checkLogins(r);
             } finally {
                 if (r != null) {
                     r.close();
                 }
             }
-            if (unknownPlayers != null && unknownPlayers.size() > 0) {
+            if (unknownLogins != null && unknownLogins.size() > 0) {
                 // il manque des joueurs
                 List<Player> allPlayers = Player.findAll();
-                render("Players/unknown.html", unknownPlayers, allPlayers, number, date, url);
+                render("Logins/unknown.html", unknownLogins, allPlayers, number, date, url);
             } else {
                 // tous les joueurs de la log sont déjà identifiés
                 con = u.openConnection();
@@ -64,7 +64,7 @@ public class KTLCEditions extends CRUD {
                     r = new BufferedReader(new InputStreamReader(is));
                     KTLCEdition.createKTLCEdition(number, date, r);
                     Application.ktlc(number);
-                } catch (UnknownPlayerException upe) {
+                } catch (UnknownLoginException upe) {
                     // malgré le check, un joueur est inconnu...
                     // remonter un message d'erreur
                 } finally {

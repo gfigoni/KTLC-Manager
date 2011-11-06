@@ -14,7 +14,7 @@
         #{crud.custom 'logins'}
         #{list items:object.logins, as:'login'}
         <a href="@{Logins.show(login.id)}">
-            ${login.id}
+            ${login.name}
         </a>
         #{if !login_isLast}<br/>#{/if}
         #{/list}
