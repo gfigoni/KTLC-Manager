@@ -121,6 +121,9 @@ public class Init extends Job {
             importKTLC(220, 2011, 10, 13, urlFormat);
             importKTLC(221, 2011, 10, 20, urlFormat);
             importKTLC(222, 2011, 10, 27, urlFormat);
+            importKTLC(223, 2011, 11, 10, urlFormat);
+            importKTLC(224, 2011, 11, 17, urlFormat);
+            importKTLC(225, 2011, 11, 24, urlFormat);
         }
     }
 
