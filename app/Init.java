@@ -11,6 +11,7 @@ import java.util.Formatter;
 import java.util.Map;
 import models.KTLCEdition;
 import models.Player;
+import play.Logger;
 import play.jobs.Job;
 import play.jobs.OnApplicationStart;
 
@@ -32,6 +33,122 @@ public class Init extends Job {
             
             // KTLC
             urlFormat = "http://www.lsd-team.net/ktlc/ktlc%s.txt";
+            importKTLC(22, 2006, 12, 14, urlFormat);
+            importKTLC(23, 2007, 1, 4, urlFormat);
+            importKTLC(24, 2007, 1, 11, urlFormat);
+            importKTLC(25, 2007, 1, 18, urlFormat);
+            importKTLC(26, 2007, 1, 25, urlFormat);
+            importKTLC(27, 2007, 2, 1, urlFormat);
+            importKTLC(28, 2007, 2, 8, urlFormat);
+            importKTLC(29, 2007, 2, 16, urlFormat);
+            importKTLC(30, 2007, 2, 22, urlFormat);
+            importKTLC(31, 2007, 3, 1, urlFormat);
+            importKTLC(32, 2007, 3, 8, urlFormat);
+            importKTLC(33, 2007, 3, 15, urlFormat);
+            importKTLC(34, 2007, 3, 22, urlFormat);
+            importKTLC(35, 2007, 3, 29, urlFormat);
+            importKTLC(36, 2007, 4, 5, urlFormat);
+            importKTLC(37, 2007, 4, 12, urlFormat);
+            importKTLC(38, 2007, 4, 19, urlFormat);
+            importKTLC(39, 2007, 4, 26, urlFormat);
+            importKTLC(40, 2007, 5, 3, urlFormat);
+            importKTLC(41, 2007, 5, 10, urlFormat);
+            // pas de log pour la KTLC 42
+            //importKTLC(42, 2007, 5, 17, urlFormat);
+            importKTLC(43, 2007, 5, 24, urlFormat);
+            importKTLC(44, 2007, 5, 31, urlFormat);
+            importKTLC(45, 2007, 6, 7, urlFormat);
+            importKTLC(46, 2007, 6, 14, urlFormat);
+            importKTLC(47, 2007, 6, 20, urlFormat);
+            importKTLC(48, 2007, 6, 28, urlFormat);
+            importKTLC(49, 2007, 7, 5, urlFormat);
+            importKTLC(50, 2007, 7, 12, urlFormat);
+            importKTLC(51, 2007, 7, 19, urlFormat);
+            importKTLC(52, 2007, 7, 26, urlFormat);
+            importKTLC(53, 2007, 8, 2, urlFormat);
+            importKTLC(54, 2007, 8, 9, urlFormat);
+            importKTLC(55, 2007, 8, 16, urlFormat);
+            importKTLC(56, 2007, 8, 23, urlFormat);
+            importKTLC(57, 2007, 8, 30, urlFormat);
+            importKTLC(58, 2007, 9, 13, urlFormat);
+            importKTLC(59, 2007, 9, 20, urlFormat);
+            importKTLC(60, 2007, 9, 27, urlFormat);
+            importKTLC(61, 2007, 10, 4, urlFormat);
+            importKTLC(62, 2007, 10, 11, urlFormat);
+            importKTLC(63, 2007, 10, 18, urlFormat);
+            importKTLC(64, 2007, 10, 25, urlFormat);
+            importKTLC(65, 2007, 11, 1, urlFormat);
+            importKTLC(66, 2007, 11, 8, urlFormat);
+            importKTLC(67, 2007, 11, 15, urlFormat);
+            importKTLC(68, 2007, 11, 22, urlFormat);
+            importKTLC(69, 2007, 11, 29, urlFormat);
+            importKTLC(70, 2007, 12, 6, urlFormat);
+            importKTLC(71, 2007, 12, 13, urlFormat);
+            importKTLC(72, 2007, 12, 20, urlFormat);
+            importKTLC(73, 2008, 1, 3, urlFormat);
+            importKTLC(74, 2008, 1, 10, urlFormat);
+            importKTLC(75, 2008, 1, 17, urlFormat);
+            importKTLC(76, 2008, 1, 24, urlFormat);
+            importKTLC(77, 2008, 1, 31, urlFormat);
+            importKTLC(78, 2008, 2, 7, urlFormat);
+            importKTLC(79, 2008, 2, 14, urlFormat);
+            importKTLC(80, 2008, 2, 21, urlFormat);
+            importKTLC(81, 2008, 2, 28, urlFormat);
+            importKTLC(82, 2008, 3, 6, urlFormat);
+            importKTLC(83, 2008, 3, 13, urlFormat);
+            importKTLC(84, 2008, 3, 20, urlFormat);
+            importKTLC(85, 2008, 4, 3, urlFormat);
+            importKTLC(86, 2008, 4, 10, urlFormat);
+            importKTLC(87, 2008, 4, 24, urlFormat);
+            importKTLC(88, 2008, 5, 1, urlFormat);
+            importKTLC(89, 2008, 5, 15, urlFormat);
+            importKTLC(90, 2008, 5, 29, urlFormat);
+            importKTLC(91, 2008, 6, 12, urlFormat);
+            importKTLC(92, 2008, 6, 19, urlFormat);
+            importKTLC(93, 2008, 7, 3, urlFormat);
+            importKTLC(94, 2008, 7, 10, urlFormat);
+            importKTLC(95, 2008, 7, 17, urlFormat);
+            importKTLC(96, 2008, 7, 24, urlFormat);
+            importKTLC(97, 2008, 7, 31, urlFormat);
+            importKTLC(98, 2008, 8, 7, urlFormat);
+            importKTLC(99, 2008, 8, 14, urlFormat);
+            importKTLC(100, 2008, 8, 21, urlFormat);
+            importKTLC(101, 2008, 8, 28, urlFormat);
+            importKTLC(102, 2008, 9, 4, urlFormat);
+            importKTLC(103, 2008, 9, 11, urlFormat);
+            importKTLC(104, 2008, 9, 18, urlFormat);
+            importKTLC(105, 2008, 9, 25, urlFormat);
+            importKTLC(106, 2008, 10, 2, urlFormat);
+            importKTLC(107, 2008, 10, 9, urlFormat);
+            importKTLC(108, 2008, 10, 16, urlFormat);
+            importKTLC(109, 2008, 10, 23, urlFormat);
+            importKTLC(110, 2008, 10, 30, urlFormat);
+            importKTLC(111, 2008, 11, 6, urlFormat);
+            importKTLC(112, 2008, 11, 13, urlFormat);
+            importKTLC(113, 2008, 11, 20, urlFormat);
+            importKTLC(114, 2008, 11, 27, urlFormat);
+            importKTLC(115, 2008, 12, 4, urlFormat);
+            importKTLC(116, 2008, 12, 11, urlFormat);
+            importKTLC(117, 2008, 12, 18, urlFormat);
+            importKTLC(118, 2009, 1, 8, urlFormat);
+            importKTLC(119, 2009, 1, 15, urlFormat);
+            importKTLC(120, 2009, 1, 22, urlFormat);
+            importKTLC(121, 2009, 1, 29, urlFormat);
+            importKTLC(122, 2009, 2, 12, urlFormat);
+            importKTLC(123, 2009, 2, 19, urlFormat);
+            importKTLC(124, 2009, 2, 26, urlFormat);
+            // pas de KTLC 125
+            importKTLC(126, 2009, 3, 12, urlFormat);
+            importKTLC(127, 2009, 3, 19, urlFormat);
+            importKTLC(128, 2009, 3, 26, urlFormat);
+            importKTLC(129, 2009, 4, 2, urlFormat);
+            importKTLC(130, 2009, 4, 9, urlFormat);
+            importKTLC(131, 2009, 4, 16, urlFormat);
+            importKTLC(132, 2009, 4, 23, urlFormat);
+            importKTLC(133, 2009, 5, 7, urlFormat);
+            importKTLC(134, 2009, 6, 11, urlFormat);
+            importKTLC(135, 2009, 6, 18, urlFormat);
+            importKTLC(136, 2009, 6, 25, urlFormat);
             importKTLC(137, 2009, 7, 2, urlFormat);
             importKTLC(138, 2009, 7, 9, urlFormat);
             importKTLC(139, 2009, 7, 16, urlFormat);
@@ -169,6 +286,7 @@ public class Init extends Job {
             }
         }
 
+        Logger.info("import KTLC %s [%s]", num, url);
 
     }
 }

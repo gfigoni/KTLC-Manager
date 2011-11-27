@@ -3,7 +3,7 @@ package models;
 import java.util.regex.Pattern;
 
 public class KTLCUtils {
-    public static Pattern FAST_LOG_PATTERN_RACE = Pattern.compile("KTLC Round .* on \\[(.+)\\] \\((.+),(.+),(.+)\\)");
+    public static Pattern FAST_LOG_PATTERN_RACE = Pattern.compile("KTLC .* on \\[(.+)\\] \\((.+),(.+),(.+)\\)");
     public static Pattern FAST_LOG_PATTERN_PLACE = Pattern.compile("([0-9]*),([0-9]*),.*,.*,.*,(.*),(.*)");
     
     private static int[] rankPoints = { 30, 25, 21, 18, 16, 14, 12, 10, 8, 7,
