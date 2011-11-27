@@ -207,15 +207,15 @@ ul, li {
 }
 
 #content ul.home {
-	width: 290px;
+	width: 400px;
 }
 
 #content ul.ktlcs {
-	width: 520px;	
+	width: 800px;	
 }
 
 #content ul.players {
-	width: 210px;
+	width: 450px;
 }
 
 #content ul.player {
@@ -253,11 +253,11 @@ ul, li {
 }
 
 #content ul li.player {
-	width: 100px;
+	width: 200px;
 }
 
 #content ul li.podium {
-	width: 250px;
+	width: 500px;
 }
 
 #race {
