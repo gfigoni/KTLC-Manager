@@ -31,21 +31,6 @@ public class Player extends Model {
         return name;
     }
     
-    @Override
-    public boolean equals(Object obj) {
-        if (obj instanceof Player) {
-            Player p = (Player) obj;
-            return this.id.equals(p.id);
-        } else {
-            return false;
-        }
-    }
-
-    @Override
-    public int hashCode() {
-        return this.id.hashCode();
-    }
-    
     public Player addLogin(String login) {
         Login l = new Login(login, this).save();
         this.logins.add(l);
