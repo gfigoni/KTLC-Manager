@@ -10,21 +10,23 @@
 </div>
 <div id="main">
     <div id="content">
-        <div class="content_box">
-            <ul class="menu player">
-                <li class="menu ktlcnbr">&{'ktlc.number.title'}</li>
-                <li class="menu rank">&{'player.rank'}</li>
-                <li class="menu score">&{'player.score'}</li>
-                <li class="menu race">&{'player.nbraces'}</li>
-            </ul>
-            #{list items:results, as:'result'}
-            <ul class="player">
-                <li class="ktlcnbr">#{a @Application.ktlc(result.ktlc.number)}&{'ktlc.number', result.ktlc.number}#{/a}</li>
-                <li class="rank">${result.rank} / ${result.ktlc.results.size()}</li>
-                <li class="score">${result.score}</li>
-                <li class="race">${result.nbRaces}</li>
-            </ul>
-            #{/list}
+        <div class="player_box">
+            <table>
+                <tr>
+                    <th>&{'ktlc.number.title'}</th>
+                    <th>&{'player.rank'}</th>
+                    <th>&{'player.score'}</th>
+                    <th>&{'player.nbraces'}</th>
+                </tr>
+                #{list items:results, as:'result'}
+                <tr>
+                    <td>#{a @Application.ktlc(result.ktlc.number)}&{'ktlc.number', result.ktlc.number}#{/a}</td>
+                    <td>${result.rank} / ${result.ktlc.results.size()}</td>
+                    <td>${result.score}</td>
+                    <td>${result.nbRaces}</td>
+                </tr>
+                #{/list}
+            </table>
         </div>
     </div>
     <div class="cleaner"></div>

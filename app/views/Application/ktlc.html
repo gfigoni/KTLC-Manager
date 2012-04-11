@@ -3,7 +3,9 @@
 #{set page:'ktlc' /}
 
 <script src="@{'/public/javascripts/jquery-ui-1.8.16.custom.min.js'}" type="text/javascript" charset="${_response_encoding}"></script>
-<script src="@{'/public/javascripts/slider.js'}" type="text/javascript" charset="${_response_encoding}"></script>
+<script src="@{'/public/javascripts/jquery-1.5.2.min.js'}" type="text/javascript" charset="${_response_encoding}"></script>
+<script src="@{'/public/javascripts/jquery.isotope.min.js'}" type="text/javascript" charset="${_response_encoding}"></script>
+
 
 #{if ktlc}
 <div id="content_top">
@@ -14,71 +16,82 @@
     </ul>
 </div>
 <div id="main">
-    <div class="map">
-        #{list ktlc.races, as:'race'}
-        <ul>
-            <li>${race.map.name}</li>
-            <li><strong>${race.map.login.player.name}</strong></li>
-            <li>${race.map.environment}</li>
-        </ul>
-        #{/list}
-    </div>
-    <div class="separator"></div>
     <div id="content">
-        <div class="content_box">
-            <ul class="menu home">
-                <li class="rank menu home">&{'player.rank'}</li>
-                <li class="player menu home">&{'player'}</li>
-                <li class="score menu home">&{'player.score'}</li>
-                <li class="race menu home">&{'player.nbraces'}</li>
-            </ul>
-            #{list ktlc.results, as:'result'}
-            <ul class="home">
-                <li class="rank">${result.rank}</li>
-                <li class="player">#{a @Application.player(result.login)}${result.login.player.name}#{/a}</li>
-                <li class="score">${result.score}</li>
-                <li class="race">${result.nbRaces}</li>
-            </ul>
-            #{/list}
+        <div class="content_left">
+            <div class="content_podium">
+                #{list ktlc.results, as:'result'}
+                #{if result_index <= 3}
+                <div class="player">${result.login.player.name}</div>
+                #{/if}
+                #{/list}
+            </div>
+            <div class="cleaner"></div>
+            <div class="content_map">
+                <table>
+                    #{list ktlc.races, as:'race'}
+                    <tr>
+                        <td class="${race.map.environment}"></td>
+                        <td>${race.map.name}</td>
+                        <td>${race.map.login.player.name}</td>
+                    </tr>
+                    #{/list}
+                </table>
+            </div>
+        </div>
+        <div class="content_right">
+            <div class="content_box">
+                <table>
+                    <tr>
+                        <th>&{'player.rank'}</th>
+                        <th>&{'player'}</th>
+                        <th>&{'player.score'}</th>
+                        <th>&{'player.nbraces'}</th>
+                    </tr>
+                    #{list ktlc.results, as:'result'}
+                    <tr>
+                        <td>${result.rank}</td>
+                        <td>#{a @Application.player(result.login)}${result.login.player.name}#{/a}</td>
+                        <td>${result.score}</td>
+                        <td>${result.nbRaces}</td>
+                    </tr>
+                    #{/list}
+                </table>
+            </div>
         </div>
     </div>
     <div class="cleaner"></div>
     <div id="race">
-        <div class="scroll-container">
-            <div class="scroll-slider"></div> 
-            <div class="scroll-content">
-                <div class="content-holder">
-                    #{list items:ktlc.races, as:'race'}
-                    <div class="race_content">
-                        <div class="racemap">
-                            <ul>
-                                <li>${race.map.name}</li>
-                                <li><strong>${race.map.login.player.name}</strong></li>
-                                <li>${race.map.environment}</li>
-                            </ul>
-                        </div>
-                        <div class="raceresult">
-                            <ul class="menu">
-                                <li class="menu rank">&{'player.rank'}</li>
-                                <li class="menu player">&{'player'}</li>
-                                <li class="menu score">&{'player.score'}</li>
-                                <li class="menu round">&{'player.rounds'}</li>
-                            </ul>
-                            #{list race.results, as:'result'}
-                            <ul>
-                                <li class="rank">${result.rank}</li>
-                                <li class="player">#{a @Application.player(result.login)}${result.login.player.name}#{/a}</li>
-                                <li class="score">${result.score}</li>
-                                <li class="round">${result.roundsCount}</li>
-                            </ul>
-                            #{/list}
-                        </div>
-                    </div>
+        #{list items:ktlc.races, as:'race'}
+        <div class="race_content">
+            <div class="racemap">
+                <ul>
+                    <li>${race.map.name}</li>
+                    <li class="sortname"><strong>${race.map.login.player.name}</strong></li>
+                    <li>${race.map.environment}</li>
+                </ul>
+                <div class="cleaner"></div>
+            </div>
+            <div class="cleaner"></div>
+            <div class="raceresult">
+                <table>
+                    <tr>
+                        <th>&{'player.rank'}</th>
+                        <th>&{'player'}</th>
+                        <th>&{'player.score'}</th>
+                        <th>&{'player.rounds'}</th>
+                    </tr>
+                    #{list race.results, as:'result'}
+                    <tr>
+                        <td>${result.rank}</td>
+                        <td>#{a @Application.player(result.login)}${result.login.player.name}#{/a}</td>
+                        <td>${result.score}</td>
+                        <td>${result.roundsCount}</td>
+                    </tr>
                     #{/list}
-                </div>
+                </table>
             </div>
         </div>
-    </div>
+        #{/list}
     <div class="cleaner"></div>
 </div>
 #{/if}
@@ -98,3 +111,4 @@
     <div class="cleaner"></div>
 </div>
 #{/else}
+<script src="@{'/public/javascripts/isotope.js'}" type="text/javascript" charset="${_response_encoding}"></script>

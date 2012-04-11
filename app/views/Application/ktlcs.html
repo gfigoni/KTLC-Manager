@@ -10,30 +10,32 @@
 </div>
 <div id="main">
     <div id="content">
-        <div class="content_box">
-            <ul class="menu ktlcs">
-                <li class="ktlcnbr menu ktlcs">&{'ktlc.number.title'}</li>
-                <li class="date menu ktlcs">&{'ktlc.date'}</li>
-                <li class="size menu ktlcs">&{'ktlc.size'}</li>
-                <li class="podium menu ktlcs">Podium</li>
-            </ul>
-            #{list items:ktlcs, as:'ktlc'}
-            <ul class="ktlcs">
-                <li class="ktlcnbr">#{a @Application.ktlc(ktlc.number)}&{'ktlc.number', ktlc.number}#{/a}</li>
-                <li class="date">${ktlc.date.format()}</li>
-                <li class="size">${ktlc.results.size()}</li>
-                <li class="podium">
-                #{list items:ktlc.results, as:'result'}
-                #{if result_index <= 3}
-                    <strong>${result.rank}|</strong> ${result.login.player.name}&nbsp;&nbsp;&nbsp;
-                #{/if}
+        <div class="ktlcs_box">
+            <table>
+                <tr>
+                    <th>&{'ktlc.number.title'}</th>
+                    <th>&{'ktlc.date'}</th>
+                    <th>&{'ktlc.size'}</th>
+                    <th>Podium</th>
+                </tr>
+                #{list items:ktlcs, as:'ktlc'}
+                <tr>
+                    <td>#{a @Application.ktlc(ktlc.number)}&{'ktlc.number', ktlc.number}#{/a}</td>
+                    <td>${ktlc.date.format()}</td>
+                    <td>${ktlc.results.size()}</td>
+                    <td>
+                        #{list items:ktlc.results, as:'result'}
+                        #{if result_index <= 3}
+                            <strong>${result.rank}|</strong> ${result.login.player.name}&nbsp;&nbsp;&nbsp;
+                        #{/if}
+                        #{/list}
+                    </td>
+                </tr>
                 #{/list}
-                </li>
-            </ul>
-            #{/list}
-            #{else}
-                &{'error.noktlc'}
-            #{/else}
+                #{else}
+                    &{'error.noktlc'}
+                #{/else}
+            </table>
         </div>
     </div>
     <div class="cleaner"></div>

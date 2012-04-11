@@ -10,27 +10,29 @@
 </div>
 <div id="main">
     <div id="content">
-        <div class="content_box">
-            <ul class="menu players">
-                <li class="menu player">&{'player'}</li>
-                <li class="menu player">&{'player.login'}</li>
-            </ul>
-            #{list items:players, as:'player'}
-            #{if player.logins}
-            <ul class="players">
-                <li class="player">#{a @Application.player(player.logins[0])}${player.name}#{/a}</li>
-                <li class="player">
-                    #{list items:player.logins, as:'login'}
-                    ${login}
-                    #{if !login_isLast}<br/>#{/if}
-                    #{/list}
-                </li>
-            </ul>
-            #{/if}
-            #{/list}
-            #{else}
-            &{'error.noplayer'}
-            #{/else}
+        <div class="players_box">
+            <table>
+                <tr>
+                    <th>&{'player'}</th>
+                    <th>&{'player.login'}</th>
+                </tr>
+                #{list items:players, as:'player'}
+                #{if player.logins}
+                <tr>
+                    <td>#{a @Application.player(player.logins[0])}${player.name}#{/a}</td>
+                    <td>
+                        #{list items:player.logins, as:'login'}
+                        <p>${login}</p>
+                        #{if !login_isLast}<br/>#{/if}
+                        #{/list}
+                    </td>
+                </tr>
+                #{/if}
+                #{/list}
+                #{else}
+                &{'error.noplayer'}
+                #{/else}
+            </table>
         </div>
     </div>
     <div class="cleaner"></div>

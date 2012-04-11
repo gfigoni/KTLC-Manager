@@ -8,6 +8,7 @@ body {
 	background: #5B5B5B url(img/bg.gif) top repeat-x;
 }
 
+
 h1, h2, h3, h4, h5, h6 { color: #ffde88; font-weight: normal }
 h1 { font-size: 26px; margin: 0 0 20px 0; padding: 5px 0; }
 h2 { font-size: 21px; margin: 0 0 15px; padding: 0; }
@@ -27,6 +28,35 @@ h6 { font-size: 12px; margin: 0 0 3px; padding: 0; }
 ul, li {
 	padding: 0;
 	margin: 0;
+}
+
+a{
+	color: #FFDE88;
+	text-decoration: none;
+}
+
+table{
+	border-spacing: 0;
+	overflow: hidden;
+}
+
+th,td{
+	padding: 8px 2px 8px 2px;
+	text-align: center;
+}
+
+th{
+	line-height: 15px;
+	vertical-align: middle;
+	color: black;
+	background-color: #9DAFB0;
+	border-bottom: 1px solid black;
+}
+
+td{
+	line-height: 10px;
+	vertical-align: middle;
+	color: #FEFADC;
 }
 
 #wrapper {
@@ -134,166 +164,252 @@ ul, li {
     background:	url(img/main.jpg) repeat-y;
 }
 
-.map {
-	padding: 0 10px;
-	height: 80px;
-	color: #bbb;
-}
-
-.map ul {
-	float:left;
-	display: inline;
-	width: 125px;
-	padding: 0;
-	height: 20px;
-	background: transparent url(img/list.jpg) no-repeat scroll 0 5px;
-}
-
-.map ul li {
-	padding: 0 10px;
-	list-style: none;
-}
-
 .separator {
 	height: 6px;
 	background: url(img/content_separator.jpg) top left repeat-x;
 }
 
 #content {
-	float: left;
-	width: 340px;
 	padding: 10px 30px;
 }
 
-.content_box { clear: both; margin-bottom: 30px; padding-bottom: 30px; }
-.last_content_box { margin: 0; padding: 0; border-bottom: 0 }
-
-#content ul {
-	width: 330px;
+.content_left{
 	float: left;
 	display: block;
-	padding: 2px 10px;
-	margin: 0;
+	width: 40%;
 }
 
-#content ul li {
-	list-style: none;
-	display: inline-block;
-	color: #fefadc;
-	padding: 0;
-	margin: 0;
-	border: 0;
+.content_right{
+	float: right;
+	width: 60%;
 }
 
-.raceresult ul:nth-child(odd),
-#content ul:nth-child(odd){
-	background-color: #3d3b37;
+.content_box {
+	margin-bottom: 30px;
 }
 
-.raceresult ul:nth-child(even),
-#content ul:nth-child(even){
+.content_box table,
+.raceresult table,
+.ktlcs_box table,
+.players_box table,
+.player_box table {
 	background-color: #484742;
 }
 
-.raceresult ul li a,
-#content ul li a {
-	color: #ffde88;
-}
-
-#content ul.menu,
-.raceresult ul.menu {
-	background-color: #9dafb0;
-	border-bottom: 1px solid black;
-}
-
-#content ul.home {
-	width: 400px;
-}
-
-#content ul.ktlcs {
-	width: 800px;	
-}
-
-#content ul.players {
-	width: 450px;
-}
-
-#content ul.player {
-	width: 280px;
-}
-
-#content ul li.menu,
-.raceresult ul li.menu {
-	font-weight: bold;
-	color: black;
-	text-align: center;
-}
-
-#content ul li.rank {
-	width: 50px;
-	text-align: left;
-}
-
-#content ul li.score,
-#content ul li.race {
-	width: 60px;
-	text-align: center;
-}
-
-
-#content ul li.ktlcnbr {
-	width: 90px;
-	text-align: left;
-}
-
-#content ul li.date,
-#content ul li.size {
-	width: 80px;
-	text-align: center;	
-}
-
-#content ul li.player {
-	width: 200px;
-}
-
-#content ul li.podium {
-	width: 500px;
-}
-
-#race {
-	width: 840px;
+.content_box table,
+.raceresult table{
 	margin: 0 auto;
-	padding-top: 10px;
+}
+
+.ktlcs_box table{
+	width: 100%;
+}
+
+.content_box td,
+.raceresult td,
+.ktlcs_box td,
+.players_box td,
+.player_box td{
+	line-height: 10px;
+	vertical-align: middle;
+	color: #FEFADC;
+}
+
+.players_box td{
+	text-align: left;
+	padding-left: 20px;
+	min-width: 200px;
+	line-height: 10px;
+}
+
+.player_box td {
+	min-width: 100px;
+}
+
+.ktlcs_box td:last-child{
+	text-align: left;
+	padding-left: 15px;
+}
+
+.content_box tr:nth-child(odd),
+.raceresult tr:nth-child(odd),
+.ktlcs_box tr:nth-child(odd),
+.players_box tr:nth-child(odd),
+.player_box tr:nth-child(odd){
+	background-color: #3D3B37;
+}
+
+.content_box td:nth-child(2),
+.raceresult td:nth-child(2){
+	text-align: left;
+	min-width: 72px;
+}
+
+.players_box p{
+	padding: 0;
+	margin:0;
+}
+
+.content_podium{
+	float: left;
+	margin: 30px 0;
+	color: #FEFADC;
+	width: 300px;
+}
+
+.content_podium .player{
+	width: 95px;
+	display: inline;
+	float:left;
+	font-weight: bold;
+	position: relative;
+	height: 45px;
+}
+
+.content_podium .player:first-child{
+	width: 300px;
+	padding-left: 125px;
+}
+
+.content_podium .player:nth-child(2){
+	padding-left: 55px;
+}
+
+.content_podium .player:last-child{
+	padding-top: 20px;
+	padding-left: 55px;
+}
+
+.content_podium .player:before{
+	content: "";
+	display: block;
+	position: absolute;
+	width: 45px;
+	max-height: 45px;
+	height: 100%;
+}
+
+.content_podium .player:first-child:before{
+	top: -15px;
+	left: 75px;
+	background: url(img/tropheegold.png) no-repeat;
+}
+
+.content_podium .player:nth-child(2):before{
+	top: -15px;
+	left: 5px;
+	background: url(img/tropheesilver.png) no-repeat;
+}
+
+.content_podium .player:last-child:before{
+	top: 5px;
+	left: 5px;
+	background: url(img/tropheebronze.png) no-repeat;
+}
+
+.content_map table{
+	background-color: #484742;
+}
+
+.content_map tr{
+	padding: 10px 0px;
+	height: 55px;
+}
+
+.content_map tr:nth-child(odd){
+	background-color: #3D3B37;
+}
+
+.content_map td{
+	text-align: left;
+	padding: 0;
+	line-height: 15px;
+}
+
+.content_map td:nth-child(2){
+	padding-left: 15px;
+	padding-right: 15px;
+}
+
+.content_map td:last-child{
+	font-weight: bold;
+	padding-left: 15px;
+	padding-right: 10px;
+}
+
+.content_map td.canyon{
+	width:80px;
+	background: url(img/Canyon.png) no-repeat center;
+}
+
+.content_map td.stadium{
+	width:80px;
+	background: url(img/Stadium.png) no-repeat center;
+}
+
+.content_map td.rally{
+	width:80px;
+	background: url(img/Rally.png) no-repeat center;
+}
+
+.content_map td.alpine{
+	width:80px;
+	background: url(img/Snow.png) no-repeat center;
+}
+
+.content_map td.coast{
+	width:80px;
+	background: url(img/Coast.png) no-repeat center;
+}
+
+.content_map td.bay{
+	width:80px;
+	background: url(img/Bay.png) no-repeat center;
+}
+
+.content_map td.island{
+	width:80px;
+	background: url(img/Island.png) no-repeat center;
+}
+
+.content_map td.speed{
+	width:80px;
+	background: url(img/Desert.png) no-repeat center;
+}
+
+#race{
+	width: 900px;
 }
 
 /**********************/
 /*** Slider Content ***/
 .scroll-container { margin: 0 auto; }
 
-.scroll-content{ width:840px; overflow:hidden; }
+.scroll-content{ width:900px; overflow:hidden; }
 
 .content-holder { width: 1479px; }
 
-.scroll-slider{ width:840px; height:6px; background:#ccc; position:relative; cursor:pointer }
+.scroll-slider{ width:900px; height:6px; background:#ccc; position:relative; cursor:pointer }
 
 .ui-slider .ui-slider-handle{ width:16px; height:12px; position:absolute; top:-3px; background:#f39400; border:1px solid black; }
 
 /*** Fin Slider Content ***/
 /**************************/
 
-.race_content { float:left; width: 197px; padding: 0 5px; margin-top: 20px; }
+.race_content { float:left; margin: 20px 3px 0; display: table-cell; }
 
 .racemap {
-	height: 60px;
+	display:inline-block;
+	width: 219px;
+	margin: 5px 0;
 	color: #aaa;
+	background: transparent url(img/list.jpg) no-repeat scroll 0 5px;
 }
 
 .racemap ul {
-	float:left;
 	display: inline;
 	padding: 0;
 	height: 20px;
-	background: transparent url(img/list.jpg) no-repeat scroll 0 5px;
 }
 
 .racemap ul li {
