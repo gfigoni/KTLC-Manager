@@ -183,7 +183,7 @@ public class KTLCEdition extends Model {
                 String loginName = m.group(4);
                 Login login = Login.findByName(loginName);
                 if (login == null) {
-                    if (logins.get(login) == null) {
+                    if (logins.get(loginName) == null) {
                         // Dans le cas d'un auteur d'une map, aucun nom de joeuur par défaut n'est disponible.
                         // On propose donc le login
                         logins.put(loginName, loginName);
@@ -214,5 +214,18 @@ public class KTLCEdition extends Model {
 
     public List<KTLCRace> findRaces() {
         return KTLCRace.find("byKtlc", this).fetch();
+    }
+    
+    public KTLCResult getResult(Player player) {
+        return KTLCResult.findByKTLCAndPlayer(this, player);
+    }
+    
+    public Integer getRatio(Player player) {
+        KTLCResult result = getResult(player);
+        Integer ratio = 0;
+        if (result != null) {
+            ratio = 100 - (result.rank * 100 / this.results.size());
+        }
+        return ratio;
     }
 }

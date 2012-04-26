@@ -2,6 +2,82 @@
 #{set title:messages.get('title.player', player?.name) /}
 #{set page:'player' /}
 
+#{set 'moreScripts'}
+    <script type="text/javascript">
+        var chartData = [
+            #{list items:ktlcs, as:'ktlc'}
+            { ktlc: "${ktlc.number}", ratio: ${ktlc.getRatio(player)}, rank: ${ktlc.getResult(player) ? ktlc.getResult(player).rank : 0}, total: ${ktlc.results.size()} }${ktlc_isLast ? '' : ','}
+            #{/list}
+        ];
+        
+        var chart;
+
+        AmCharts.ready(function () {
+            chart = new AmCharts.AmSerialChart();
+            
+            chart.pathToImages = "@{'/public/images/amcharts/'}/";
+            chart.panEventsEnabled = true;
+            chart.dataProvider = chartData;
+            chart.categoryField = "ktlc";
+            chart.marginTop = 0;
+            chart.marginLeft = 0;
+            chart.marginRight = 0;
+            chart.marginBottom = 30;
+            chart.color = "#FEFADC";
+
+            // listen for "dataUpdated" event (fired when chart is rendered) and call zoomChart method when it happens
+            chart.addListener("dataUpdated", zoomChart);
+
+            // Axes
+            // category
+            var catAxis = chart.categoryAxis;
+            catAxis.gridCount = chartData.length;
+            catAxis.labelRotation = 90;
+            // value                
+            var valueAxis = new AmCharts.ValueAxis();
+            valueAxis.minimum = 0;
+            valueAxis.maximum = 100;
+            chart.addValueAxis(valueAxis);
+
+            // Graph
+            var graph = new AmCharts.AmGraph();
+            graph.balloonText = "ktlc #[[category]] - [[rank]]/[[total]]";
+            graph.valueField = "ratio"
+            graph.type = "column";
+            graph.lineAlpha = 0;
+            graph.fillAlphas = 1;
+            graph.fillColors = "#C37700"
+            chart.addGraph(graph);
+
+            // Cursor
+            var chartCursor = new AmCharts.ChartCursor();
+            chartCursor.cursorPosition = "middle";
+            chartCursor.categoryBalloonEnabled = false;
+            chartCursor.pan = true;
+            chart.addChartCursor(chartCursor);
+
+            var chartScrollbar = new AmCharts.ChartScrollbar();
+            chartScrollbar.graph = graph;
+            chartScrollbar.scrollbarHeight = 35;
+            chartScrollbar.autoGridCount = false;
+            chartScrollbar.hideResizeGrips = true;
+            chartScrollbar.backgroundAlpha = 0;
+            chartScrollbar.selectedBackgroundColor = "#C37700";
+            chartScrollbar.selectedBackgroundAlpha = 0.5;
+            chartScrollbar.graphFillColor = "#444444";
+            chartScrollbar.graphFillAlpha = 1;
+            
+            chart.addChartScrollbar(chartScrollbar);
+
+            chart.write('chartContainer');
+        });
+        
+        function zoomChart() {
+            chart.zoomToIndexes(chartData.length - 15, chartData.length - 1);
+        }
+    </script>
+#{/set}
+
 #{if player}
 <div id="content_top">
     <ul>
@@ -10,6 +86,7 @@
 </div>
 <div id="main">
     <div id="content">
+        <div id="chartContainer" style="width: 800px; height: 400px;"></div>
         <div class="player_box">
             <table>
                 <tr>
