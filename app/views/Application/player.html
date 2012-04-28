@@ -22,8 +22,12 @@
             chart.marginTop = 0;
             chart.marginLeft = 0;
             chart.marginRight = 0;
-            chart.marginBottom = 30;
+            chart.marginBottom = 0;
             chart.color = "#FEFADC";
+            chart.zoomOutButton = {
+                 backgroundColor: "#C37700",
+                 backgroundAlpha: 0.5
+            };
 
             // listen for "dataUpdated" event (fired when chart is rendered) and call zoomChart method when it happens
             chart.addListener("dataUpdated", zoomChart);
@@ -56,6 +60,7 @@
             chartCursor.pan = true;
             chart.addChartCursor(chartCursor);
 
+            // scrollbar
             var chartScrollbar = new AmCharts.ChartScrollbar();
             chartScrollbar.graph = graph;
             chartScrollbar.scrollbarHeight = 35;
@@ -66,7 +71,6 @@
             chartScrollbar.selectedBackgroundAlpha = 0.5;
             chartScrollbar.graphFillColor = "#444444";
             chartScrollbar.graphFillAlpha = 1;
-            
             chart.addChartScrollbar(chartScrollbar);
 
             chart.write('chartContainer');
@@ -86,7 +90,7 @@
 </div>
 <div id="main">
     <div id="content">
-        <div id="chartContainer" style="width: 800px; height: 400px;"></div>
+        <div id="chartContainer" style="width: 850px; height: 400px;"></div>
         <div class="player_box">
             <table>
                 <tr>

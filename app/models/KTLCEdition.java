@@ -9,13 +9,13 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-
 import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.OneToMany;
+
 import play.data.validation.Required;
 import play.db.jpa.Model;
 
@@ -220,11 +220,15 @@ public class KTLCEdition extends Model {
         return KTLCResult.findByKTLCAndPlayer(this, player);
     }
     
+    /**
+     * Ratio de participation d'un joueur à une édition
+     * zéro si le joueur n'a pas participé, 100% s'il est premier.
+     */
     public Integer getRatio(Player player) {
         KTLCResult result = getResult(player);
         Integer ratio = 0;
         if (result != null) {
-            ratio = 100 - (result.rank * 100 / this.results.size());
+            ratio = 100 - ((result.rank - 1) * 100 / this.results.size());
         }
         return ratio;
     }
