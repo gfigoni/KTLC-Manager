@@ -5,9 +5,10 @@
 # Home page
 GET     /                                       Application.index
 GET     /ktlc/{number}                          Application.ktlc
-GET     /ktlc					Application.ktlcs
+GET     /ktlc									Application.ktlcs
 GET     /player/{loginName}                     Application.player
-GET	/player 				Application.players
+GET		/player 								Application.players
+GET		/stats									Application.stats
 
 # Ignore favicon requests
 GET     /favicon.ico                            404

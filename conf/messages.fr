@@ -2,12 +2,14 @@ title.default = Kill The Last Cup
 title.ktlc = Kill The Last Cup | édition #%s
 title.players = Kill The Last Cup | joueurs
 title.player = Kill The Last Cup | %s
+title.stats = Kill The Last Cup | Statistiques
 
 main.home = Accueil
 main.players = Joueurs
 main.ktlcs = Editions KTLC
 main.forum = Forum
 main.admin = Administration
+main.stats = Statistiques
 
 ktlc = KTLC
 ktlc.number = KTLC #%s

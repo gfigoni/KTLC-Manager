@@ -49,4 +49,9 @@ public class Application extends Controller {
         List<KTLCEdition> ktlcs = KTLCEdition.find("order by date desc").fetch();
         render(ktlcs);
     }
+    
+    public static void stats() {
+    	//TODO generer stats...
+    	render();
+    }
 }
