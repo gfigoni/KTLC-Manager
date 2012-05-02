@@ -50,8 +50,8 @@ public class Application extends Controller {
         render(ktlcs);
     }
     
-    public static void stats() {
-    	//TODO generer stats...
-    	render();
+    public static void statistics() {
+    	Statistics statistics = Statistics.getUniqueInstance();
+    	render(statistics);
     }
 }

@@ -1,0 +1,188 @@
+#{extends 'main.html' /}
+#{set title:messages.get('title.stats') /}
+#{set page:'statistics' /}
+
+#{set 'moreScripts'}
+    <script type="text/javascript">
+    	// CHART ENVIRONMENT -----------------------------------------------------------------------
+    	var chartEnviroData = [
+			#{list items:statistics.numberMapsByEnviro.keySet(), as:'enviro'}
+				{ enviro: "${enviro}".charAt(0).toUpperCase() + "${enviro}".slice(1), maps: ${statistics.numberMapsByEnviro.get(enviro)} },
+			#{/list}
+		];
+    	
+    	function compareEnviro(a,b) {
+      	  if (a.maps > b.maps)
+      	     return -1;
+      	  if (a.maps < b.maps)
+      	    return 1;
+      	  return 0;
+      	}
+    	
+    	chartEnviroData.sort(compareEnviro);    	
+		var chartEnviro;
+
+        AmCharts.ready(function () {
+        	chartEnviro = new AmCharts.AmSerialChart();
+            
+        	chartEnviro.dataProvider = chartEnviroData;
+        	chartEnviro.categoryField = "enviro";
+        	chartEnviro.rotate= true;
+        	chartEnviro.color = "#FEFADC";
+        	chartEnviro.columnWidth = 0.5;
+			
+			// Graph
+	        var graph = new AmCharts.AmGraph();
+	        graph.balloonText = "[[category]]: [[value]]";
+	        graph.valueField = "maps"
+	        graph.type = "column";
+	        graph.lineAlpha = 0;
+	        graph.fillAlphas = 1;
+	        graph.fillColors = "#C37700"
+	        
+	        chartEnviro.addGraph(graph);
+	        
+	     	// Axes
+            // value                
+            var valueAxis = new AmCharts.ValueAxis();
+            valueAxis.minimum = 0;
+            chartEnviro.addValueAxis(valueAxis);
+	
+            chartEnviro.write('chartContainer');
+	    });
+        
+     	// CHART PARTICIPATION ---------------------------------------------------------------------
+     	var chartPlayersData = [
+			#{list items:statistics.last15KTLCs, as:'ktlc'}
+				{ ktlc: "${ktlc.number}", numberPlayer: "${ktlc.results.size()}" },
+			#{/list}
+		];
+     	
+     	var chartPlayers;
+     	AmCharts.ready(function () {
+        	chartPlayers = new AmCharts.AmSerialChart();
+            
+        	chartPlayers.dataProvider = chartPlayersData;
+        	chartPlayers.categoryField = "ktlc";
+        	chartPlayers.color = "#FEFADC";
+			
+			// Graph
+	        var graph = new AmCharts.AmGraph();
+	        graph.balloonText = "[[category]]: [[value]]";
+	        graph.valueField = "numberPlayer"
+	        graph.type = "line";
+	        graph.fillAlphas = 1;
+	        graph.fillColors = "#C37700"
+	        
+	        chartEnviro.addGraph(graph);
+	        
+	     	// Axes
+            // value                
+            var valueAxis = new AmCharts.ValueAxis();
+            valueAxis.minimum = 0;
+            chartPlayers.addValueAxis(valueAxis);
+	
+            chartPlayers.write('chartContainer2');
+	    });
+	</script>
+#{/set}
+
+#{if statistics}
+<div id="content_top">
+    <ul>
+        <li><h1><a>&{'main.stats'}</a></h1></li>
+    </ul>
+</div>
+<div id="main">
+    <div id="content">
+    	<div id="content_generalStats">
+	    	<h1>General (I18N)</h1>
+	    	<table>
+	    		<tr>
+	    			<td>Total number of KTLC: (I18N)</td>
+	    			<td>${statistics.numberKTLCs}</td>
+	    		</tr>
+	    		<tr>
+	    			<td>Total number of players: (I18N)</td>
+	    			<td>${statistics.numberPlayers.format('#,##0')}</td>
+	    		</tr>
+	    		<tr>
+	    			<td>--> Average number of players by KTLC: (I18N)</td>
+	    			<td>${statistics.averageNumberPlayersByKTLC.format('#,##0.00')}</td>
+	    		</tr>
+	    		<tr>
+	    			<td>Total number of played maps: (I18N)</td>
+	    			<td>${statistics.numberMaps.format('#,##0')}</td>
+	    		</tr>
+	    		<tr>
+	    			<td>--> Average number of maps by KTLC: (I18N)</td>
+	    			<td>${statistics.averageNumberMapsByKTLC.format('#,##0.00')}</td>
+	    		</tr>
+	    		<tr>
+	    			<td>Total number of played runs: (I18N)</td>
+	    			<td>${statistics.numberRuns.format('#,##0')}</td>
+	    		</tr>
+    		</table>
+    		<hr>
+    		<table>
+	    		<tr>
+	    			<td>--> Last reported KTLC: (I18N)</td>
+	    			<td>
+	    				#{a @Application.ktlc(statistics.lastKTLC.number)}&{'ktlc.number', statistics.lastKTLC.number}
+	    				(${statistics.lastKTLC.date.format()} - &{'ktlc.nbparticipants',statistics.lastKTLC.results.size()})#{/a}
+	   				</td>
+	    		</tr>
+	    		<tr>
+	    			<td>--> First reported KTLC: (I18N)</td>
+	    			<td>
+	    				#{a @Application.ktlc(statistics.firstKTLC.number)}&{'ktlc.number', statistics.firstKTLC.number} 
+	    				(${statistics.firstKTLC.date.format()} - &{'ktlc.nbparticipants',statistics.firstKTLC.results.size()})#{/a}
+	    			</td>
+	    		</tr>
+	    		<tr>
+	    			<td>--> Biggest KTLC: (I18N)</td>
+	    			<td>
+	    				#{a @Application.ktlc(statistics.maxNumberPlayersKTLC.number)}&{'ktlc.number', statistics.maxNumberPlayersKTLC.number} 
+	    				(${statistics.maxNumberPlayersKTLC.date.format()} - &{'ktlc.nbparticipants',statistics.maxNumberPlayersKTLC.results.size()})#{/a}
+	    			</td>
+	    		</tr>
+	    		<tr>
+	    			<td>--> Smallest KTLC: (I18N)</td>
+	    			<td>
+	    				#{a @Application.ktlc(statistics.minNumberPlayersKTLC.number)}&{'ktlc.number', statistics.minNumberPlayersKTLC.number} 
+	    				(${statistics.minNumberPlayersKTLC.date.format()} - &{'ktlc.nbparticipants',statistics.minNumberPlayersKTLC.results.size()})#{/a}
+	    			</td>
+	    		</tr>
+	    	</table>	    	
+    	</div>
+    	<h1>Evolution of the number of players (I18N)</h1>
+    	<div id="chartContainer2" style="width: 600px; height: 300px;"></div>
+        
+        <h1>Maps / Enviro (I18N)</h1>
+        <div id="chartContainer" style="width: 600px; height: 300px;"></div>
+        
+        <h1>Hall of Fame (I18N)</h1>
+        <p>?</p>
+        
+        <h1>Hall of Shame (I18N)</h1>
+        <p>?</p>
+    </div>
+    <div class="cleaner"></div>
+</div>
+#{/if}
+
+#{else}
+<div id="content_top">
+    <ul>
+        <li><h1><a>&{'error.noStats'}</a></h1></li>
+    </ul>
+</div>
+<div id="main">
+    <div id="content">
+        <div class="content_box">
+            &{'error.wrongStats'}
+        </div>
+    </div>
+    <div class="cleaner"></div>
+</div>
+#{/else}

@@ -29,6 +29,8 @@ error.wrongktlc = This KTLC does not exist.
 error.noktlc = No KTLC available
 error.wrongplayer = This player does not exist.
 error.noplayer = No player
+error.wrongStats = There is currently no statistics to display
+error.noStats = No statistics
 
 # administration
 validation.required = %s is required

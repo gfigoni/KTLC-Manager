@@ -8,7 +8,7 @@ GET     /ktlc/{number}                          Application.ktlc
 GET     /ktlc									Application.ktlcs
 GET     /player/{loginName}                     Application.player
 GET		/player 								Application.players
-GET		/stats									Application.stats
+GET		/statistics								Application.statistics
 
 # Ignore favicon requests
 GET     /favicon.ico                            404
