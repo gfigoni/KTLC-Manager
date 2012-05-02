@@ -4,25 +4,92 @@
 
 #{set 'moreScripts'}
     <script type="text/javascript">
-    	// CHART ENVIRONMENT -----------------------------------------------------------------------
     	var chartEnviroData = [
 			#{list items:statistics.numberMapsByEnviro.keySet(), as:'enviro'}
 				{ enviro: "${enviro}".charAt(0).toUpperCase() + "${enviro}".slice(1), maps: ${statistics.numberMapsByEnviro.get(enviro)} },
 			#{/list}
 		];
     	
-    	function compareEnviro(a,b) {
-      	  if (a.maps > b.maps)
-      	     return -1;
-      	  if (a.maps < b.maps)
-      	    return 1;
-      	  return 0;
-      	}
+    	var chartPlayersData = [
+  			#{list items:statistics.ktlcs, as:'ktlc'}
+  				{ ktlc: "${ktlc.number}", numberPlayer: ${ktlc.results.size()} },
+  			#{/list}
+  		];        	
     	
-    	chartEnviroData.sort(compareEnviro);    	
+    	function compareEnviro(a,b) {
+       	  if (a.maps > b.maps)
+       	     return -1;
+       	  if (a.maps < b.maps)
+       	    return 1;
+       	  return 0;
+       	}
+    	chartEnviroData.sort(compareEnviro);
+    	
 		var chartEnviro;
+		var chartPlayers;
 
-        AmCharts.ready(function () {
+		 window.onload = function () {
+			// CHART PARTICIPATION -----------------------------------------------------------------
+			chartPlayers = new AmCharts.AmSerialChart();
+            
+			chartPlayers.pathToImages = "@{'/public/images/amcharts/'}/";
+			chartPlayers.panEventsEnabled = true;
+        	chartPlayers.dataProvider = chartPlayersData;
+        	chartPlayers.categoryField = "ktlc";
+            chartPlayers.color = "#FEFADC";
+            chartPlayers.zoomOutButton = {
+                 backgroundColor: "#C37700",
+                 backgroundAlpha: 0.5
+            };
+            chartPlayers.marginTop = 0;
+            chartPlayers.marginBottom = 0;
+            
+         	// listen for "dataUpdated" event (fired when chart is inited) and call zoomChart method when it happens
+            chartPlayers.addListener("dataUpdated", zoomChart);
+			
+			// Graph
+	        var graphPlayers = new AmCharts.AmGraph();
+	        graphPlayers.balloonText = "[[value]] players (I18N)";
+	        graphPlayers.valueField = "numberPlayer";
+	        graphPlayers.type = "line";
+	        graphPlayers.lineAlpha = 1;
+	        graphPlayers.lineThickness = 1;
+	        graphPlayers.lineColor = "#C37700";
+	        graphPlayers.bullet = "round";
+	        graphPlayers.bulletSize = 5;
+	        
+	        chartPlayers.addGraph(graphPlayers);
+	        
+	     	// Axes
+            // value                
+            var valuePlayersAxis = new AmCharts.ValueAxis();
+            valuePlayersAxis.minimum = 0;
+            chartPlayers.addValueAxis(valuePlayersAxis);
+            
+         	// Cursor
+            var chartPlayerCursor = new AmCharts.ChartCursor();
+            chartPlayerCursor.cursorAlpha = 0;
+            chartPlayerCursor.cursorPosition = "middle";
+            chartPlayers.addChartCursor(chartPlayerCursor);
+            
+         	// scrollbar
+            var chartScrollbar = new AmCharts.ChartScrollbar();
+            chartScrollbar.graph = graphPlayers;
+            chartScrollbar.scrollbarHeight = 35;
+            chartScrollbar.autoGridCount = false;
+            chartScrollbar.hideResizeGrips = true;
+            chartScrollbar.backgroundAlpha = 0;
+            chartScrollbar.selectedBackgroundColor = "#C37700";
+            chartScrollbar.selectedBackgroundAlpha = 0.5;
+            chartScrollbar.graphFillColor = "#444444";
+            chartScrollbar.graphFillAlpha = 1;
+            chartPlayers.addChartScrollbar(chartScrollbar);
+            
+            chartPlayers.zoomToIndexes(chartPlayersData.length - 15, chartPlayersData.length - 1);
+	
+            chartPlayers.write('chartContainerPlayers');
+	            
+        	// CHART ENVIRONMENT -------------------------------------------------------------------
         	chartEnviro = new AmCharts.AmSerialChart();
             
         	chartEnviro.dataProvider = chartEnviroData;
@@ -30,60 +97,40 @@
         	chartEnviro.rotate= true;
         	chartEnviro.color = "#FEFADC";
         	chartEnviro.columnWidth = 0.5;
+        	chartEnviro.marginTop = 0;
+            chartEnviro.marginBottom = 0;
 			
 			// Graph
-	        var graph = new AmCharts.AmGraph();
-	        graph.balloonText = "[[category]]: [[value]]";
-	        graph.valueField = "maps"
-	        graph.type = "column";
-	        graph.lineAlpha = 0;
-	        graph.fillAlphas = 1;
-	        graph.fillColors = "#C37700"
+	        var graphEnviro = new AmCharts.AmGraph();
+	        graphEnviro.balloonText = "[[value]] maps";
+	        graphEnviro.valueField = "maps";
+	        graphEnviro.type = "column";
+	        graphEnviro.lineAlpha = 0;
+	        graphEnviro.fillAlphas = 1;
+	        graphEnviro.fillColors = "#C37700";
 	        
-	        chartEnviro.addGraph(graph);
+	        chartEnviro.addGraph(graphEnviro);
 	        
 	     	// Axes
             // value                
-            var valueAxis = new AmCharts.ValueAxis();
-            valueAxis.minimum = 0;
-            chartEnviro.addValueAxis(valueAxis);
-	
-            chartEnviro.write('chartContainer');
-	    });
-        
-     	// CHART PARTICIPATION ---------------------------------------------------------------------
-     	var chartPlayersData = [
-			#{list items:statistics.last15KTLCs, as:'ktlc'}
-				{ ktlc: "${ktlc.number}", numberPlayer: "${ktlc.results.size()}" },
-			#{/list}
-		];
-     	
-     	var chartPlayers;
-     	AmCharts.ready(function () {
-        	chartPlayers = new AmCharts.AmSerialChart();
+            var valueEnviroAxis = new AmCharts.ValueAxis();
+            valueEnviroAxis.minimum = 0;
+            chartEnviro.addValueAxis(valueEnviroAxis);
             
-        	chartPlayers.dataProvider = chartPlayersData;
-        	chartPlayers.categoryField = "ktlc";
-        	chartPlayers.color = "#FEFADC";
-			
-			// Graph
-	        var graph = new AmCharts.AmGraph();
-	        graph.balloonText = "[[category]]: [[value]]";
-	        graph.valueField = "numberPlayer"
-	        graph.type = "line";
-	        graph.fillAlphas = 1;
-	        graph.fillColors = "#C37700"
-	        
-	        chartEnviro.addGraph(graph);
-	        
-	     	// Axes
-            // value                
-            var valueAxis = new AmCharts.ValueAxis();
-            valueAxis.minimum = 0;
-            chartPlayers.addValueAxis(valueAxis);
+         	// Cursor
+            var chartEnviroCursor = new AmCharts.ChartCursor();
+            chartEnviroCursor.cursorPosition = "middle";
+            chartEnviroCursor.categoryBalloonEnabled = false;
+            chartEnviro.addChartCursor(chartEnviroCursor);
 	
-            chartPlayers.write('chartContainer2');
-	    });
+            chartEnviro.write('chartContainerEnviro');
+	    }
+	    
+	 	// this method is called when chart is first inited as we listen for "dataUpdated" event
+        function zoomChart() {
+            // different zoom methods can be used - zoomToIndexes, zoomToDates, zoomToCategoryValues
+            chartPlayers.zoomToIndexes(chartPlayersData.length - 15, chartPlayersData.length - 1);
+        }
 	</script>
 #{/set}
 
@@ -97,72 +144,88 @@
     <div id="content">
     	<div id="content_generalStats">
 	    	<h1>General (I18N)</h1>
-	    	<table>
-	    		<tr>
-	    			<td>Total number of KTLC: (I18N)</td>
-	    			<td>${statistics.numberKTLCs}</td>
-	    		</tr>
-	    		<tr>
-	    			<td>Total number of players: (I18N)</td>
-	    			<td>${statistics.numberPlayers.format('#,##0')}</td>
-	    		</tr>
-	    		<tr>
-	    			<td>--> Average number of players by KTLC: (I18N)</td>
-	    			<td>${statistics.averageNumberPlayersByKTLC.format('#,##0.00')}</td>
-	    		</tr>
-	    		<tr>
-	    			<td>Total number of played maps: (I18N)</td>
-	    			<td>${statistics.numberMaps.format('#,##0')}</td>
-	    		</tr>
-	    		<tr>
-	    			<td>--> Average number of maps by KTLC: (I18N)</td>
-	    			<td>${statistics.averageNumberMapsByKTLC.format('#,##0.00')}</td>
-	    		</tr>
-	    		<tr>
-	    			<td>Total number of played runs: (I18N)</td>
-	    			<td>${statistics.numberRuns.format('#,##0')}</td>
-	    		</tr>
-    		</table>
-    		<hr>
-    		<table>
-	    		<tr>
-	    			<td>--> Last reported KTLC: (I18N)</td>
-	    			<td>
-	    				#{a @Application.ktlc(statistics.lastKTLC.number)}&{'ktlc.number', statistics.lastKTLC.number}
-	    				(${statistics.lastKTLC.date.format()} - &{'ktlc.nbparticipants',statistics.lastKTLC.results.size()})#{/a}
-	   				</td>
-	    		</tr>
-	    		<tr>
-	    			<td>--> First reported KTLC: (I18N)</td>
-	    			<td>
-	    				#{a @Application.ktlc(statistics.firstKTLC.number)}&{'ktlc.number', statistics.firstKTLC.number} 
-	    				(${statistics.firstKTLC.date.format()} - &{'ktlc.nbparticipants',statistics.firstKTLC.results.size()})#{/a}
-	    			</td>
-	    		</tr>
-	    		<tr>
-	    			<td>--> Biggest KTLC: (I18N)</td>
-	    			<td>
-	    				#{a @Application.ktlc(statistics.maxNumberPlayersKTLC.number)}&{'ktlc.number', statistics.maxNumberPlayersKTLC.number} 
-	    				(${statistics.maxNumberPlayersKTLC.date.format()} - &{'ktlc.nbparticipants',statistics.maxNumberPlayersKTLC.results.size()})#{/a}
-	    			</td>
-	    		</tr>
-	    		<tr>
-	    			<td>--> Smallest KTLC: (I18N)</td>
-	    			<td>
-	    				#{a @Application.ktlc(statistics.minNumberPlayersKTLC.number)}&{'ktlc.number', statistics.minNumberPlayersKTLC.number} 
-	    				(${statistics.minNumberPlayersKTLC.date.format()} - &{'ktlc.nbparticipants',statistics.minNumberPlayersKTLC.results.size()})#{/a}
-	    			</td>
-	    		</tr>
-	    	</table>	    	
+	    	<div class="content_chartLeft">
+		    	<table>
+		    		<tr>
+		    			<td>Total number of KTLC: (I18N)</td>
+		    			<td>${statistics.numberKTLCs}</td>
+		    		</tr>
+		    		<tr>
+		    			<td>Total number of players: (I18N)</td>
+		    			<td>${statistics.numberPlayers.format('#,##0')}</td>
+		    		</tr>
+		    		<tr>
+		    			<td>--> Average number of players by KTLC: (I18N)</td>
+		    			<td>${statistics.averageNumberPlayersByKTLC.format('#,##0.00')}</td>
+		    		</tr>
+		    		<tr>
+		    			<td>Total number of played maps: (I18N)</td>
+		    			<td>${statistics.numberMaps.format('#,##0')}</td>
+		    		</tr>
+		    		<tr>
+		    			<td>--> Average number of maps by KTLC: (I18N)</td>
+		    			<td>${statistics.averageNumberMapsByKTLC.format('#,##0.00')}</td>
+		    		</tr>
+		    		<tr>
+		    			<td>Total number of played runs: (I18N)</td>
+		    			<td>${statistics.numberRuns.format('#,##0')}</td>
+		    		</tr>
+	    		</table>
+	   		</div>
+	    	<div class="content_chartRight">
+	    		<table>
+		    		<tr>
+		    			<td>Last KTLC: (I18N)</td>
+		    			<td>
+		    				#{a @Application.ktlc(statistics.lastKTLC.number)}&{'ktlc.number', statistics.lastKTLC.number}
+		    				(${statistics.lastKTLC.date.format()} - &{'ktlc.nbparticipants',statistics.lastKTLC.results.size()})#{/a}
+		   				</td>
+		    		</tr>
+		    		<tr>
+		    			<td>First KTLC: (I18N)</td>
+		    			<td>
+		    				#{a @Application.ktlc(statistics.firstKTLC.number)}&{'ktlc.number', statistics.firstKTLC.number} 
+		    				(${statistics.firstKTLC.date.format()} - &{'ktlc.nbparticipants',statistics.firstKTLC.results.size()})#{/a}
+		    			</td>
+		    		</tr>
+		    		<tr>
+		    			<td>Biggest KTLC: (I18N)</td>
+		    			<td>
+		    				#{a @Application.ktlc(statistics.maxNumberPlayersKTLC.number)}&{'ktlc.number', statistics.maxNumberPlayersKTLC.number} 
+		    				(${statistics.maxNumberPlayersKTLC.date.format()} - &{'ktlc.nbparticipants',statistics.maxNumberPlayersKTLC.results.size()})#{/a}
+		    			</td>
+		    		</tr>
+		    		<tr>
+		    			<td>Smallest KTLC: (I18N)</td>
+		    			<td>
+		    				#{a @Application.ktlc(statistics.minNumberPlayersKTLC.number)}&{'ktlc.number', statistics.minNumberPlayersKTLC.number} 
+		    				(${statistics.minNumberPlayersKTLC.date.format()} - &{'ktlc.nbparticipants',statistics.minNumberPlayersKTLC.results.size()})#{/a}
+		    			</td>
+		    		</tr>
+		    	</table>	    	
+	    	</div>
     	</div>
-    	<h1>Evolution of the number of players (I18N)</h1>
-    	<div id="chartContainer2" style="width: 600px; height: 300px;"></div>
+    	
+    	<div class="cleaner"></div>
+    	<hr>
+    	
+    	<div class="content_chartLeft">
+	    	<h1># Players / KTLC (I18N)</h1>
+	    	<div id="chartContainerPlayers" style="width: 420px; height: 300px;"></div>
+    	</div>
+        <div class="content_chartRight">
+	        <h1># Maps / Environment (I18N)</h1>
+	        <div id="chartContainerEnviro" style="width: 420px; height: 300px;"></div>
+        </div>
         
-        <h1>Maps / Enviro (I18N)</h1>
-        <div id="chartContainer" style="width: 600px; height: 300px;"></div>
-        
+        <div class="cleaner"></div>
+    	<hr>
+    	
         <h1>Hall of Fame (I18N)</h1>
         <p>?</p>
+        
+        <div class="cleaner"></div>
+    	<hr>
         
         <h1>Hall of Shame (I18N)</h1>
         <p>?</p>

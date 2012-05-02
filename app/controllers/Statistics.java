@@ -36,7 +36,7 @@ public class Statistics {
 	public KTLCEdition maxNumberPlayersKTLC;
 	public KTLCEdition minNumberPlayersKTLC;
 	
-	public List<KTLCEdition> last15KTLCs;
+	public List<KTLCEdition> ktlcs;
 
 	/** Private constructor for implementation of the singleton pattern */
 	private Statistics() {
@@ -59,7 +59,8 @@ public class Statistics {
 	 * Update all the statistics, should be called only using administrator board... 
 	 */
 	private void updateStatistics() {
-		List<KTLCEdition> ktlcs = KTLCEdition.find("order by date desc").fetch();
+		ktlcs = KTLCEdition.find("order by date asc").fetch();
+		
 		List<Player> players = Player.find("order by name asc").fetch();
 		List<TMMap> maps = TMMap.find("order by environment desc").fetch();
 		
@@ -67,10 +68,8 @@ public class Statistics {
 		numberPlayers = players.size();
 		numberMaps = maps.size();
 		
-		last15KTLCs = ktlcs.subList(0, 14);
-		
-		lastKTLC = ktlcs.get(0);
-		firstKTLC = ktlcs.get(ktlcs.size() - 1);
+		firstKTLC = ktlcs.get(0);
+		lastKTLC = ktlcs.get(ktlcs.size() - 1);
 		
 		calcNumberRuns();
 		calcMapsByEnviro(maps);		

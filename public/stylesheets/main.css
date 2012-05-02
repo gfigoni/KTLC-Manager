@@ -462,6 +462,17 @@ td{
 	text-align: left;
 }
 
+.content_chartLeft h1,
+.content_chartRight h1 {
+	text-align: center;
+}
+
+.content_chartLeft,
+.content_chartRight {
+	float: left;
+	width: 50%;
+}
+
 /***********************************
 *             FOOTER               *
 ***********************************/
