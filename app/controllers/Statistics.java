@@ -23,7 +23,7 @@ public class Statistics {
 	/** The ranks that are counted for the podiums */
 	private static final int RANK_INTEREST = 4;
 	/** The minimal number of participation that are required to be counted in some TOPs */
-	private static final int MIN_PARTICIPATIONS = 10;
+	private static final int MIN_PERCENTAGE_PARTICIPATIONS = 10;
 
 	/** The Statistics unique instance */
 	private static Statistics uniqueInstance;
@@ -111,10 +111,6 @@ public class Statistics {
 		calcTOPxNumberPodiumsRace();
 		calcTOPxNumberMapsByPlayer();
 		calcTOPxAverageRankByKTLC();
-		
-		for (int i = 0; i < LENGTH_TOP; i++) {
-			System.out.println(top_averageRank_Players.get(i).name + ": " + top_averageRank_Values.get(i) + " (" + top_averageRank_Participations.get(i) + ")");
-		}
 	}
 	
 	/**
@@ -416,7 +412,7 @@ public class Statistics {
 			double value = averageRankByPlayerID[i][1];
 			int numberParticipation = KTLCResult.findByPlayer(player).size();
 			
-			if (numberParticipation >= MIN_PARTICIPATIONS) {
+			if (numberParticipation >= (MIN_PERCENTAGE_PARTICIPATIONS*ktlcs.size()/100)) {
 				top_averageRank_Players.add(currentCount, player);
 				top_averageRank_Values.add(currentCount, value);
 				top_averageRank_Participations.add(currentCount, numberParticipation);
