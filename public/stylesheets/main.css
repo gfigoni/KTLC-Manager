@@ -458,8 +458,20 @@ td{
 /***********************************
 *             STATS                *
 ***********************************/
-#content_generalStats td {
+.content_generalStats p {
+	color: #b6b6b6;
+}
+
+.content_generalStats td {
 	text-align: left;
+}
+
+.content_generalStats h1 {
+	font-weight: bold;
+	font-size: 18px;
+	margin: 0;
+	padding: 0;
+	margin-bottom: 10px;
 }
 
 .content_chartLeft h1,
@@ -472,6 +484,99 @@ td{
 	float: left;
 	width: 50%;
 }
+
+.ranking {
+	width: 900px;
+}
+
+.ranking_content {
+	padding-right: 20px;
+	float: left;
+}
+
+.ranking_title {
+	color: #aaa;
+	background: transparent url(img/list.jpg) no-repeat scroll 0 5px;
+}
+
+.ranking_title h2 {
+	font-size: 14px;
+	margin: 10px 10px 5px 10px;
+}
+
+.ranking_title p {
+	margin-top: 0px;
+	margin-bottom: 5px;
+}
+
+.ranking_list {
+	clear: both;
+}
+
+.ranking_list table {
+	background-color: #484742;
+	min-width: 225px;
+}
+
+.ranking_list caption {
+	color: #aaa;
+	margin-top: 0px;
+	margin-bottom: 5px;
+	text-align: justify;
+	caption-side: top;
+	min-height: 55px;
+}
+
+.ranking_list td {
+	line-height: 10px;
+	vertical-align: middle;
+	text-align: center;
+	color: #FEFADC;
+	padding-left: 10px;
+	padding-right: 10px;
+}
+
+.ranking_list th {
+	vertical-align: middle;
+	text-align: center;
+	padding-left: 5px;
+	padding-right: 5px;
+} 
+
+.ranking_list tr:nth-child(odd) {
+	background-color: #3D3B37;
+}
+
+.ranking_list td:nth-child(2) {
+	text-align: left;
+}
+
+.ranking_list th:nth-child(2) {
+	text-align: left;
+}
+
+.ranking_list th.spacer_both,
+.ranking_list td.spacer_both {
+	border-left: 1px solid black;
+	border-right: 1px solid black;
+	padding-left: 10px;
+	padding-right: 10px;
+}
+
+.ranking_list th.spacer_right,
+.ranking_list td.spacer_right {
+	border-right: 1px solid black;
+	padding-left: 10px;
+	padding-right: 10px;
+}
+
+.ranking_list th.spacer_left,
+.ranking_list td.spacer_left {
+	border-left: 1px solid black;
+	padding-left: 10px;
+	padding-right: 10px;
+	
+} 
 
 /***********************************
 *             FOOTER               *

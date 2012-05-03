@@ -1,5 +1,8 @@
 package models;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -41,4 +44,13 @@ public class TMMap extends GenericModel {
         return name;
     }
     
+    public static List<TMMap> findByPlayer(Player player) {
+    	List<TMMap> maps = new ArrayList<TMMap>();
+        // On itère sur tous les logins du joueur pour récupérer les maps
+        for (Login login : player.logins) {
+            List<TMMap> m = TMMap.find("byLogin", login).fetch();
+            maps.addAll(m);
+        }
+        return maps;
+    }
 }

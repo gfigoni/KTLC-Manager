@@ -25,6 +25,16 @@ player.score = Score
 player.nbraces = Races
 player.rounds = Rounds
 
+stats.total = Total
+stats.ratio = Ratio
+stats.first = 1st
+stats.second = 2nd
+stats.third = 3rd
+stats.fourth = 4th
+stats.maps = # Maps
+stats.ktlcs = # KTLCs
+stats.averageRank = Average Rank
+
 error.wrongktlc = This KTLC does not exist.
 error.noktlc = No KTLC available
 error.wrongplayer = This player does not exist.

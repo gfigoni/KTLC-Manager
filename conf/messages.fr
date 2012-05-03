@@ -25,6 +25,16 @@ player.score = Score
 player.nbraces = Courses
 player.rounds = Tours
 
+stats.total = Total
+stats.ratio = Ratio
+stats.first = 1er
+stats.second = 2e
+stats.third = 3e
+stats.fourth = 4e
+stats.maps = # Maps
+stats.ktlcs = # KTLCs
+stats.averageRank = Place Moyenne
+
 error.wrongktlc = Cette KTLC n'existe pas.
 error.noktlc = Pas de KTLC
 error.wrongplayer = Ce joueur n'existe pas.
