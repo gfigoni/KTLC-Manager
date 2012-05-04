@@ -6,117 +6,75 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 
+import models.GeneralStatistic;
 import models.KTLCEdition;
 import models.KTLCRaceResult;
 import models.KTLCResult;
 import models.Player;
+import models.Rank;
 import models.TMEnvironment;
 import models.TMMap;
 
 /**
- * 
+ * This class is used to generate general statistics regarding the whole KTLC history.
  * @author Toub
  */
 public class Statistics {
 	/** The number of results that we want to have in the rankings */
-	private static final int LENGTH_TOP = 10;
+	private static final int LENGTH_TOP = 15;
 	/** The ranks that are counted for the podiums */
 	private static final int RANK_INTEREST = 4;
 	/** The minimal number of participation that are required to be counted in some TOPs */
 	private static final int MIN_PERCENTAGE_PARTICIPATIONS = 10;
-
-	/** The Statistics unique instance */
-	private static Statistics uniqueInstance;
-	
-	public List<KTLCEdition> ktlcs;
-	public List<Player> players;
-	public List<TMMap> maps;
-	
-	public KTLCEdition maxNumberPlayersKTLC;
-	public KTLCEdition minNumberPlayersKTLC;
-	
-	public int 		stats_numberKTLCs;
-	public int 		stats_numberPlayers;
-	public int 		stats_numberMaps;
-	public int 		stats_numberRuns;
-	
-	public double 	stats_averageNumberPlayersByKTLC;
-	public double 	stats_averageNumberMapsByKTLC;
-	
-	public HashMap<TMEnvironment, Integer> chart_numberMapsByEnviro;
-	
-	public List<Player>  top_numberParticipation_Players;
-	public List<Integer> top_numberParticipation_Values;
-	public List<Double>  top_numberParticipation_Ratios;
-	
-	public List<Player>  top_numberPodiumsKTLC_Players;
-	public List<int[]>   top_numberPodiumsKTLC_Values;
-	public List<Double>  top_numberPodiumsKTLC_Ratios;
-	public List<Integer> top_numberPodiumsKTLC_Participations;
-	
-	public List<Player>  top_numberPodiumsRace_Players;
-	public List<int[]>   top_numberPodiumsRace_Values;
-	public List<Double>  top_numberPodiumsRace_Ratios;
-	public List<Integer> top_numberPodiumsRace_Participations;
-	
-	public List<Player>  top_numberMaps_Players;
-	public List<Integer> top_numberMaps_Values;
-	
-	public List<Player>  top_averageRank_Players;
-	public List<Double>  top_averageRank_Values;
-	public List<Integer> top_averageRank_Participations;
-
-	/** Private constructor for implementation of the singleton pattern */
-	private Statistics() {
-		updateStatistics();
-	}
-	
-	/**
-	 * Get the unique statistics
-	 * @return the uniqueInstace statistics
-	 */
-	public static Statistics getUniqueInstance() {
-		//if (uniqueInstance == null) { //TODO remove "//"
-			// init the class
-			uniqueInstance = new Statistics();
-		//}
-		return uniqueInstance;
-	}
 	
 	/**
 	 * Update all the statistics, should be called only using administrator board... 
 	 */
-	private void updateStatistics() {		
-		ktlcs = KTLCEdition.find("order by date asc").fetch();
-		players = Player.find("order by name asc").fetch();
-		maps = TMMap.find("order by environment desc").fetch();
+	public static GeneralStatistic updateAllGeneralStatistics(GeneralStatistic stats) {
+		
+		stats.LENGTH_TOP = LENGTH_TOP;
+		stats.RANK_INTEREST = RANK_INTEREST;
+		stats.MIN_PERCENTAGE_PARTICIPATIONS = MIN_PERCENTAGE_PARTICIPATIONS;
+		
+		stats.ktlcs = KTLCEdition.find("order by date asc").fetch();
+		stats.players = Player.find("order by name asc").fetch();
+		stats.maps = TMMap.find("order by environment desc").fetch();
 		
 		// Stats
-		stats_numberKTLCs = ktlcs.size();
-		stats_numberPlayers = players.size();
-		stats_numberMaps = maps.size();
-		stats_numberRuns = calcNumberRuns();
-		stats_averageNumberPlayersByKTLC = calcAverageNumberPlayersByKTLC();
-		stats_averageNumberMapsByKTLC = calcAverageNumberMapsByKTLC();
+		stats.stats_numberKTLCs = stats.ktlcs.size();
+		stats.stats_numberPlayers = stats.players.size();
+		stats.stats_numberMaps = stats.maps.size();
+		stats.stats_numberRuns = calcTotalNumberRuns();
+		stats.stats_averageNumberPlayersByKTLC = calcAverageNumberPlayersByKTLC(stats.ktlcs);
+		stats.stats_averageNumberMapsByKTLC = calcAverageNumberMapsByKTLC(stats.ktlcs);
 		
 		// charts
-		chart_numberMapsByEnviro = calcMapsByEnviro();
+		stats.chart_numberMapsByEnviro = calcMapsByEnviro(stats.maps);
 		
 		// particular KTLC
-		calcMinMaxNumberPlayers();
+		stats.smallestKTLC = calcMinNumberPlayers(stats.ktlcs);
+		stats.biggestKTLC = calcMaxNumberPlayers(stats.ktlcs);
 		
-		// tops
-		calcTOPxParticipationRatio();
-		calcTOPxNumberPodiumsKTLC();
-		calcTOPxNumberPodiumsRace();
-		calcTOPxNumberMapsByPlayer();
-		calcTOPxAverageRankByKTLC();
+		// rankings - hall of fame
+		stats.ranking_numberParticipation = calcRankingParticipatioRatio(stats.players);
+		stats.ranking_averageRank = calcRankingAverageRank(stats.players);
+		stats.ranking_numberMaps = calcRankingNumberMaps(stats.players);
+		stats.ranking_numberPodiumsRTLC = calcRankingNumberPodiumsKTLC(stats.players);
+		stats.ranking_numberPodiumsRace = calcRankingNumberPodiumsRace(stats.players);
+		
+		// ranking - hall of shame
+		
+		// change the status
+		stats.setInitialized(true);
+		return stats;
 	}
 	
 	/**
-	 * TODO
+	 * Count the number of maps by TMEnvironment
+	 * @param maps the list of maps that have to be used
+	 * @return a HashMap with the environment as keys and count as value
 	 */
-	private HashMap<TMEnvironment, Integer> calcMapsByEnviro() {
+	public static HashMap<TMEnvironment, Integer> calcMapsByEnviro(List<TMMap> maps) {
 		HashMap<TMEnvironment, Integer> count = new HashMap<TMEnvironment, Integer>();
 
 		for (TMMap map : maps) {
@@ -132,9 +90,11 @@ public class Statistics {
 	}
 	
 	/**
-	 * TODO
+	 * Calculate the average number of players for a list of KTLCs
+	 * @param ktlcs
+	 * @return the average number of players
 	 */
-	private double calcAverageNumberPlayersByKTLC() {
+	public static double calcAverageNumberPlayersByKTLC(List<KTLCEdition> ktlcs) {
 		int count = 0;
 		for (KTLCEdition ktlc : ktlcs) {
 			count += ktlc.results.size();
@@ -143,9 +103,11 @@ public class Statistics {
 	}
 	
 	/**
-	 * TODO
+	 * Calculate the average number of maps for a list of KTLCs
+	 * @param ktlcs
+	 * @return the average number of maps
 	 */
-	private double calcAverageNumberMapsByKTLC() {
+	public static double calcAverageNumberMapsByKTLC(List<KTLCEdition> ktlcs) {
 		int count = 0;
 		for (KTLCEdition ktlc : ktlcs) {
 			count += ktlc.races.size();
@@ -154,21 +116,37 @@ public class Statistics {
 	}
 	
 	/**
-	 * TODO
+	 * Find the ktlc with the smallest number of players in a list of KTLCs
+	 * @param ktlcs
+	 * @return the smallest KTLCEdition
 	 */
-	private void calcMinMaxNumberPlayers() {
-		int max = Integer.MIN_VALUE;
+	public static KTLCEdition calcMinNumberPlayers(List<KTLCEdition> ktlcs) {
+		KTLCEdition minNumberPlayersKTLC = null;
 		int min = Integer.MAX_VALUE;
 		for (KTLCEdition ktlc : ktlcs) {
-			if (ktlc.results.size() > max) {
-				max = ktlc.results.size();
-				maxNumberPlayersKTLC = ktlc;
-			}
 			if (ktlc.results.size() < min) {
 				min = ktlc.results.size();
 				minNumberPlayersKTLC = ktlc;
 			}
 		}
+		return minNumberPlayersKTLC;
+	}
+	
+	/**
+	 * Find the ktlc with the biggest number of players in a list of KTLCs
+	 * @param ktlcs
+	 * @return the biggest KTLCEdition
+	 */
+	public static KTLCEdition calcMaxNumberPlayers(List<KTLCEdition> ktlcs) {
+		KTLCEdition maxNumberPlayersKTLC = null;
+		int max = Integer.MIN_VALUE;
+		for (KTLCEdition ktlc : ktlcs) {
+			if (ktlc.results.size() > max) {
+				max = ktlc.results.size();
+				maxNumberPlayersKTLC = ktlc;
+			}
+		}
+		return maxNumberPlayersKTLC;
 	}
 	
 	/**
@@ -176,7 +154,7 @@ public class Statistics {
 	 * The number of runs is the sum of the number of round played by each winner
 	 * @return the total number of runs
 	 */
-	private int calcNumberRuns() {
+	public static int calcTotalNumberRuns() {
 		// get only the results from the winner of each race
 		List<KTLCRaceResult> results = KTLCRaceResult.find("rank = 1").fetch();
 	
@@ -188,12 +166,14 @@ public class Statistics {
 	}
 	
 	/**
-	 * TODO TOP10
+	 * Calculate the ranking regarding the Participation Ratio of a list of players, 
+	 * on ALL the KTLCs.
+	 * @param players
+	 * @return the list of size LENGTH_TOP of the best players with their values
 	 */
-	private void calcTOPxParticipationRatio() {
-		top_numberParticipation_Players = new ArrayList<Player>(LENGTH_TOP);
-		top_numberParticipation_Values = new ArrayList<Integer>(LENGTH_TOP);
-		top_numberParticipation_Ratios = new ArrayList<Double>(LENGTH_TOP);
+	public static List<Rank> calcRankingParticipatioRatio(List<Player> players) {
+		List<Rank> ranking = new ArrayList<Rank>(LENGTH_TOP);
+		int numberKTLCs = KTLCEdition.findAll().size();
 		
 		// calculate the participation ratio for each player
 		Double[][] participationRatiosByPlayerID = new Double[players.size()][2];
@@ -201,7 +181,7 @@ public class Statistics {
 		for (Player player : players) {
 			int numberParticipation = KTLCResult.findByPlayer(player).size();
 			participationRatiosByPlayerID[currentIndex][0] = (double)player.id;
-			participationRatiosByPlayerID[currentIndex][1] = (double)numberParticipation / (double)ktlcs.size();
+			participationRatiosByPlayerID[currentIndex][1] = (double)numberParticipation / (double)numberKTLCs;
 			currentIndex++;
 		}
 		
@@ -215,27 +195,123 @@ public class Statistics {
             }
         });
 		
-		// create the structure for holding results
+		// Add the best results to the ranking create the structure for holding results
 		for (int i = 0; i < LENGTH_TOP; i++) {
 			int index = players.size() - 1 - i;
+			
 			Player player = Player.findById(participationRatiosByPlayerID[index][0].longValue());
 			Double ratio = participationRatiosByPlayerID[index][1];
-			Integer numberparticipations = KTLCResult.findByPlayer(player).size();
+			Integer participation = KTLCResult.findByPlayer(player).size();
 			
-			top_numberParticipation_Players.add(i, player);
-			top_numberParticipation_Ratios.add(i, ratio);
-			top_numberParticipation_Values.add(i, numberparticipations);
+			Rank r = new Rank(player, participation, ratio);
+			ranking.add(r);
 		}
+		
+		return ranking;
 	}
 	
 	/**
-	 * TODO TOP10
+	 * Calculate the ranking regarding the Best Average Rank of a list of players, 
+	 * on ALL the KTLCs.
+	 * @param players
+	 * @return the list of size LENGTH_TOP of the best players with their values
 	 */
-	private void calcTOPxNumberPodiumsKTLC() {
-		top_numberPodiumsKTLC_Players = new ArrayList<Player>(LENGTH_TOP);
-		top_numberPodiumsKTLC_Participations = new ArrayList<Integer>(LENGTH_TOP);
-		top_numberPodiumsKTLC_Values = new ArrayList<int[]>(LENGTH_TOP);
-		top_numberPodiumsKTLC_Ratios = new ArrayList<Double>(LENGTH_TOP);
+	public static List<Rank<Double>> calcRankingAverageRank(List<Player> players) {
+		List<Rank<Double>> ranking = new ArrayList<Rank<Double>>(LENGTH_TOP);
+		int numberKTLC = KTLCEdition.findAll().size();
+		
+		// calculate the number of maps for each player
+		double[][] averageRankByPlayerID = new double[players.size()][2];
+		
+		int currentIndex = 0;
+		for (Player player: players) {
+			averageRankByPlayerID[currentIndex][0] = player.id.doubleValue();
+			averageRankByPlayerID[currentIndex][1] = averageRankByPlayer(player);
+			currentIndex++;
+		}
+		
+		// sort the array by ASCENDING participation rate
+		Arrays.sort(averageRankByPlayerID, new Comparator<double[]>() {
+            @Override
+            public int compare(final double[] entry1, final double[] entry2) {
+                final Double averageRank1 = entry1[1];
+                final Double averageRank2 = entry2[1];
+                return averageRank1.compareTo(averageRank2);
+            }
+        });
+		
+		// create the structure for holding results,
+		// but only for players with at least MIN_PARTICIPATION
+		int currentCount = 0;
+		for (int i = 0; i < players.size(); i++) {
+			Player player = Player.findById((long)averageRankByPlayerID[i][0]);
+			double value = averageRankByPlayerID[i][1];
+			int numberParticipation = KTLCResult.findByPlayer(player).size();
+			
+			if (numberParticipation >= (MIN_PERCENTAGE_PARTICIPATIONS*0.01*numberKTLC)) {
+				Rank<Double> r = new Rank<Double>(player, numberParticipation, -1, value);
+				ranking.add(currentCount, r);
+				
+				currentCount++;
+				if (currentCount == LENGTH_TOP) { break; }
+			}
+		}
+		
+		return ranking;
+	}
+	
+	/**
+	 * Calculate the ranking regarding the Number of map created by the players from the list, 
+	 * on ALL the KTLCs.
+	 * @param players
+	 * @return the list of size LENGTH_TOP of the best players with their values
+	 */
+	public static List<Rank<Integer>> calcRankingNumberMaps(List<Player> players) {
+		List<Rank<Integer>> ranking = new ArrayList<Rank<Integer>>(LENGTH_TOP);
+		
+		// calculate the number of maps for each player
+		int[][] numberMapsByPlayerID = new int[players.size()][2];
+		
+		int currentIndex = 0;
+		for (Player player : players) {
+			numberMapsByPlayerID[currentIndex][0] = player.id.intValue();
+			numberMapsByPlayerID[currentIndex][1] = TMMap.findByPlayer(player).size();
+			currentIndex++;
+		}
+		
+		// sort the array by ASCENDING participation rate
+		Arrays.sort(numberMapsByPlayerID, new Comparator<int[]>() {
+            @Override
+            public int compare(final int[] entry1, final int[] entry2) {
+                final Integer numberMaps1 = entry1[1];
+                final Integer numberMaps2 = entry2[1];
+                return numberMaps1.compareTo(numberMaps2);
+            }
+        });
+		
+		// create the structure for holding results
+		for (int i = 0; i < LENGTH_TOP; i++) {
+			int index = players.size() - 1 - i;
+			
+			Player player = Player.findById((long)numberMapsByPlayerID[index][0]);
+			int numberMaps = numberMapsByPlayerID[index][1];
+			
+			// numberParticipation & ratio are not used nor calculated
+			Rank r = new Rank<Integer>(player, -1, -1, numberMaps);
+			ranking.add(i, r);
+		}
+		
+		return ranking;
+	}
+	
+	/**
+	 * Calculate the ranking regarding the Number of podiums performed during the KTLCs by the 
+	 * players from the list, on ALL the KTLCs.
+	 * @param players
+	 * @return the list of size LENGTH_TOP of the best players with their values
+	 */
+	public static List<Rank<int[]>> calcRankingNumberPodiumsKTLC(List<Player> players) {
+		List<Rank<int[]>> ranking = new ArrayList<Rank<int[]>>(LENGTH_TOP);
 		
 		// calculate the number of podiums by KTLC for each player
 		int[][] numberPodiumByPlayerID = new int[players.size()][RANK_INTEREST + 1];
@@ -271,26 +347,27 @@ public class Statistics {
 			int index = players.size() - 1 - i;
 			
 			Player player = Player.findById((long)numberPodiumByPlayerID[index][0]);
-			int numberParticipation = KTLCResult.findByPlayer(player).size();
+			int participation = KTLCResult.findByPlayer(player).size();
 			
 			int[] podiums = Arrays.copyOfRange(numberPodiumByPlayerID[index], 1, RANK_INTEREST + 1);
 			int totalPodium = podiums[0] + podiums[1] + podiums[3];
+			double ratio = (double)totalPodium / (double)participation;
 			
-			top_numberPodiumsKTLC_Players.add(i, player);
-			top_numberPodiumsKTLC_Participations.add(i, numberParticipation);
-			top_numberPodiumsKTLC_Values.add(i, podiums);
-			top_numberPodiumsKTLC_Ratios.add(i, (double)totalPodium / (double)numberParticipation);
+			Rank<int[]> r = new Rank<int[]>(player, participation, ratio, podiums);
+			ranking.add(i, r);
 		}
+		
+		return ranking;
 	}
 	
 	/**
-	 * TODO TOP10
+	 * Calculate the ranking regarding the Number of podiums performed during the races of the KTLCs
+	 * by the players from the list, on ALL the KTLCs.
+	 * @param players
+	 * @return the list of size LENGTH_TOP of the best players with their values
 	 */
-	private void calcTOPxNumberPodiumsRace() {
-		top_numberPodiumsRace_Players = new ArrayList<Player>(LENGTH_TOP);
-		top_numberPodiumsRace_Participations = new ArrayList<Integer>();
-		top_numberPodiumsRace_Values = new ArrayList<int[]>(LENGTH_TOP);
-		top_numberPodiumsRace_Ratios = new ArrayList<Double>(LENGTH_TOP);
+	public static List<Rank<int[]>> calcRankingNumberPodiumsRace(List<Player> players) {
+		List<Rank<int[]>> ranking = new ArrayList<Rank<int[]>>();
 		
 		// calculate the number of podiums by race for each player
 		int[][] numberPodiumByPlayerID = new int[players.size()][RANK_INTEREST + 1];
@@ -326,101 +403,17 @@ public class Statistics {
 			int index = players.size() - 1 - i;
 			
 			Player player = Player.findById((long)numberPodiumByPlayerID[index][0]);
-			int numberPlayedMap = KTLCRaceResult.findByPlayer(player).size();
+			int participation = KTLCRaceResult.findByPlayer(player).size();
 			
 			int[] podiums = Arrays.copyOfRange(numberPodiumByPlayerID[index], 1, RANK_INTEREST + 1);
 			int totalPodium = podiums[0] + podiums[1] + podiums[3];
+			double ratio = (double)totalPodium / (double)participation;
 			
-			top_numberPodiumsRace_Players.add(i, player);
-			top_numberPodiumsRace_Participations.add(i, numberPlayedMap);
-			top_numberPodiumsRace_Values.add(i, podiums);
-			top_numberPodiumsRace_Ratios.add(i, (double)totalPodium / (double)numberPlayedMap);
-		}
-	}
-	
-	/**
-	 * TODO TOP10
-	 */
-	private void calcTOPxNumberMapsByPlayer() {
-		top_numberMaps_Players = new ArrayList<Player>(LENGTH_TOP);
-		top_numberMaps_Values = new ArrayList<Integer>(LENGTH_TOP);
-		
-		// calculate the number of maps for each player
-		int[][] numberMapsByPlayerID = new int[players.size()][2];
-		
-		int currentIndex = 0;
-		for (Player player : players) {
-			numberMapsByPlayerID[currentIndex][0] = player.id.intValue();
-			numberMapsByPlayerID[currentIndex][1] = TMMap.findByPlayer(player).size();
-			currentIndex++;
+			Rank<int[]> r = new Rank<int[]>(player, participation, ratio, podiums);
+			ranking.add(i, r);
 		}
 		
-		// sort the array by ASCENDING participation rate
-		Arrays.sort(numberMapsByPlayerID, new Comparator<int[]>() {
-            @Override
-            public int compare(final int[] entry1, final int[] entry2) {
-                final Integer numberMaps1 = entry1[1];
-                final Integer numberMaps2 = entry2[1];
-                return numberMaps1.compareTo(numberMaps2);
-            }
-        });
-		
-		// create the structure for holding results
-		for (int i = 0; i < LENGTH_TOP; i++) {
-			int index = players.size() - 1 - i;
-			Player player = Player.findById((long)numberMapsByPlayerID[index][0]);
-			int value = numberMapsByPlayerID[index][1];
-			
-			top_numberMaps_Players.add(i, player);
-			top_numberMaps_Values.add(i, value);
-		}
-	}
-	
-	/**
-	 * TODO TOP10
-	 */
-	private void calcTOPxAverageRankByKTLC() {
-		top_averageRank_Players = new ArrayList<Player>(LENGTH_TOP);
-		top_averageRank_Values = new ArrayList<Double>(LENGTH_TOP);
-		top_averageRank_Participations = new ArrayList<Integer>(LENGTH_TOP);
-		
-		// calculate the number of maps for each player
-		double[][] averageRankByPlayerID = new double[players.size()][2];
-		
-		int currentIndex = 0;
-		for (Player player: players) {
-			averageRankByPlayerID[currentIndex][0] = player.id.doubleValue();
-			averageRankByPlayerID[currentIndex][1] = averageRankByPlayer(player);
-			currentIndex++;
-		}
-		
-		// sort the array by ASCENDING participation rate
-		Arrays.sort(averageRankByPlayerID, new Comparator<double[]>() {
-            @Override
-            public int compare(final double[] entry1, final double[] entry2) {
-                final Double averageRank1 = entry1[1];
-                final Double averageRank2 = entry2[1];
-                return averageRank1.compareTo(averageRank2);
-            }
-        });
-		
-		// create the structure for holding results,
-		// but only for players with at least MIN_PARTICIPATION
-		int currentCount = 0;
-		for (int i = 0; i < players.size(); i++) {
-			Player player = Player.findById((long)averageRankByPlayerID[i][0]);
-			double value = averageRankByPlayerID[i][1];
-			int numberParticipation = KTLCResult.findByPlayer(player).size();
-			
-			if (numberParticipation >= (MIN_PERCENTAGE_PARTICIPATIONS*ktlcs.size()/100)) {
-				top_averageRank_Players.add(currentCount, player);
-				top_averageRank_Values.add(currentCount, value);
-				top_averageRank_Participations.add(currentCount, numberParticipation);
-				currentCount++;
-				
-				if (currentCount == LENGTH_TOP) { break; }
-			}
-		}
+		return ranking;
 	}
 	
 	/**

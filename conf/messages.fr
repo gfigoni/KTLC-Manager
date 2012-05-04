@@ -2,7 +2,7 @@ title.default = Kill The Last Cup
 title.ktlc = Kill The Last Cup | édition #%s
 title.players = Kill The Last Cup | joueurs
 title.player = Kill The Last Cup | %s
-title.stats = Kill The Last Cup | Statistiques
+title.stats = Kill The Last Cup | statistiques
 
 main.home = Accueil
 main.players = Joueurs
@@ -25,6 +25,11 @@ player.score = Score
 player.nbraces = Courses
 player.rounds = Tours
 
+stats.title_generalStats = Statistiques Générales
+stats.title_playerChart = Nombre de Joueurs par KTLC
+stats.title_enviroChart = Nombre de Maps par Environment
+stats.title_hallOfFame = Temple de la Gloire
+stats.title_hallOfShame = Temple de la Honte
 stats.total = Total
 stats.ratio = Ratio
 stats.first = 1er

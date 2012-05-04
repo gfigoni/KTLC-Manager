@@ -458,6 +458,11 @@ td{
 /***********************************
 *             STATS                *
 ***********************************/
+.statsSpace {
+	padding-top: 20px;
+	padding-bottom: 20px;
+}
+
 .content_generalStats p {
 	color: #b6b6b6;
 }
@@ -468,7 +473,7 @@ td{
 
 .content_generalStats h1 {
 	font-weight: bold;
-	font-size: 18px;
+	font-size: 20px;
 	margin: 0;
 	padding: 0;
 	margin-bottom: 10px;
