@@ -142,54 +142,60 @@
 </div>
 <div id="main">
     <div id="content">
+    	<div id="bg_stats"></div>
+    	<div class="cleaner"></div>
+    	
     	<div class="content_generalStats">
 	    	<h1>&{'stats.title_generalStats'}</h1>
-	    	<p>Version: ${statistics.getCreationDate().format('dd MMMM yyyy - hh:mm:ss')}</p>
-	    	<div class="content_chartLeft">
-		    	<table>
-		    		<tr>
-		    			<td>Total number of KTLC: (I18N)</td>
-		    			<td>${statistics.stats_numberKTLCs}</td>
+	    	<div class="measures_list">
+                <table>
+                    <tr>
+                        <th>&{'stats.measures'}</th>
+                        <th class="spacer_left">&{'stats.values'}</th>
+                    </tr>
+                    <tr>
+		    			<td>&{'stats.totalKTLCs'}</td>
+		    			<td class="spacer_left">${statistics.stats_numberKTLCs}</td>
 		    		</tr>
 		    		<tr>
-		    			<td>Total number of players: (I18N)</td>
-		    			<td>${statistics.stats_numberPlayers.format('#,##0')}</td>
+		    			<td>&{'stats.totalPlayers'}</td>
+		    			<td class="spacer_left">${statistics.stats_numberPlayers.format('#,##0')}</td>
 		    		</tr>
 		    		<tr>
-		    			<td>--> Average number of players by KTLC: (I18N)</td>
-		    			<td>${statistics.stats_averageNumberPlayersByKTLC.format('#,##0.00')}</td>
+		    			<td class="details">&{'stats.avgPlayers'}</td>
+		    			<td class="spacer_left">${statistics.stats_averageNumberPlayersByKTLC.format('#,##0.00')}</td>
 		    		</tr>
 		    		<tr>
-		    			<td>Total number of played maps: (I18N)</td>
-		    			<td>${statistics.stats_numberMaps.format('#,##0')}</td>
+		    			<td>&{'stats.totalMaps'}</td>
+		    			<td class="spacer_left">${statistics.stats_numberMaps.format('#,##0')}</td>
 		    		</tr>
 		    		<tr>
-		    			<td>--> Average number of maps by KTLC: (I18N)</td>
-		    			<td>${statistics.stats_averageNumberMapsByKTLC.format('#,##0.00')}</td>
+		    			<td class="details">&{'stats.avgMaps'}</td>
+		    			<td class="spacer_left">${statistics.stats_averageNumberMapsByKTLC.format('#,##0.00')}</td>
 		    		</tr>
 		    		<tr>
-		    			<td>Total number of played runs: (I18N)</td>
-		    			<td>${statistics.stats_numberRuns.format('#,##0')}</td>
-		    		</tr>
-	    		</table>
-	   		</div>
-	    	<div class="content_chartRight">
-	    		<table>
-		    		<tr>
-		    			<td>Biggest KTLC: (I18N)</td>
-		    			<td>
-		    				#{a @Application.ktlc(statistics.biggestKTLC.number)}&{'ktlc.number', statistics.biggestKTLC.number} 
-		    				(${statistics.biggestKTLC.date.format()} - &{'ktlc.nbparticipants',statistics.biggestKTLC.results.size()})#{/a}
-		    			</td>
+		    			<td>&{'stats.totalRuns'}</td>
+		    			<td class="spacer_left">${statistics.stats_numberRuns.format('#,##0')}</td>
 		    		</tr>
 		    		<tr>
-		    			<td>Smallest KTLC: (I18N)</td>
-		    			<td>
+	    			<td>&{'stats.biggest'}</td>
+	    			<td class="spacer_left">
+	    				#{a @Application.ktlc(statistics.biggestKTLC.number)}&{'ktlc.number', statistics.biggestKTLC.number} 
+	    				(${statistics.biggestKTLC.date.format()} - &{'ktlc.nbparticipants',statistics.biggestKTLC.results.size()})#{/a}
+	    			</td>
+		    		</tr>
+		    		<tr>
+		    			<td>&{'stats.smallest'}</td>
+		    			<td class="spacer_left">
 		    				#{a @Application.ktlc(statistics.smallestKTLC.number)}&{'ktlc.number', statistics.smallestKTLC.number} 
 		    				(${statistics.smallestKTLC.date.format()} - &{'ktlc.nbparticipants',statistics.smallestKTLC.results.size()})#{/a}
 		    			</td>
 		    		</tr>
-		    	</table>	    	
+		    		<tr>
+		    			<td><em>&{'stats.time'}</em></td>
+		    			<td class="spacer_left"><em>${statistics.getCreationDate().format('dd MMMM yyyy - hh:mm:ss')}</em></td>
+		    		</tr>
+               	</table>
 	    	</div>
     	</div>
     	
@@ -217,11 +223,11 @@
 	        	<!-- TOP 10 PLAYER -->
 		        <div class="ranking_content">		        
 		            <div class="ranking_title">
-		                <h2>Most Active Players (I18N)</h2>
+		                <h2>&{'stats.ranking_activity_title'}</h2>
 		            </div>
 		            <div class="ranking_list">
 		                <table>
-		                	<caption>Top${statistics.LENGTH_TOP} of the players which participate the most often to the KTLCs. (I18N)</caption>
+		                	<caption>&{'stats.ranking_activity_legend', statistics.LENGTH_TOP}</caption>
 		                    <tr>
 		                        <th>&{'player.rank'}</th>
 		                        <th class="spacer_both">&{'player'}</th>
@@ -230,7 +236,7 @@
 		                    </tr>
 		                    #{list items:0..statistics.LENGTH_TOP - 1, as:'i'}
 		                    <tr>
-		                        <td>${i + 1}</td>
+		                        #{if i < 3 }<td class="podium_${i + 1}"></td>#{/if}#{else}<td>${i + 1}</td>#{/else}
 		                        <td class="spacer_both">#{a @Application.player(statistics.ranking_numberParticipation.get(i).login)}${statistics.ranking_numberParticipation.get(i).player.name}#{/a}</td>
 		                        <td>${(statistics.ranking_numberParticipation.get(i).ratio*100.0).format('0.00')} %</td>
 		                        <td class="spacer_left">${statistics.ranking_numberParticipation.get(i).participation}</td>
@@ -244,11 +250,11 @@
 		        <!-- TOP 10 PLAYER -->
 		        <div class="ranking_content">		        
 		            <div class="ranking_title">
-		                <h2>Best Average Rank (I18N)</h2>
+		                <h2>&{'stats.ranking_avgRank_title'}</h2>
 		            </div>
 		            <div class="ranking_list">
 		                <table>
-		                	<caption>Top${statistics.LENGTH_TOP} of the players with the <strong>Best Average Ranks</strong>. Only players which participated to at least ${statistics.MIN_PERCENTAGE_PARTICIPATIONS}% of the KTLCs are counted. (I18N)</caption>
+		                	<caption>&{'stats.ranking_avgRank_legend', statistics.LENGTH_TOP, statistics.MIN_PERCENTAGE_PARTICIPATIONS}</caption>
 		                    <tr>
 		                        <th>&{'player.rank'}</th>
 		                        <th class="spacer_both">&{'player'}</th>
@@ -257,7 +263,7 @@
 		                    </tr>
 		                    #{list items:0..statistics.LENGTH_TOP - 1, as:'i'}
 		                    <tr>
-		                        <td>${i + 1}</td>
+		                    	#{if i < 3 }<td class="podium_${i + 1}"></td>#{/if}#{else}<td>${i + 1}</td>#{/else}
 		                        <td class="spacer_both">#{a @Application.player(statistics.ranking_averageRank.get(i).login)}${statistics.ranking_averageRank.get(i).player.name}#{/a}</td>
 		                        <td>${statistics.ranking_averageRank.get(i).value.format('0.00')}</td>
 		                        <td class="spacer_left">${statistics.ranking_averageRank.get(i).participation}</td>
@@ -271,11 +277,11 @@
 		        <!-- TOP 10 PLAYER -->
 		        <div class="ranking_content">		        
 		            <div class="ranking_title">
-		                <h2>Most Productive Mappers (I18N)</h2>
+		                <h2>&{'stats.ranking_mapper_title'}</h2>
 		            </div>
 		            <div class="ranking_list">
 		                <table>
-		                	<caption>Top${statistics.LENGTH_TOP} of the track builders which created the highest number of maps for the KTLC. (I18N)</caption>
+		                	<caption>&{'stats.ranking_mapper_legend', statistics.LENGTH_TOP}</caption>
 		                    <tr>
 		                        <th>&{'player.rank'}</th>
 		                        <th class="spacer_both">&{'player'}</th>
@@ -283,7 +289,7 @@
 		                    </tr>
 		                    #{list items:0..statistics.LENGTH_TOP - 1, as:'i'}
 		                    <tr>
-		                        <td>${i + 1}</td>
+		                        #{if i < 3 }<td class="podium_${i + 1}"></td>#{/if}#{else}<td>${i + 1}</td>#{/else}
 		                        <td class="spacer_both">#{a @Application.player(statistics.ranking_numberMaps.get(i).login)}${statistics.ranking_numberMaps.get(i).player.name}#{/a}</td>
 		                        <td>${statistics.ranking_numberMaps.get(i).value}</td>
 		                    </tr>
@@ -296,11 +302,11 @@
 		        <!-- TOP 10 PLAYER -->
 		        <div class="ranking_content">		        
 		            <div class="ranking_title">
-		                <h2>Highest Number of Podiums by KTLC (I18N)</h2>
+		                <h2>&{'stats.ranking_podiumKTLC_title'}</h2>
 		            </div>
 		            <div class="ranking_list">
 		                <table>
-		                	<caption>Top${statistics.LENGTH_TOP} of the players with the highest number of <strong>podium</strong> performed during the <strong>KTLC</strong>, with respect to the total number of KTLC they played. Results beyond the third place are not used. (I18N)</caption>
+		                	<caption>&{'stats.ranking_podiumKTLC_legend', statistics.LENGTH_TOP}</caption>
 		                    <tr>
 		                        <th>&{'player.rank'}</th>
 		                        <th class="spacer_both">&{'player'}</th>
@@ -313,7 +319,7 @@
 		                    </tr>
 		                    #{list items:0..statistics.LENGTH_TOP - 1, as:'i'}
 		                    <tr>
-		                        <td>${i + 1}</td>
+		                        #{if i < 3 }<td class="podium_${i + 1}"></td>#{/if}#{else}<td>${i + 1}</td>#{/else}
 		                        <td class="spacer_both">#{a @Application.player(statistics.ranking_numberPodiumsRTLC.get(i).login)}${statistics.ranking_numberPodiumsRTLC.get(i).player.name}#{/a}</td>
 		                        <td><strong>${statistics.ranking_numberPodiumsRTLC.get(i).value[0] + statistics.ranking_numberPodiumsRTLC.get(i).value[1] + statistics.ranking_numberPodiumsRTLC.get(i).value[2]}</strong> / ${statistics.ranking_numberPodiumsRTLC.get(i).participation}</td>
 		                        <td class="spacer_right"><em>${(statistics.ranking_numberPodiumsRTLC.get(i).ratio*100.0).format('0.00')} %</em></td>
@@ -331,11 +337,11 @@
 		        <!-- TOP 10 PLAYER -->
 		        <div class="ranking_content">		        
 		            <div class="ranking_title">
-		                <h2>Highest Number of Podiums by Maps (I18N)</h2>
+		                <h2>&{'stats.ranking_podiumRace_title'}</h2>
 		            </div>
 		            <div class="ranking_list">
 		                <table>
-		                	<caption>Top${statistics.LENGTH_TOP} of the players with the highest number of <strong>podium</strong> performed during the <strong>races</strong> of the KTLCs, with respect to the total number of maps they played. Results beyond the third place are not used. (I18N)</caption>
+		                	<caption>&{'stats.ranking_podiumRace_legend', statistics.LENGTH_TOP}</caption>
 		                    <tr>
 		                        <th>&{'player.rank'}</th>
 		                        <th class="spacer_both">&{'player'}</th>
@@ -348,7 +354,7 @@
 		                    </tr>
 		                    #{list items:0..statistics.LENGTH_TOP - 1, as:'i'}
 		                    <tr>
-		                        <td>${i + 1}</td>
+		                        #{if i < 3 }<td class="podium_${i + 1}"></td>#{/if}#{else}<td>${i + 1}</td>#{/else}
 		                        <td class="spacer_both">#{a @Application.player(statistics.ranking_numberPodiumsRace.get(i).login)}${statistics.ranking_numberPodiumsRace.get(i).player.name}#{/a}</td>
 		                        <td><strong>${statistics.ranking_numberPodiumsRace.get(i).value[0] + statistics.ranking_numberPodiumsRace.get(i).value[1] + statistics.ranking_numberPodiumsRace.get(i).value[2]}</strong> / ${statistics.ranking_numberPodiumsRace.get(i).participation}</td>
 		                        <td class="spacer_right"><em>${(statistics.ranking_numberPodiumsRace.get(i).ratio*100.0).format('0.00')} %</em></td>

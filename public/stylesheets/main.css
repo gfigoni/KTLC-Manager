@@ -463,6 +463,14 @@ td{
 	padding-bottom: 20px;
 }
 
+#bg_stats {
+	width: 351px;
+	height: 308px;
+	background:  url(img/bg_car_canyon_corner_top_right.png) no-repeat;
+	position: absolute;
+	margin-left: 530px;
+}
+
 .content_generalStats p {
 	color: #b6b6b6;
 }
@@ -514,11 +522,13 @@ td{
 	margin-bottom: 5px;
 }
 
-.ranking_list {
+.ranking_list,
+.measures_list {
 	clear: both;
 }
 
-.ranking_list table {
+.ranking_list table,
+.measures_list table {
 	background-color: #484742;
 	min-width: 225px;
 }
@@ -532,7 +542,8 @@ td{
 	min-height: 55px;
 }
 
-.ranking_list td {
+.ranking_list td,
+.measures_list td {
 	line-height: 10px;
 	vertical-align: middle;
 	text-align: center;
@@ -541,27 +552,37 @@ td{
 	padding-right: 10px;
 }
 
+.measures_list td {
+	text-align: left;
+}
+
 .ranking_list th {
 	vertical-align: middle;
 	text-align: center;
 	padding-left: 5px;
 	padding-right: 5px;
-} 
+}
 
-.ranking_list tr:nth-child(odd) {
+.measures_list th {
+	text-align: left;
+	padding-left: 10px;
+	padding-right: 10px;
+}
+
+.ranking_list tr:nth-child(odd),
+.measures_list tr:nth-child(odd) {
 	background-color: #3D3B37;
 }
 
-.ranking_list td:nth-child(2) {
-	text-align: left;
-}
-
+.ranking_list td:nth-child(2),
 .ranking_list th:nth-child(2) {
 	text-align: left;
 }
 
 .ranking_list th.spacer_both,
-.ranking_list td.spacer_both {
+.measures_list th.spacer_both,
+.ranking_list td.spacer_both,
+.measures_list td.spacer_both {
 	border-left: 1px solid black;
 	border-right: 1px solid black;
 	padding-left: 10px;
@@ -569,19 +590,44 @@ td{
 }
 
 .ranking_list th.spacer_right,
-.ranking_list td.spacer_right {
+.measures_list th.spacer_right,
+.ranking_list td.spacer_right,
+.measures_list td.spacer_right {
 	border-right: 1px solid black;
 	padding-left: 10px;
 	padding-right: 10px;
 }
 
 .ranking_list th.spacer_left,
-.ranking_list td.spacer_left {
+.measures_list th.spacer_left,
+.ranking_list td.spacer_left,
+.measures_list td.spacer_left {
 	border-left: 1px solid black;
 	padding-left: 10px;
 	padding-right: 10px;
 	
-} 
+}
+
+.measures_list td.details {
+	background: transparent url(img/list.png) no-repeat scroll;
+	background-position: 10px 8px;
+	padding-left: 20px;
+}
+
+.ranking_list td.podium_1 {
+	background: url(img/tropheegold_tiny.png) no-repeat;
+	background-position: center;
+}
+
+.ranking_list td.podium_2 {
+	background: url(img/tropheesilver_tiny.png) no-repeat;
+	background-position: center;
+}
+
+.ranking_list td.podium_3 {
+	background: url(img/tropheebronze_tiny.png) no-repeat;
+	background-position: center;
+}
 
 /***********************************
 *             FOOTER               *
