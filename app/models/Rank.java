@@ -29,7 +29,11 @@ public class Rank<V> {
 	 */
 	public Rank(Player player, int participation, double ratio) {
 		this.player = player;
-		login = player.logins.get(0).name;
+		if (player != null) {
+			login = player.logins.get(0).name;
+		} else {
+			login = null;
+		}
 		this.participation = participation;
 		this.ratio = ratio;
 		value = null;
@@ -44,7 +48,11 @@ public class Rank<V> {
 	 */	
 	public Rank(Player player, int participation, double ratio, V value) {
 		this.player = player;
-		login = player.logins.get(0).name;
+		if (player != null) {
+			login = player.logins.get(0).name;
+		} else {
+			login = null;
+		}
 		this.participation = participation;
 		this.ratio = ratio;
 		this.value = value;

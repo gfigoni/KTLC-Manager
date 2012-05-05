@@ -575,7 +575,10 @@ td{
 }
 
 .ranking_list td:nth-child(2),
-.ranking_list th:nth-child(2) {
+.ranking_list th:nth-child(2),
+.ranking_list td.author_column,
+.ranking_list th.author_column {
+	min-width: 70px;
 	text-align: left;
 }
 

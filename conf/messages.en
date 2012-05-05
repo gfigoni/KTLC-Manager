@@ -39,6 +39,13 @@ stats.fourth = 4th
 stats.maps = # Maps
 stats.ktlcs = # KTLCs
 stats.averageRank = Average Rank
+stats.victims = # Victims
+stats.author = Author
+stats.map = Map
+stats.enviro = Environment
+stats.totalKTLC_TMU = Number of KTLC TMU (SKTLC TMU)
+stats.totalKTLC_TM2 = Number of KTLC TM2
+
 stats.measures = Measures
 stats.values = Values
 stats.totalKTLCs = Total number of KTLCs

@@ -27,9 +27,9 @@ player.rounds = Tours
 
 stats.title_generalStats = Statistiques Générales
 stats.title_playerChart = Nombre de Joueurs par KTLC
-stats.title_enviroChart = Nombre de Maps par Environment
-stats.title_hallOfFame = Temple de la Gloire
-stats.title_hallOfShame = Temple de la Honte
+stats.title_enviroChart = Nombre de Maps par Environement
+stats.title_hallOfFame = Panthéon de la Gloire
+stats.title_hallOfShame = Panthéon de la Honte
 stats.total = Total
 stats.ratio = Ratio
 stats.first = 1er
@@ -39,6 +39,8 @@ stats.fourth = 4e
 stats.maps = # Maps
 stats.ktlcs = # KTLCs
 stats.averageRank = Place Moyenne
+stats.totalKTLC_TMU = Nombre de KTLC TMU (SKTLC TMU)
+stats.totalKTLC_TM2 = Nombre de KTLC TM2
 
 stats.measures = Mesures
 stats.values = Valeurs
