@@ -1,8 +1,14 @@
-package models;
+package models.stats;
 
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+
+import models.KTLCEdition;
+import models.KTLCRace;
+import models.Player;
+import models.TMEnvironment;
+import models.TMMap;
 
 /**
  * 
@@ -44,8 +50,9 @@ public class GeneralStatistic {
 	public List<Rank> 		 	ranking_numberParticipation;
 	public List<Rank<Double>> 	ranking_bestAverageRank;
 	public List<Rank<Integer>>	ranking_numberMaps;
-	public List<Rank<int[]>> 	ranking_numberPodiumsRTLC;
+	public List<Rank<int[]>> 	ranking_numberPodiumsKTLC;
 	public List<Rank<int[]>>	ranking_numberPodiumsRace;
+	public List<Rank<List<KTLCEdition>>> ranking_numberPerfect;
 	
 	public List<Rank<KTLCRace>> ranking_violentMaps;
 	public List<Rank<Integer>>	ranking_numberLastPlaceKTLC;

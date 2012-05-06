@@ -7,7 +7,7 @@ import java.util.List;
 import models.KTLCEdition;
 import models.KTLCResult;
 import models.Player;
-import models.GeneralStatistic;
+import models.stats.GeneralStatistic;
 import play.mvc.Controller;
 
 public class Application extends Controller {
@@ -54,9 +54,9 @@ public class Application extends Controller {
     
     public static void statistics() {
     	GeneralStatistic statistics = GeneralStatistic.getUniqueInstance();
-    	if(!statistics.isInitialized()) {
+//    	if(!statistics.isInitialized()) {
     		Statistics.updateAllGeneralStatistics(GeneralStatistic.getUniqueInstance());
-    	}
+//    	}
     	render(statistics);
     }
 }

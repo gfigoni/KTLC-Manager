@@ -230,6 +230,37 @@
 	        	<!-- TOP 10 PLAYER -->
 		        <div class="ranking_content">		        
 		            <div class="ranking_title">
+		                <h2>Number Perfect (I18N)</h2>
+		            </div>
+		            <div class="ranking_list">
+		                <table>
+		                	<caption>bla bla bla (I18N)</caption>
+		                    <tr>
+		                        <th>&{'player.rank'}</th>
+		                        <th class="spacer_both">&{'player'}</th>
+		                        <th>Num Perfect (I18N)</th>
+		                        <th class="spacer_left">KTLCs (I18N)</th>
+		                    </tr>
+		                    #{list items:0..statistics.ranking_numberPerfect.size() - 1, as:'i'}
+		                    <tr>
+		                        #{if i < 3 }<td class="podium_${i + 1}"></td>#{/if}#{else}<td>${i + 1}</td>#{/else}
+		                        <td class="spacer_both">#{a @Application.player(statistics.ranking_numberPerfect.get(i).login)}${statistics.ranking_numberPerfect.get(i).player.name}#{/a}</td>
+		                        <td>${statistics.ranking_numberPerfect.get(i).value.size()} / ${statistics.ranking_numberPerfect.get(i).participation}</td>
+		                        <td class="spacer_left">
+		                        	#{list items:0..statistics.ranking_numberPerfect.get(i).value.size() - 1, as:'j'}
+		                        	#{a @Application.ktlc(statistics.ranking_numberPerfect.get(i).value.get(j).number)}  #${statistics.ranking_numberPerfect.get(i).value.get(j).number}#{/a}
+		                        	#{/list}
+		                        </td>
+		                    </tr>
+		                    #{/list}
+		                </table>
+		            </div>
+		        </div>
+		        <!-- /TOP 10 PLAYER -->
+	        
+	        	<!-- TOP 10 PLAYER -->
+		        <div class="ranking_content">		        
+		            <div class="ranking_title">
 		                <h2>&{'stats.ranking_activity_title'}</h2>
 		            </div>
 		            <div class="ranking_list">
@@ -327,13 +358,13 @@
 		                    #{list items:0..statistics.LENGTH_TOP - 1, as:'i'}
 		                    <tr>
 		                        #{if i < 3 }<td class="podium_${i + 1}"></td>#{/if}#{else}<td>${i + 1}</td>#{/else}
-		                        <td class="spacer_both">#{a @Application.player(statistics.ranking_numberPodiumsRTLC.get(i).login)}${statistics.ranking_numberPodiumsRTLC.get(i).player.name}#{/a}</td>
-		                        <td><strong>${statistics.ranking_numberPodiumsRTLC.get(i).value[0] + statistics.ranking_numberPodiumsRTLC.get(i).value[1] + statistics.ranking_numberPodiumsRTLC.get(i).value[2]}</strong> / ${statistics.ranking_numberPodiumsRTLC.get(i).participation}</td>
-		                        <td class="spacer_right"><em>${(statistics.ranking_numberPodiumsRTLC.get(i).ratio*100.0).format('0.00')} %</em></td>
-		                        <td>${statistics.ranking_numberPodiumsRTLC.get(i).value[0]}</td>
-		                        <td>${statistics.ranking_numberPodiumsRTLC.get(i).value[1]}</td>
-		                        <td>${statistics.ranking_numberPodiumsRTLC.get(i).value[2]}</td>
-		                        <td>(${statistics.ranking_numberPodiumsRTLC.get(i).value[3]})</td>
+		                        <td class="spacer_both">#{a @Application.player(statistics.ranking_numberPodiumsKTLC.get(i).login)}${statistics.ranking_numberPodiumsKTLC.get(i).player.name}#{/a}</td>
+		                        <td><strong>${statistics.ranking_numberPodiumsKTLC.get(i).value[0] + statistics.ranking_numberPodiumsKTLC.get(i).value[1] + statistics.ranking_numberPodiumsKTLC.get(i).value[2]}</strong> / ${statistics.ranking_numberPodiumsKTLC.get(i).participation}</td>
+		                        <td class="spacer_right"><em>${(statistics.ranking_numberPodiumsKTLC.get(i).ratio*100.0).format('0.00')} %</em></td>
+		                        <td>${statistics.ranking_numberPodiumsKTLC.get(i).value[0]}</td>
+		                        <td>${statistics.ranking_numberPodiumsKTLC.get(i).value[1]}</td>
+		                        <td>${statistics.ranking_numberPodiumsKTLC.get(i).value[2]}</td>
+		                        <td>(${statistics.ranking_numberPodiumsKTLC.get(i).value[3]})</td>
 		                    </tr>
 		                    #{/list}
 		                </table>

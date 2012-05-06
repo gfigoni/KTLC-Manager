@@ -4,17 +4,20 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 
-import models.GeneralStatistic;
+import play.db.jpa.Model;
+
 import models.KTLCEdition;
 import models.KTLCRace;
 import models.KTLCRaceResult;
 import models.KTLCResult;
 import models.Player;
-import models.Rank;
 import models.TMEnvironment;
 import models.TMMap;
+import models.stats.GeneralStatistic;
+import models.stats.Rank;
 
 /**
  * This class is used to generate general statistics regarding the whole KTLC history.
@@ -63,8 +66,17 @@ public class Statistics {
 		stats.ranking_numberParticipation = calcRankingParticipatioRatio(stats.players);
 		stats.ranking_bestAverageRank = calcRankingBestAverageRank(stats.players);
 		stats.ranking_numberMaps = calcRankingNumberMaps(stats.players);
-		stats.ranking_numberPodiumsRTLC = calcRankingNumberPodiumsKTLC(stats.players);
+		stats.ranking_numberPodiumsKTLC = calcRankingNumberPodiumsKTLC(stats.players);
 		stats.ranking_numberPodiumsRace = calcRankingNumberPodiumsRace(stats.players);
+		stats.ranking_numberPerfect = calcRankingNumberPerfect();
+		
+		for (int i = 0; i < stats.ranking_numberPerfect.size(); i++) {
+			System.out.println("player: " + stats.ranking_numberPerfect.get(i).player.name +", numPerfect: " + stats.ranking_numberPerfect.get(i).value.size() + ", numKTLC: " + stats.ranking_numberPerfect.get(i).participation);
+			for (KTLCEdition edition : stats.ranking_numberPerfect.get(i).value) {
+				System.out.println("\t"+edition.number);
+			}
+		}
+		
 		
 		// ranking - hall of shame
 		List<KTLCRace> races = KTLCRace.findAll();
@@ -72,16 +84,6 @@ public class Statistics {
 		stats.ranking_numberLastPlaceKTLC = calcRankingNumberlastPlaceKTLC(stats.players);
 		stats.ranking_numberLastPlaceRace = calcRankingNumberlastPlaceRace(stats.players);
 		stats.ranking_worstAverageRank = calcRankingWorstAverageRank(stats.players);
-		
-		System.out.println("KTLC");
-		for (int i = 0; i < LENGTH_TOP; i++) {
-			System.out.println(i + " :" + stats.ranking_numberLastPlaceKTLC.get(i).player.name + ", num: " + stats.ranking_numberLastPlaceKTLC.get(i).value + " / " + stats.ranking_numberLastPlaceKTLC.get(i).participation);
-		}
-		
-		System.out.println("Race");
-		for (int i = 0; i < LENGTH_TOP; i++) {
-			System.out.println(i + " :" + stats.ranking_numberLastPlaceRace.get(i).player.name + ", num: " + stats.ranking_numberLastPlaceRace.get(i).value + " / " + stats.ranking_numberLastPlaceRace.get(i).participation);
-		}
 		
 		// change the status
 		stats.setInitialized(true);
@@ -477,7 +479,7 @@ public class Statistics {
 			int participation = KTLCResult.findByPlayer(player).size();
 			
 			int[] podiums = Arrays.copyOfRange(numberPodiumByPlayerID[index], 1, RANK_INTEREST + 1);
-			int totalPodium = podiums[0] + podiums[1] + podiums[3];
+			int totalPodium = podiums[0] + podiums[1] + podiums[2];
 			double ratio = (double)totalPodium / (double)participation;
 			
 			Rank<int[]> r = new Rank<int[]>(player, participation, ratio, podiums);
@@ -533,7 +535,7 @@ public class Statistics {
 			int participation = KTLCRaceResult.findByPlayer(player).size();
 			
 			int[] podiums = Arrays.copyOfRange(numberPodiumByPlayerID[index], 1, RANK_INTEREST + 1);
-			int totalPodium = podiums[0] + podiums[1] + podiums[3];
+			int totalPodium = podiums[0] + podiums[1] + podiums[2];
 			double ratio = (double)totalPodium / (double)participation;
 			
 			Rank<int[]> r = new Rank<int[]>(player, participation, ratio, podiums);
@@ -711,6 +713,93 @@ public class Statistics {
 		return ranking;		
 	}
 	
+	/**
+	 * TODO
+	 * @param players
+	 * @return
+	 */
+	public static List<Rank<List<KTLCEdition>>> calcRankingNumberPerfect() {
+		List<Rank<List<KTLCEdition>>> ranking = new ArrayList<Rank<List<KTLCEdition>>>();
+		HashMap<Long, List<KTLCEdition>> listPerfectByPlayerID = new HashMap<Long, List<KTLCEdition>>(); 
+		
+		// find all the results of ktlc where a player finished first and with an rank average of 1, 
+		// which means that the player did win all the maps that he played
+		List<KTLCResult> results = KTLCResult.find("rank = 1 and rankAvg = 1").fetch(); 
+		
+		for (KTLCResult result : results) {
+			// if the player did win all the maps
+			if (result.nbRaces == result.ktlc.races.size()) {
+				Long playerID = Player.findByLogin(result.login.name).id;
+				List<KTLCEdition> editions;
+				if (listPerfectByPlayerID.containsKey(playerID)) {
+					editions = listPerfectByPlayerID.get(playerID);
+				} else {
+					editions = new ArrayList<KTLCEdition>();
+				}
+				//add the ktlc to the list of perfect of the player
+				editions.add(result.ktlc);
+				listPerfectByPlayerID.put(playerID, editions);
+			}
+		}
+		
+		// at this step, we know the players that really did a perfect and at which editions. Now, 
+		// we have to sort them to make the ranking. The sorting has to be done by number of ktlc, 
+		// and if equality, by editions...
+		int[][] numberPerfectByPlayerID = new int[listPerfectByPlayerID.keySet().size()][3];
+		int currentIndex = 0;
+		for (Long playerID : listPerfectByPlayerID.keySet()) {
+			Player player = Player.findById(playerID);
+			numberPerfectByPlayerID[currentIndex][0] = playerID.intValue();							// the player id
+			numberPerfectByPlayerID[currentIndex][1] = listPerfectByPlayerID.get(playerID).size();	// the number of perfect
+			numberPerfectByPlayerID[currentIndex][2] = KTLCResult.findByPlayer(player).size(); 		// the number of ktlc participated
+			currentIndex++;
+		}
+		
+		// sort the array by ASCENDING number of last place
+		Arrays.sort(numberPerfectByPlayerID, new Comparator<int[]>() {
+            @Override
+            public int compare(final int[] entry1, final int[] entry2) {
+                int numPerfect1 = entry1[1];
+                int numKTLC1 = entry1[2];
+                int numPerfect2 = entry2[1];
+                int numKTLC2 = entry2[2];
+                
+                if (numPerfect1 > numPerfect2) {
+                	return 1;
+                } else if (numPerfect1 < numPerfect2) {
+                	return -1;
+                } else {
+                	if (numKTLC1 > numKTLC2) {
+                		return -1;
+                	} else if (numKTLC1 < numKTLC2) {
+                		return 1;
+                	} else {
+                		return 0;
+                	}
+                }
+            }
+        });
+		
+		// create the structure for holding results
+		int currentCount = 0;
+		for (int i = 0; i < LENGTH_TOP; i++) {
+			int index = listPerfectByPlayerID.keySet().size() - 1 - i;
+			
+			Player player = Player.findById((long)numberPerfectByPlayerID[index][0]);
+			int participation = numberPerfectByPlayerID[index][2];
+			List<KTLCEdition> editions = listPerfectByPlayerID.get((long)numberPerfectByPlayerID[index][0]);
+			
+			Rank<List<KTLCEdition>> r = new Rank<List<KTLCEdition>>(player, participation, -1, editions);
+			ranking.add(i, r);
+			currentCount++;
+			
+			if (currentCount == listPerfectByPlayerID.keySet().size()) {
+				break;
+			}
+		}
+		
+		return ranking;
+	}
 	
 	/**
 	 * Calculate for a particular player his participation ratio (# participation / # KTLCs).

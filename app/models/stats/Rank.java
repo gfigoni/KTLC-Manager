@@ -1,6 +1,8 @@
-package models;
+package models.stats;
 
 import java.util.List;
+
+import models.Player;
 
 /**
  * This class is used to create ranking and store data about players
