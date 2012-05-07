@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<statisticConfig>
+    <lengthTop>15</lengthTop>
+    <minNumberMapsForEpicFail>2</minNumberMapsForEpicFail>
+    <minPercentageParticipations>10</minPercentageParticipations>
+    <rankInterest>4</rankInterest>
+</statisticConfig>

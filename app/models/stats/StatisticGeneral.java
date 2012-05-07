@@ -1,8 +1,12 @@
 package models.stats;
 
+import java.text.DateFormat;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
+import java.util.TimeZone;
 
 import models.KTLCEdition;
 import models.KTLCRace;
@@ -14,10 +18,10 @@ import models.TMMap;
  * 
  * @author Toub
  */
-public class GeneralStatistic {
+public class StatisticGeneral {
 	
 	/** The GeneralStatistic unique instance */
-	private static GeneralStatistic uniqueInstance;
+	private static StatisticGeneral uniqueInstance;
 	/** The initialization tag */
 	private boolean initialized;
 	/** The creation date of the statistics */
@@ -59,7 +63,7 @@ public class GeneralStatistic {
 	public List<Rank<List<KTLCEdition>>> ranking_numberEpicFail;
 
 	/** Private constructor for implementation of the singleton pattern */
-	private GeneralStatistic() { 
+	private StatisticGeneral() { 
 		initialized = false;
 	}
 	
@@ -67,10 +71,10 @@ public class GeneralStatistic {
 	 * Get the unique statistics
 	 * @return the uniqueInstace statistic
 	 */
-	public static GeneralStatistic getUniqueInstance() {
+	public static StatisticGeneral getUniqueInstance() {
 		if (uniqueInstance == null) {
 			// init the class
-			uniqueInstance = new GeneralStatistic();
+			uniqueInstance = new StatisticGeneral();
 		}
 		return uniqueInstance;
 	}

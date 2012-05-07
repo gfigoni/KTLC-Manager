@@ -4,11 +4,14 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import controllers.stats.StatisticsGenerator;
+
 import models.KTLCEdition;
 import models.KTLCResult;
 import models.Player;
-import models.stats.GeneralStatistic;
+import models.stats.StatisticGeneral;
 import play.mvc.Controller;
+import play.mvc.With;
 
 public class Application extends Controller {
 
@@ -53,9 +56,9 @@ public class Application extends Controller {
     }
     
     public static void statistics() {
-    	GeneralStatistic statistics = GeneralStatistic.getUniqueInstance();
+    	StatisticGeneral statistics = StatisticGeneral.getUniqueInstance();
     	if(!statistics.isInitialized()) {
-    		Statistics.updateAllGeneralStatistics(GeneralStatistic.getUniqueInstance());
+    		StatisticsGenerator.updateAllGeneralStatistics();
     	}
     	render(statistics);
     }

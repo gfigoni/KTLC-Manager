@@ -1,13 +1,11 @@
-package controllers;
+package controllers.stats;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
-
-import play.db.jpa.Model;
 
 import models.KTLCEdition;
 import models.KTLCRace;
@@ -16,32 +14,33 @@ import models.KTLCResult;
 import models.Player;
 import models.TMEnvironment;
 import models.TMMap;
-import models.stats.GeneralStatistic;
 import models.stats.Rank;
+import models.stats.StatisticConfig;
+import models.stats.StatisticGeneral;
 
 /**
  * This class is used to generate general statistics regarding the whole KTLC history.
  * @author Toub
  */
-public class Statistics {
-	/** The number of results that we want to have in the rankings */
-	private static final int LENGTH_TOP = 15;
-	/** The ranks that are counted for the podiums */
-	private static final int RANK_INTEREST = 4;
-	/** The minimal number of participation that are required to be counted in some TOPs */
-	private static final int MIN_PERCENTAGE_PARTICIPATIONS = 10;
-	/** The minimal number of map that a player have to play to be counted in the epic fail ranking */
-	private static final int MIN_NUMBER_MAPS_FOR_EPIC_FAIL = 2;
+public class StatisticsGenerator {
+	/** The configuration for the statistics calculations */
+	private static StatisticConfig config;
 	
 	/**
 	 * Update all the statistics, should be called only using administrator board... 
+	 * @return the elapsed time in milliseconds
 	 */
-	public static GeneralStatistic updateAllGeneralStatistics(GeneralStatistic stats) {
+	public static Long updateAllGeneralStatistics() {
+		Long startTime = System.nanoTime();
 		
-		stats.LENGTH_TOP = LENGTH_TOP;
-		stats.RANK_INTEREST = RANK_INTEREST;
-		stats.MIN_PERCENTAGE_PARTICIPATIONS = MIN_PERCENTAGE_PARTICIPATIONS;
-		stats.MIN_NUMBER_MAPS_FOR_EPIC_FAIL = MIN_NUMBER_MAPS_FOR_EPIC_FAIL;
+		StatisticGeneral stats = StatisticGeneral.getUniqueInstance();
+		
+		config = StatisticConfig.loadStatsConfig();
+		
+		stats.LENGTH_TOP = config.getLengthTop();
+		stats.RANK_INTEREST = config.getRankInterest();
+		stats.MIN_PERCENTAGE_PARTICIPATIONS = config.getMinPercentageParticipations();
+		stats.MIN_NUMBER_MAPS_FOR_EPIC_FAIL = config.getMinNumberMapsForEpicFail();
 		
 		List<KTLCEdition> ktlcs = KTLCEdition.find("order by date asc").fetch();
 		List<Player> players = Player.find("order by name asc").fetch();
@@ -67,24 +66,27 @@ public class Statistics {
 		stats.biggestKTLC = calcMaxNumberPlayers(ktlcs);
 		
 		// rankings - hall of fame
-		stats.ranking_numberParticipation = calcRankingParticipatioRatio(players);
-		stats.ranking_bestAverageRank = calcRankingBestAverageRank(players);
-		stats.ranking_numberMaps = calcRankingNumberMaps(players);
-		stats.ranking_numberPodiumsKTLC = calcRankingNumberPodiumsKTLC(players);
-		stats.ranking_numberPodiumsRace = calcRankingNumberPodiumsRace(players);
+		stats.ranking_numberParticipation = calcRankingParticipatioRatio(players, config.getLengthTop());
+		stats.ranking_bestAverageRank = calcRankingBestAverageRank(players, config.getLengthTop(), config.getMinPercentageParticipations());
+		stats.ranking_numberMaps = calcRankingNumberMaps(players, config.getLengthTop());
+		stats.ranking_numberPodiumsKTLC = calcRankingNumberPodiumsKTLC(players, config.getLengthTop(), config.getRankInterest());
+		stats.ranking_numberPodiumsRace = calcRankingNumberPodiumsRace(players, config.getLengthTop(), config.getRankInterest());
 		stats.ranking_numberPerfect = calcRankingNumberPerfect();
 		
 		// ranking - hall of shame
 		List<KTLCRace> races = KTLCRace.findAll();
-		stats.ranking_violentMaps = calcRankingViolentMaps(races);
-		stats.ranking_numberLastPlaceKTLC = calcRankingNumberlastPlaceKTLC(players);
-		stats.ranking_numberLastPlaceRace = calcRankingNumberlastPlaceRace(players);
-		stats.ranking_worstAverageRank = calcRankingWorstAverageRank(players);
-		stats.ranking_numberEpicFail = calcRankingNumberEpicFail();
+		stats.ranking_violentMaps = calcRankingViolentMaps(races, config.getLengthTop());
+		stats.ranking_numberLastPlaceKTLC = calcRankingNumberlastPlaceKTLC(players, config.getLengthTop(), config.getMinPercentageParticipations());
+		stats.ranking_numberLastPlaceRace = calcRankingNumberlastPlaceRace(players, config.getLengthTop());
+		stats.ranking_worstAverageRank = calcRankingWorstAverageRank(players, config.getLengthTop(), config.getMinPercentageParticipations());
+		stats.ranking_numberEpicFail = calcRankingNumberEpicFail(config.getMinNumberMapsForEpicFail());
 		
 		// change the status
 		stats.setInitialized(true);
-		return stats;
+		
+		Long endTime = System.nanoTime();
+		
+		return Math.abs(endTime - startTime) / 1000000;
 	}
 	
 	/**
@@ -260,10 +262,11 @@ public class Statistics {
 	 * Calculate the ranking regarding the Participation Ratio of a list of players, 
 	 * on ALL the KTLCs.
 	 * @param players the list of players
-	 * @return the list of size LENGTH_TOP of the best players with their values
+	 * @param lengthTop the size of the top
+	 * @return the list of size lengthTop of the best players with their values
 	 */
-	public static List<Rank> calcRankingParticipatioRatio(List<Player> players) {
-		List<Rank> ranking = new ArrayList<Rank>(LENGTH_TOP);
+	public static List<Rank> calcRankingParticipatioRatio(List<Player> players, int lengthTop) {
+		List<Rank> ranking = new ArrayList<Rank>(lengthTop);
 		int numberKTLCs = KTLCEdition.findAll().size();
 		
 		// calculate the participation ratio for each player
@@ -287,7 +290,7 @@ public class Statistics {
         });
 		
 		// Add the best results to the ranking create the structure for holding results
-		for (int i = 0; i < LENGTH_TOP; i++) {
+		for (int i = 0; i < lengthTop; i++) {
 			int index = players.size() - 1 - i;
 			
 			Player player = Player.findById(participationRatiosByPlayerID[index][0].longValue());
@@ -305,10 +308,12 @@ public class Statistics {
 	 * Calculate the ranking regarding the Best Average Rank of a list of players, 
 	 * on ALL the KTLCs.
 	 * @param players the list of players
-	 * @return the list of size LENGTH_TOP of the best players with their values
+	 * @param lengthTop the size of the top
+	 * @param minPercentage the minimal percentage that the players should have played to be considered
+	 * @return the list of size lengthTop of the best players with their values
 	 */
-	public static List<Rank<Double>> calcRankingBestAverageRank(List<Player> players) {
-		List<Rank<Double>> ranking = new ArrayList<Rank<Double>>(LENGTH_TOP);
+	public static List<Rank<Double>> calcRankingBestAverageRank(List<Player> players, int lengthTop, int MinPercentage) {
+		List<Rank<Double>> ranking = new ArrayList<Rank<Double>>(lengthTop);
 		int numberKTLC = KTLCEdition.findAll().size();
 		
 		// calculate the number of maps for each player
@@ -339,12 +344,12 @@ public class Statistics {
 			double value = averageRankByPlayerID[i][1];
 			int numberParticipation = KTLCResult.findByPlayer(player).size();
 			
-			if (numberParticipation >= (MIN_PERCENTAGE_PARTICIPATIONS*0.01*numberKTLC)) {
+			if (numberParticipation >= (MinPercentage*0.01*numberKTLC)) {
 				Rank<Double> r = new Rank<Double>(player, numberParticipation, -1, value);
 				ranking.add(currentCount, r);
 				
 				currentCount++;
-				if (currentCount == LENGTH_TOP) { break; }
+				if (currentCount == lengthTop) { break; }
 			}
 		}
 		
@@ -355,10 +360,12 @@ public class Statistics {
 	 * Calculate the ranking regarding the Worst Average Rank of a list of players, 
 	 * on ALL the KTLCs.
 	 * @param players the list of players
-	 * @return the list of size LENGTH_TOP of the best players with their values
+	 * @param lengthTop the size of the top
+	 * @param minPercentage the minimal percentage that the players should have played to be considered
+	 * @return the list of size lengthTop of the best players with their values
 	 */
-	public static List<Rank<Double>> calcRankingWorstAverageRank(List<Player> players) {
-		List<Rank<Double>> ranking = new ArrayList<Rank<Double>>(LENGTH_TOP);
+	public static List<Rank<Double>> calcRankingWorstAverageRank(List<Player> players, int lengthTop, int MinPercentage) {
+		List<Rank<Double>> ranking = new ArrayList<Rank<Double>>(lengthTop);
 		int numberKTLC = KTLCEdition.findAll().size();
 		
 		// calculate the number of maps for each player
@@ -389,12 +396,12 @@ public class Statistics {
 			double value = averageRankByPlayerID[i][1];
 			int numberParticipation = KTLCResult.findByPlayer(player).size();
 			
-			if (numberParticipation >= (MIN_PERCENTAGE_PARTICIPATIONS*0.01*numberKTLC)) {
+			if (numberParticipation >= (MinPercentage*0.01*numberKTLC)) {
 				Rank<Double> r = new Rank<Double>(player, numberParticipation, -1, value);
 				ranking.add(currentCount, r);
 				
 				currentCount++;
-				if (currentCount == LENGTH_TOP) { break; }
+				if (currentCount == lengthTop) { break; }
 			}
 		}
 		
@@ -404,11 +411,12 @@ public class Statistics {
 	/**
 	 * Calculate the ranking regarding the Number of map created by the players from the list, 
 	 * on ALL the KTLCs.
-	 * @param players
-	 * @return the list of size LENGTH_TOP of the best players with their values
+	 * @param players the list of players
+	 * @param lengthTop the size of the top
+	 * @return the list of size lengthTop of the best players with their values
 	 */
-	public static List<Rank<Integer>> calcRankingNumberMaps(List<Player> players) {
-		List<Rank<Integer>> ranking = new ArrayList<Rank<Integer>>(LENGTH_TOP);
+	public static List<Rank<Integer>> calcRankingNumberMaps(List<Player> players, int lengthTop) {
+		List<Rank<Integer>> ranking = new ArrayList<Rank<Integer>>(lengthTop);
 		
 		// calculate the number of maps for each player
 		int[][] numberMapsByPlayerID = new int[players.size()][2];
@@ -431,7 +439,7 @@ public class Statistics {
         });
 		
 		// create the structure for holding results
-		for (int i = 0; i < LENGTH_TOP; i++) {
+		for (int i = 0; i < lengthTop; i++) {
 			int index = players.size() - 1 - i;
 			
 			Player player = Player.findById((long)numberMapsByPlayerID[index][0]);
@@ -448,14 +456,16 @@ public class Statistics {
 	/**
 	 * Calculate the ranking regarding the Number of podiums performed during the KTLCs by the 
 	 * players from the list, on ALL the KTLCs.
-	 * @param players
-	 * @return the list of size LENGTH_TOP of the best players with their values
+	 * @param players the list of players
+	 * @param lengthTop the size of the top
+	 * @param rankInterest the last rank that should be considered (from 1st place to rankInterest)
+	 * @return the list of size lengthTop of the best players with their values
 	 */
-	public static List<Rank<int[]>> calcRankingNumberPodiumsKTLC(List<Player> players) {
-		List<Rank<int[]>> ranking = new ArrayList<Rank<int[]>>(LENGTH_TOP);
+	public static List<Rank<int[]>> calcRankingNumberPodiumsKTLC(List<Player> players, int lengthTop, int rankInterest) {
+		List<Rank<int[]>> ranking = new ArrayList<Rank<int[]>>(lengthTop);
 		
 		// calculate the number of podiums by KTLC for each player
-		int[][] numberPodiumByPlayerID = new int[players.size()][RANK_INTEREST + 1];
+		int[][] numberPodiumByPlayerID = new int[players.size()][rankInterest + 1];
 		
 		int currentIndex = 0;
 		for (Player player : players) {
@@ -465,7 +475,7 @@ public class Statistics {
 			List<KTLCResult> results = KTLCResult.findByPlayer(player);
 			if (!results.isEmpty()) {
 				for (KTLCResult result : results) {
-					if (result.rank <= RANK_INTEREST) {
+					if (result.rank <= rankInterest) {
 						numberPodiumByPlayerID[currentIndex][result.rank]++;
 					}
 				}
@@ -484,13 +494,13 @@ public class Statistics {
         });
 		
 		// create the structure for holding results
-		for (int i = 0; i < LENGTH_TOP; i++) {			
+		for (int i = 0; i < lengthTop; i++) {			
 			int index = players.size() - 1 - i;
 			
 			Player player = Player.findById((long)numberPodiumByPlayerID[index][0]);
 			int participation = KTLCResult.findByPlayer(player).size();
 			
-			int[] podiums = Arrays.copyOfRange(numberPodiumByPlayerID[index], 1, RANK_INTEREST + 1);
+			int[] podiums = Arrays.copyOfRange(numberPodiumByPlayerID[index], 1, rankInterest + 1);
 			int totalPodium = podiums[0] + podiums[1] + podiums[2];
 			double ratio = (double)totalPodium / (double)participation;
 			
@@ -504,14 +514,16 @@ public class Statistics {
 	/**
 	 * Calculate the ranking regarding the Number of podiums performed during the races of the KTLCs
 	 * by the players from the list, on ALL the KTLCs.
-	 * @param players
-	 * @return the list of size LENGTH_TOP of the best players with their values
+	 * @param players the list of players
+	 * @param lengthTop the size of the top
+	 * @param rankInterest the last rank that should be considered (from 1st place to rankInterest)
+	 * @return the list of size lengthTop of the best players with their values
 	 */
-	public static List<Rank<int[]>> calcRankingNumberPodiumsRace(List<Player> players) {
-		List<Rank<int[]>> ranking = new ArrayList<Rank<int[]>>();
+	public static List<Rank<int[]>> calcRankingNumberPodiumsRace(List<Player> players, int lengthTop, int rankInterest) {
+		List<Rank<int[]>> ranking = new ArrayList<Rank<int[]>>(lengthTop);
 		
 		// calculate the number of podiums by race for each player
-		int[][] numberPodiumByPlayerID = new int[players.size()][RANK_INTEREST + 1];
+		int[][] numberPodiumByPlayerID = new int[players.size()][rankInterest + 1];
 		
 		int currentIndex = 0;
 		for (Player player : players) {
@@ -521,7 +533,7 @@ public class Statistics {
 			List<KTLCRaceResult> results = KTLCRaceResult.findByPlayer(player);
 			if (!results.isEmpty()) {
 				for (KTLCRaceResult result : results) {
-					if (result.rank <= RANK_INTEREST) {
+					if (result.rank <= rankInterest) {
 						numberPodiumByPlayerID[currentIndex][result.rank]++;
 					}
 				}
@@ -540,13 +552,13 @@ public class Statistics {
         });
 		
 		// create the structure for holding results
-		for (int i = 0; i < LENGTH_TOP; i++) {
+		for (int i = 0; i < lengthTop; i++) {
 			int index = players.size() - 1 - i;
 			
 			Player player = Player.findById((long)numberPodiumByPlayerID[index][0]);
 			int participation = KTLCRaceResult.findByPlayer(player).size();
 			
-			int[] podiums = Arrays.copyOfRange(numberPodiumByPlayerID[index], 1, RANK_INTEREST + 1);
+			int[] podiums = Arrays.copyOfRange(numberPodiumByPlayerID[index], 1, rankInterest + 1);
 			int totalPodium = podiums[0] + podiums[1] + podiums[2];
 			double ratio = (double)totalPodium / (double)participation;
 			
@@ -560,11 +572,12 @@ public class Statistics {
 	/**
 	 * Calculate the ranking regarding the maps which eliminated the highest number of player, 
 	 * on ALL the KTLCs.
-	 * @param races
-	 * @return the list of size LENGTH_TOP of the most violent races with their values
+	 * @param races the list of races
+	 * @param lengthTop the size of the top
+	 * @return the list of size lengthTop of the most violent races with their values
 	 */
-	public static List<Rank<KTLCRace>> calcRankingViolentMaps(List<KTLCRace> races) {
-		List<Rank<KTLCRace>> ranking = new ArrayList<Rank<KTLCRace>>(LENGTH_TOP);
+	public static List<Rank<KTLCRace>> calcRankingViolentMaps(List<KTLCRace> races, int lengthTop) {
+		List<Rank<KTLCRace>> ranking = new ArrayList<Rank<KTLCRace>>(lengthTop);
 		
 		//calculate the number of elimination for each races
 		int[][] numberEliminationFirstLapByRaceID = new int[races.size()][2];
@@ -599,16 +612,18 @@ public class Statistics {
         });
 	
 		// create the structure for holding results,
-		for (int i = 0; i < LENGTH_TOP; i++) {
-			int index = races.size() - 1 - i;
-			
-			KTLCRace race = KTLCRace.findById((long)numberEliminationFirstLapByRaceID[index][0]);
+		int currentCount = 0;
+		for (int i = races.size() - 1; i >= 0; i--) {			
+			KTLCRace race = KTLCRace.findById((long)numberEliminationFirstLapByRaceID[i][0]);
 			Player author = Player.findByLogin(race.map.login.name);
 			// the number of elimination
-			int participation = numberEliminationFirstLapByRaceID[index][1];
+			int participation = numberEliminationFirstLapByRaceID[i][1];
 
 			Rank<KTLCRace> r = new Rank<KTLCRace>(author, participation, -1, race);
-			ranking.add(i, r);
+			ranking.add(currentCount, r);
+			
+			currentCount++;
+			if (currentCount == lengthTop) { break; }
 		}
 		
 		return ranking;
@@ -616,11 +631,12 @@ public class Statistics {
 	
 	/**
 	 * Calculate the ranking for the player that finished at the last place of a race
-	 * @param players
-	 * @return
+	 * @param players the list of players
+	 * @param lengthTop the size of the top
+	 * @return the list of size lengthTop of players with the highest number of last places
 	 */
-	public static List<Rank<Integer>> calcRankingNumberlastPlaceRace(List<Player> players) {
-		List<Rank<Integer>> ranking = new ArrayList<Rank<Integer>>(LENGTH_TOP);
+	public static List<Rank<Integer>> calcRankingNumberlastPlaceRace(List<Player> players, int lengthTop) {
+		List<Rank<Integer>> ranking = new ArrayList<Rank<Integer>>(lengthTop);
 		
 		// calculate the number of podiums by race for each player
 		int[][] numberLastPlaceByPlayerID = new int[players.size()][2];
@@ -653,17 +669,19 @@ public class Statistics {
         });
 		
 		// create the structure for holding results
-		for (int i = 0; i < LENGTH_TOP; i++) {
-			int index = players.size() - 1 - i;
-			
-			Player player = Player.findById((long)numberLastPlaceByPlayerID[index][0]);
+		int currentCount = 0;
+		for (int i = players.size() - 1; i >= 0; i--) {	
+			Player player = Player.findById((long)numberLastPlaceByPlayerID[i][0]);
 			int participation = KTLCRaceResult.findByPlayer(player).size();
 			
-			Integer numberLastPlace = numberLastPlaceByPlayerID[index][1];
+			Integer numberLastPlace = numberLastPlaceByPlayerID[i][1];
 			double ratio = (double)numberLastPlace / (double)participation;
 			
 			Rank<Integer> r = new Rank<Integer>(player, participation, ratio, numberLastPlace);
-			ranking.add(i, r);
+			ranking.add(currentCount, r);
+			
+			currentCount++;
+			if (currentCount == lengthTop) { break; }
 		}
 		
 		return ranking;		
@@ -671,11 +689,13 @@ public class Statistics {
 	
 	/**
 	 * Calculate the ranking for the player that finished at the last place of a KTLC
-	 * @param players
-	 * @return
+	 * @param players the list of players
+	 * @param lengthTop the size of the top
+	 * @param minPercentage the minimal percentage that the players should have played to be considered
+	 * @return the list of players of size lengthTop with the highest number of last places
 	 */
-	public static List<Rank<Integer>> calcRankingNumberlastPlaceKTLC(List<Player> players) {
-		List<Rank<Integer>> ranking = new ArrayList<Rank<Integer>>(LENGTH_TOP);
+	public static List<Rank<Integer>> calcRankingNumberlastPlaceKTLC(List<Player> players, int lengthTop, int minPercentage) {
+		List<Rank<Integer>> ranking = new ArrayList<Rank<Integer>>(lengthTop);
 		int numberKTLC = KTLCEdition.findAll().size();
 		
 		// calculate the number of podiums by race for each player
@@ -709,7 +729,7 @@ public class Statistics {
         });
 		
 		// create the structure for holding results,
-		// but only for players with at least MIN_PARTICIPATION
+		// but only for players with at least minPercentage of participation
 		int currentCount = 0;
 		for (int i = players.size() - 1; i >= 0; i--) {			
 			Player player = Player.findById((long)numberLastPlaceByPlayerID[i][0]);
@@ -718,12 +738,12 @@ public class Statistics {
 			Integer numberLastPlace = numberLastPlaceByPlayerID[i][1];
 			double ratio = (double)numberLastPlace / (double)participation;
 			
-			if (participation >= (MIN_PERCENTAGE_PARTICIPATIONS*0.01*numberKTLC)) {
+			if (participation >= (minPercentage*0.01*numberKTLC)) {
 				Rank<Integer> r = new Rank<Integer>(player, participation, ratio, numberLastPlace);
 				ranking.add(currentCount, r);
 				
 				currentCount++;
-				if (currentCount == LENGTH_TOP) { break; }
+				if (currentCount == lengthTop) { break; }
 			}			
 		}
 		
@@ -733,6 +753,7 @@ public class Statistics {
 	/**
 	 * Calculate the ranking for the player that made a "perfect" during a KTLC (finish all the map
 	 * at first place)
+	 * @return the list of players that performed perfects
 	 */
 	public static List<Rank<List<KTLCEdition>>> calcRankingNumberPerfect() {
 		List<Rank<List<KTLCEdition>>> ranking = new ArrayList<Rank<List<KTLCEdition>>>();
@@ -797,8 +818,7 @@ public class Statistics {
         });
 		
 		// create the structure for holding results
-		int currentCount = 0;
-		for (int i = 0; i < LENGTH_TOP; i++) {
+		for (int i = 0; i < listPerfectByPlayerID.keySet().size(); i++) {
 			int index = listPerfectByPlayerID.keySet().size() - 1 - i;
 			
 			Player player = Player.findById((long)numberPerfectByPlayerID[index][0]);
@@ -807,11 +827,6 @@ public class Statistics {
 			
 			Rank<List<KTLCEdition>> r = new Rank<List<KTLCEdition>>(player, participation, -1, editions);
 			ranking.add(i, r);
-			currentCount++;
-			
-			if (currentCount == listPerfectByPlayerID.keySet().size()) {
-				break;
-			}
 		}
 		
 		return ranking;
@@ -820,8 +835,10 @@ public class Statistics {
 	/**
 	 * Calculate the ranking for the player that made a "epic fail" during a KTLC (eliminated at the 
 	 * first lap of each race of a KTLC)
+	 * @param minNumberMaps the minimal number of maps that the player should have played during a KTLC to be considered
+	 * @return the list of players that performed epic fails
 	 */
-	public static List<Rank<List<KTLCEdition>>> calcRankingNumberEpicFail() {
+	public static List<Rank<List<KTLCEdition>>> calcRankingNumberEpicFail(int minNumberMaps) {
 		List<Rank<List<KTLCEdition>>> ranking = new ArrayList<Rank<List<KTLCEdition>>>();
 		HashMap<Long, List<KTLCEdition>> listEpicFailByPlayerID = new HashMap<Long, List<KTLCEdition>>(); 
 		
@@ -852,7 +869,7 @@ public class Statistics {
 				// if the player has been eliminated at first lap on all the maps AND played at lest x Maps,
 				// then it's a Epic Fail
 				if (playersEliminatedAt1stLap.get(player) == numberMapsPlayedByPlayer 
-						&& playersEliminatedAt1stLap.get(player) >= MIN_NUMBER_MAPS_FOR_EPIC_FAIL) {
+						&& playersEliminatedAt1stLap.get(player) >= minNumberMaps) {
 					List<KTLCEdition> editions;
 					if (listEpicFailByPlayerID.containsKey(player.id)) {
 						editions = listEpicFailByPlayerID.get(player.id);
@@ -937,13 +954,13 @@ public class Statistics {
 	 * @param player
 	 * @return an array of 3 values, corresponding to the number of 1st, 2nd and 3rd places.
 	 */
-	public static int[] numberPodiumsKTLCByPlayer(Player player) {
+	public static int[] numberPodiumsKTLCByPlayer(Player player, int rankInterest) {
 		List<KTLCResult> results = KTLCResult.findByPlayer(player);
-		int[] podiums = new int[RANK_INTEREST];
+		int[] podiums = new int[rankInterest];
 		
 		if (!results.isEmpty()) {
 			for (KTLCResult result : results) {
-				if (result.rank <= RANK_INTEREST) {
+				if (result.rank <= rankInterest) {
 					podiums[result.rank - 1]++;
 				}
 			}
@@ -957,13 +974,13 @@ public class Statistics {
 	 * @param player
 	 * @return an array of 3 values, corresponding to the number of 1st, 2nd and 3rd places.
 	 */
-	public static int[] numberPodiumsRaceByPlayer(Player player) {
+	public static int[] numberPodiumsRaceByPlayer(Player player, int rankInterest) {
 		List<KTLCRaceResult> results = KTLCRaceResult.findByPlayer(player);
-		int[] podiums = new int[RANK_INTEREST];
+		int[] podiums = new int[rankInterest];
 		
 		if (!results.isEmpty()) {
 			for (KTLCRaceResult result : results) {
-				if (result.rank <= RANK_INTEREST) {
+				if (result.rank <= rankInterest) {
 					podiums[result.rank - 1]++;
 				}
 			}
