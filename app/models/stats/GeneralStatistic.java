@@ -26,10 +26,7 @@ public class GeneralStatistic {
 	public int LENGTH_TOP;
 	public int RANK_INTEREST;
 	public int MIN_PERCENTAGE_PARTICIPATIONS;
-	
-	public List<KTLCEdition> ktlcs;
-	public List<Player> players;
-	public List<TMMap> maps;
+	public int MIN_NUMBER_MAPS_FOR_EPIC_FAIL;
 	
 	public KTLCEdition biggestKTLC;
 	public KTLCEdition smallestKTLC;
@@ -46,6 +43,7 @@ public class GeneralStatistic {
 	public double stats_averageNumberMapsByKTLC;
 	
 	public HashMap<TMEnvironment, Integer> chart_numberMapsByEnviro;
+	public int[][] chart_numberPlayersByKTLC;
 	
 	public List<Rank> 		 	ranking_numberParticipation;
 	public List<Rank<Double>> 	ranking_bestAverageRank;
@@ -58,6 +56,7 @@ public class GeneralStatistic {
 	public List<Rank<Integer>>	ranking_numberLastPlaceKTLC;
 	public List<Rank<Integer>>	ranking_numberLastPlaceRace;
 	public List<Rank<Double>> 	ranking_worstAverageRank;
+	public List<Rank<List<KTLCEdition>>> ranking_numberEpicFail;
 
 	/** Private constructor for implementation of the singleton pattern */
 	private GeneralStatistic() { 

@@ -12,8 +12,8 @@
 		];
     	
     	var chartPlayersData = [
-  			#{list items:statistics.ktlcs, as:'ktlc'}
-  				{ ktlc: "${ktlc.number}", numberPlayer: ${ktlc.results.size()} },
+  			#{list items:0..(statistics.chart_numberPlayersByKTLC.length - 1), as:'i'}
+  				{ ktlc: "${statistics.chart_numberPlayersByKTLC[i][0]}", numberPlayer: ${statistics.chart_numberPlayersByKTLC[i][1]} },
   			#{/list}
   		];        	
     	
@@ -69,6 +69,7 @@
             
          	// Cursor
             var chartPlayerCursor = new AmCharts.ChartCursor();
+            chartPlayerCursor.pan = true;
             chartPlayerCursor.cursorAlpha = 0;
             chartPlayerCursor.cursorPosition = "middle";
             chartPlayers.addChartCursor(chartPlayerCursor);
@@ -225,30 +226,31 @@
     	
     	<div class="content_generalStats">
 	        <h1>&{'stats.title_hallOfFame'}</h1>
-	        <div class="ranking">
-	        
+	        <div>	        
 	        	<!-- TOP 10 PLAYER -->
 		        <div class="ranking_content">		        
 		            <div class="ranking_title">
-		                <h2>Number Perfect (I18N)</h2>
+		                <h2>&{'stats.ranking_perfect_title'}</h2>
 		            </div>
 		            <div class="ranking_list">
 		                <table>
-		                	<caption>bla bla bla (I18N)</caption>
+		                	<caption class="ranking_top">&{'stats.ranking_perfect_legend'}</caption>
 		                    <tr>
 		                        <th>&{'player.rank'}</th>
 		                        <th class="spacer_both">&{'player'}</th>
-		                        <th>Num Perfect (I18N)</th>
-		                        <th class="spacer_left">KTLCs (I18N)</th>
+		                        <th>&{'stats.perfects'}</th>
+		                        <th class="spacer_left">KTLC(s)</th>
 		                    </tr>
 		                    #{list items:0..statistics.ranking_numberPerfect.size() - 1, as:'i'}
 		                    <tr>
 		                        #{if i < 3 }<td class="podium_${i + 1}"></td>#{/if}#{else}<td>${i + 1}</td>#{/else}
 		                        <td class="spacer_both">#{a @Application.player(statistics.ranking_numberPerfect.get(i).login)}${statistics.ranking_numberPerfect.get(i).player.name}#{/a}</td>
-		                        <td>${statistics.ranking_numberPerfect.get(i).value.size()} / ${statistics.ranking_numberPerfect.get(i).participation}</td>
+		                        <td><strong>${statistics.ranking_numberPerfect.get(i).value.size()}</strong> / ${statistics.ranking_numberPerfect.get(i).participation}</td>
 		                        <td class="spacer_left">
 		                        	#{list items:0..statistics.ranking_numberPerfect.get(i).value.size() - 1, as:'j'}
-		                        	#{a @Application.ktlc(statistics.ranking_numberPerfect.get(i).value.get(j).number)}  #${statistics.ranking_numberPerfect.get(i).value.get(j).number}#{/a}
+		                        	#{if (statistics.ranking_numberPerfect.get(i).value.size() > 1 && j > 0)}<br />#{/if}
+		                        	#{a @Application.ktlc(statistics.ranking_numberPerfect.get(i).value.get(j).number)}&{'ktlc.number', statistics.ranking_numberPerfect.get(i).value.get(j).number} 
+	    							(${statistics.ranking_numberPerfect.get(i).value.get(j).date.format()} - &{'ktlc.nbparticipants',statistics.ranking_numberPerfect.get(i).value.get(j).results.size()})#{/a}
 		                        	#{/list}
 		                        </td>
 		                    </tr>
@@ -257,7 +259,10 @@
 		            </div>
 		        </div>
 		        <!-- /TOP 10 PLAYER -->
+	        </div>
+	        <div class="cleaner"></div>
 	        
+	        <div class="ranking">
 	        	<!-- TOP 10 PLAYER -->
 		        <div class="ranking_content">		        
 		            <div class="ranking_title">
@@ -272,7 +277,7 @@
 		                        <th>&{'stats.ratio'}</th>
 		                        <th class="spacer_left">&{'stats.ktlcs'}</th>
 		                    </tr>
-		                    #{list items:0..statistics.LENGTH_TOP - 1, as:'i'}
+		                    #{list items:0..statistics.ranking_numberParticipation.size() - 1, as:'i'}
 		                    <tr>
 		                        #{if i < 3 }<td class="podium_${i + 1}"></td>#{/if}#{else}<td>${i + 1}</td>#{/else}
 		                        <td class="spacer_both">#{a @Application.player(statistics.ranking_numberParticipation.get(i).login)}${statistics.ranking_numberParticipation.get(i).player.name}#{/a}</td>
@@ -288,18 +293,18 @@
 		        <!-- TOP 10 PLAYER -->
 		        <div class="ranking_content">		        
 		            <div class="ranking_title">
-		                <h2>&{'stats.ranking_avgRank_title'}</h2>
+		                <h2>&{'stats.ranking_bestAvgRank_title'}</h2>
 		            </div>
 		            <div class="ranking_list">
 		                <table>
-		                	<caption>&{'stats.ranking_avgRank_legend', statistics.LENGTH_TOP, statistics.MIN_PERCENTAGE_PARTICIPATIONS}</caption>
+		                	<caption>&{'stats.ranking_bestAvgRank_legend', statistics.LENGTH_TOP, statistics.MIN_PERCENTAGE_PARTICIPATIONS}</caption>
 		                    <tr>
 		                        <th>&{'player.rank'}</th>
 		                        <th class="spacer_both">&{'player'}</th>
 		                        <th>&{'stats.averageRank'}</th>
 		                        <th class="spacer_left">&{'stats.ktlcs'}</th>
 		                    </tr>
-		                    #{list items:0..statistics.LENGTH_TOP - 1, as:'i'}
+		                    #{list items:0..statistics.ranking_bestAverageRank.size() - 1, as:'i'}
 		                    <tr>
 		                    	#{if i < 3 }<td class="podium_${i + 1}"></td>#{/if}#{else}<td>${i + 1}</td>#{/else}
 		                        <td class="spacer_both">#{a @Application.player(statistics.ranking_bestAverageRank.get(i).login)}${statistics.ranking_bestAverageRank.get(i).player.name}#{/a}</td>
@@ -325,7 +330,7 @@
 		                        <th class="spacer_both">&{'player'}</th>
 		                        <th>&{'stats.maps'}</th>
 		                    </tr>
-		                    #{list items:0..statistics.LENGTH_TOP - 1, as:'i'}
+		                    #{list items:0..statistics.ranking_numberMaps.size() - 1, as:'i'}
 		                    <tr>
 		                        #{if i < 3 }<td class="podium_${i + 1}"></td>#{/if}#{else}<td>${i + 1}</td>#{/else}
 		                        <td class="spacer_both">#{a @Application.player(statistics.ranking_numberMaps.get(i).login)}${statistics.ranking_numberMaps.get(i).player.name}#{/a}</td>
@@ -355,7 +360,7 @@
 		                        <th>&{'stats.third'}</th>
 		                        <th>(&{'stats.fourth'})</th>
 		                    </tr>
-		                    #{list items:0..statistics.LENGTH_TOP - 1, as:'i'}
+		                    #{list items:0..statistics.ranking_numberPodiumsKTLC.size() - 1, as:'i'}
 		                    <tr>
 		                        #{if i < 3 }<td class="podium_${i + 1}"></td>#{/if}#{else}<td>${i + 1}</td>#{/else}
 		                        <td class="spacer_both">#{a @Application.player(statistics.ranking_numberPodiumsKTLC.get(i).login)}${statistics.ranking_numberPodiumsKTLC.get(i).player.name}#{/a}</td>
@@ -390,7 +395,7 @@
 		                        <th>&{'stats.third'}</th>
 		                        <th>(&{'stats.fourth'})</th>
 		                    </tr>
-		                    #{list items:0..statistics.LENGTH_TOP - 1, as:'i'}
+		                    #{list items:0..statistics.ranking_numberPodiumsRace.size() - 1, as:'i'}
 		                    <tr>
 		                        #{if i < 3 }<td class="podium_${i + 1}"></td>#{/if}#{else}<td>${i + 1}</td>#{/else}
 		                        <td class="spacer_both">#{a @Application.player(statistics.ranking_numberPodiumsRace.get(i).login)}${statistics.ranking_numberPodiumsRace.get(i).player.name}#{/a}</td>
@@ -419,18 +424,18 @@
 	        <!-- TOP 10 PLAYER -->
 	        <div class="ranking_content">		        
 	            <div class="ranking_title">
-	                <h2>Number of last places by KTLC (I18N)</h2>
+	                <h2>&{'stats.ranking_numberlastPlaceKTLC_title'}</h2>
 	            </div>
 	            <div class="ranking_list">
 	                <table>
-	                	<caption>bla bla bla last of the KTLC bla bla bla first eliminated players bla bla bla loosers bla bla bla at least 10%  (I18N)</caption>
+	                	<caption>&{'stats.ranking_numberlastPlaceKTLC_legend', statistics.LENGTH_TOP, statistics.MIN_PERCENTAGE_PARTICIPATIONS}</caption>
 	                    <tr>
 	                        <th>&{'player.rank'}</th>
 	                        <th class="spacer_both">&{'player'}</th>
 	                        <th>&{'stats.total'}</th>
 	                        <th class="spacer_left">&{'stats.ratio'}</th>
 	                    </tr>
-	                    #{list items:0..statistics.LENGTH_TOP - 1, as:'i'}
+	                    #{list items:0..statistics.ranking_numberLastPlaceKTLC.size() - 1, as:'i'}
 	                    <tr>
 	                        #{if i < 3 }<td class="podium_${i + 1}"></td>#{/if}#{else}<td>${i + 1}</td>#{/else}
 	                        <td class="spacer_both">#{a @Application.player(statistics.ranking_numberLastPlaceKTLC.get(i).login)}${statistics.ranking_numberLastPlaceKTLC.get(i).player.name}#{/a}</td>
@@ -446,18 +451,18 @@
 	        <!-- TOP 10 PLAYER -->
 	        <div class="ranking_content">		        
 	            <div class="ranking_title">
-	                <h2>Number of last places by Races (I18N)</h2>
+	                <h2>&{'stats.ranking_numberlastPlaceRace_title'}</h2>
 	            </div>
 	            <div class="ranking_list">
 	                <table>
-	                	<caption>bla bla bla last of the Race bla bla bla first eliminated players bla bla bla loosers bla bla bla at least 10%  (I18N)</caption>
+	                	<caption>&{'stats.ranking_numberlastPlaceRace_legend', statistics.LENGTH_TOP, statistics.MIN_PERCENTAGE_PARTICIPATIONS}</caption>
 	                    <tr>
 	                        <th>&{'player.rank'}</th>
 	                        <th class="spacer_both">&{'player'}</th>
 	                        <th>&{'stats.total'}</th>
 	                        <th class="spacer_left">&{'stats.ratio'}</th>
 	                    </tr>
-	                    #{list items:0..statistics.LENGTH_TOP - 1, as:'i'}
+	                    #{list items:0..statistics.ranking_numberLastPlaceRace.size() - 1, as:'i'}
 	                    <tr>
 	                        #{if i < 3 }<td class="podium_${i + 1}"></td>#{/if}#{else}<td>${i + 1}</td>#{/else}
 	                        <td class="spacer_both">#{a @Application.player(statistics.ranking_numberLastPlaceRace.get(i).login)}${statistics.ranking_numberLastPlaceRace.get(i).player.name}#{/a}</td>
@@ -473,18 +478,18 @@
 	        <!-- TOP 10 PLAYER -->
 	        <div class="ranking_content">		        
 	            <div class="ranking_title">
-	                <h2>Worst Average Rank (I18N)</h2>
+	                <h2>&{'stats.ranking_worstAvgRank_title'}</h2>
 	            </div>
 	            <div class="ranking_list">
 	                <table>
-	                	<caption>bla bla bla 10% worst bla bla bla haha les mauvais (I18N)</caption>
+	                	<caption>&{'stats.ranking_worstAvgRank_legend', statistics.LENGTH_TOP, statistics.MIN_PERCENTAGE_PARTICIPATIONS}</caption>
 	                    <tr>
 	                        <th>&{'player.rank'}</th>
 	                        <th class="spacer_both">&{'player'}</th>
 	                        <th>&{'stats.averageRank'}</th>
 	                        <th class="spacer_left">&{'stats.ktlcs'}</th>
 	                    </tr>
-	                    #{list items:0..statistics.LENGTH_TOP - 1, as:'i'}
+	                    #{list items:0..statistics.ranking_worstAverageRank.size() - 1, as:'i'}
 	                    <tr>
 	                    	#{if i < 3 }<td class="podium_${i + 1}"></td>#{/if}#{else}<td>${i + 1}</td>#{/else}
 	                        <td class="spacer_both">#{a @Application.player(statistics.ranking_worstAverageRank.get(i).login)}${statistics.ranking_worstAverageRank.get(i).player.name}#{/a}</td>
@@ -500,11 +505,11 @@
 	        <!-- TOP 10 PLAYER -->
        		<div class="ranking_content">		        
 	            <div class="ranking_title">
-	                <h2>Violent Maps (I18N)</h2>
+	                <h2>&{'stats.ranking_violentMap_title'}</h2>
 	            </div>
 	            <div class="ranking_list">
 	                <table>
-	                	<caption>bla bla bla violent bla bla bla eliminated players bla bla bla loosers  (I18N)</caption>
+	                	<caption>&{'stats.ranking_violentMap_legend', statistics.LENGTH_TOP}</caption>
 	                    <tr>
 	                        <th>&{'player.rank'}</th>
 	                        <th class="spacer_left">&{'stats.map'}</th>
@@ -512,7 +517,7 @@
 	                        <th class="author_column">&{'stats.enviro'}</th>
 	                        <th class="spacer_left">&{'stats.victims'}</th>
 	                    </tr>
-	                    #{list items:0..statistics.LENGTH_TOP - 1, as:'i'}
+	                    #{list items:0..statistics.ranking_violentMaps.size() - 1, as:'i'}
 	                    <tr>
 	                        #{if i < 3 }<td class="podium_${i + 1}"></td>#{/if}#{else}<td>${i + 1}</td>#{/else}
 	                        <td class="spacer_left">#{a @Application.ktlc(statistics.ranking_violentMaps.get(i).value.ktlc.number)}${statistics.ranking_violentMaps.get(i).value.map.name}#{/a}</td>
@@ -525,7 +530,42 @@
 	            </div>
 	        </div>
 	        <!-- /TOP 10 PLAYER -->
-        </div>
+        </div>    
+    	<div>	        
+        	<!-- TOP 10 PLAYER -->
+	        <div class="ranking_content">		        
+	            <div class="ranking_title">
+	                <h2>&{'stats.ranking_epicFail_title'}</h2>
+	            </div>
+	            <div class="ranking_list">
+	                <table>
+	                	<caption class="ranking_top">&{'stats.ranking_epicFail_legend', statistics.MIN_NUMBER_MAPS_FOR_EPIC_FAIL}</caption>
+	                    <tr>
+	                        <th>&{'player.rank'}</th>
+	                        <th class="spacer_both">&{'player'}</th>
+	                        <th>&{'stats.epicFails'}</th>
+	                        <th class="spacer_left">KTLC(s)</th>
+	                    </tr>
+	                    #{list items:0..statistics.ranking_numberEpicFail.size() - 1, as:'i'}
+	                    <tr>
+	                        #{if i < 3 }<td class="podium_${i + 1}"></td>#{/if}#{else}<td>${i + 1}</td>#{/else}
+	                        <td class="spacer_both">#{a @Application.player(statistics.ranking_numberEpicFail.get(i).login)}${statistics.ranking_numberEpicFail.get(i).player.name}#{/a}</td>
+	                        <td><strong>${statistics.ranking_numberEpicFail.get(i).value.size()}</strong> / ${statistics.ranking_numberEpicFail.get(i).participation}</td>
+	                        <td class="spacer_left">
+	                        	#{list items:0..statistics.ranking_numberEpicFail.get(i).value.size() - 1, as:'j'}
+	                        	#{if (statistics.ranking_numberEpicFail.get(i).value.size() > 1 && j > 0)}<br />#{/if}
+	                        	#{a @Application.ktlc(statistics.ranking_numberEpicFail.get(i).value.get(j).number)}&{'ktlc.number', statistics.ranking_numberEpicFail.get(i).value.get(j).number} 
+    							(${statistics.ranking_numberEpicFail.get(i).value.get(j).date.format()} - &{'ktlc.nbparticipants',statistics.ranking_numberEpicFail.get(i).value.get(j).results.size()})#{/a}
+	                        	#{/list}
+	                        </td>
+	                    </tr>
+	                    #{/list}
+	                </table>
+	            </div>
+	        </div>
+	        <!-- /TOP 10 PLAYER -->
+       </div>
+       <div class="cleaner"></div>
     </div>
     <div class="cleaner"></div>
 </div>

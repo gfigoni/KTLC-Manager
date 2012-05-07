@@ -54,9 +54,9 @@ public class Application extends Controller {
     
     public static void statistics() {
     	GeneralStatistic statistics = GeneralStatistic.getUniqueInstance();
-//    	if(!statistics.isInitialized()) {
+    	if(!statistics.isInitialized()) {
     		Statistics.updateAllGeneralStatistics(GeneralStatistic.getUniqueInstance());
-//    	}
+    	}
     	render(statistics);
     }
 }

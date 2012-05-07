@@ -30,6 +30,8 @@ public class Statistics {
 	private static final int RANK_INTEREST = 4;
 	/** The minimal number of participation that are required to be counted in some TOPs */
 	private static final int MIN_PERCENTAGE_PARTICIPATIONS = 10;
+	/** The minimal number of map that a player have to play to be counted in the epic fail ranking */
+	private static final int MIN_NUMBER_MAPS_FOR_EPIC_FAIL = 2;
 	
 	/**
 	 * Update all the statistics, should be called only using administrator board... 
@@ -39,55 +41,65 @@ public class Statistics {
 		stats.LENGTH_TOP = LENGTH_TOP;
 		stats.RANK_INTEREST = RANK_INTEREST;
 		stats.MIN_PERCENTAGE_PARTICIPATIONS = MIN_PERCENTAGE_PARTICIPATIONS;
+		stats.MIN_NUMBER_MAPS_FOR_EPIC_FAIL = MIN_NUMBER_MAPS_FOR_EPIC_FAIL;
 		
-		stats.ktlcs = KTLCEdition.find("order by date asc").fetch();
-		stats.players = Player.find("order by name asc").fetch();
-		stats.maps = TMMap.find("order by environment desc").fetch();
+		List<KTLCEdition> ktlcs = KTLCEdition.find("order by date asc").fetch();
+		List<Player> players = Player.find("order by name asc").fetch();
+		List<TMMap> maps = TMMap.find("order by environment desc").fetch();
 		
-		// Stats
-		stats.stats_numberKTLCs = stats.ktlcs.size();
-		stats.stats_numberKTLC_TMU = calcNumberKTLCTMU(stats.ktlcs);
-		stats.stats_numberSuperKTLC_TMU = calcNumberSuperKTLCTMU(stats.ktlcs);
-		stats.stats_numberKTLC_TM2 = calcNumberKTLCTM2(stats.ktlcs);
-		stats.stats_numberPlayers = stats.players.size();
-		stats.stats_numberMaps = stats.maps.size();
+		// Stats		
+		stats.stats_numberKTLCs = ktlcs.size();
+		stats.stats_numberKTLC_TMU = calcNumberKTLCTMU(ktlcs);
+		stats.stats_numberSuperKTLC_TMU = calcNumberSuperKTLCTMU(ktlcs);
+		stats.stats_numberKTLC_TM2 = calcNumberKTLCTM2(ktlcs);
+		stats.stats_numberPlayers = players.size();
+		stats.stats_numberMaps = maps.size();
 		stats.stats_numberRuns = calcTotalNumberRuns();
-		stats.stats_averageNumberPlayersByKTLC = calcAverageNumberPlayersByKTLC(stats.ktlcs);
-		stats.stats_averageNumberMapsByKTLC = calcAverageNumberMapsByKTLC(stats.ktlcs);
+		stats.stats_averageNumberPlayersByKTLC = calcAverageNumberPlayersByKTLC(ktlcs);
+		stats.stats_averageNumberMapsByKTLC = calcAverageNumberMapsByKTLC(ktlcs);
 		
 		// charts
-		stats.chart_numberMapsByEnviro = calcMapsByEnviro(stats.maps);
+		stats.chart_numberMapsByEnviro = calcMapsByEnviro(maps);
+		stats.chart_numberPlayersByKTLC = calcNumberPlayersByKTLC(ktlcs);
 		
 		// particular KTLC
-		stats.smallestKTLC = calcMinNumberPlayers(stats.ktlcs);
-		stats.biggestKTLC = calcMaxNumberPlayers(stats.ktlcs);
+		stats.smallestKTLC = calcMinNumberPlayers(ktlcs);
+		stats.biggestKTLC = calcMaxNumberPlayers(ktlcs);
 		
 		// rankings - hall of fame
-		stats.ranking_numberParticipation = calcRankingParticipatioRatio(stats.players);
-		stats.ranking_bestAverageRank = calcRankingBestAverageRank(stats.players);
-		stats.ranking_numberMaps = calcRankingNumberMaps(stats.players);
-		stats.ranking_numberPodiumsKTLC = calcRankingNumberPodiumsKTLC(stats.players);
-		stats.ranking_numberPodiumsRace = calcRankingNumberPodiumsRace(stats.players);
+		stats.ranking_numberParticipation = calcRankingParticipatioRatio(players);
+		stats.ranking_bestAverageRank = calcRankingBestAverageRank(players);
+		stats.ranking_numberMaps = calcRankingNumberMaps(players);
+		stats.ranking_numberPodiumsKTLC = calcRankingNumberPodiumsKTLC(players);
+		stats.ranking_numberPodiumsRace = calcRankingNumberPodiumsRace(players);
 		stats.ranking_numberPerfect = calcRankingNumberPerfect();
-		
-		for (int i = 0; i < stats.ranking_numberPerfect.size(); i++) {
-			System.out.println("player: " + stats.ranking_numberPerfect.get(i).player.name +", numPerfect: " + stats.ranking_numberPerfect.get(i).value.size() + ", numKTLC: " + stats.ranking_numberPerfect.get(i).participation);
-			for (KTLCEdition edition : stats.ranking_numberPerfect.get(i).value) {
-				System.out.println("\t"+edition.number);
-			}
-		}
-		
 		
 		// ranking - hall of shame
 		List<KTLCRace> races = KTLCRace.findAll();
 		stats.ranking_violentMaps = calcRankingViolentMaps(races);
-		stats.ranking_numberLastPlaceKTLC = calcRankingNumberlastPlaceKTLC(stats.players);
-		stats.ranking_numberLastPlaceRace = calcRankingNumberlastPlaceRace(stats.players);
-		stats.ranking_worstAverageRank = calcRankingWorstAverageRank(stats.players);
+		stats.ranking_numberLastPlaceKTLC = calcRankingNumberlastPlaceKTLC(players);
+		stats.ranking_numberLastPlaceRace = calcRankingNumberlastPlaceRace(players);
+		stats.ranking_worstAverageRank = calcRankingWorstAverageRank(players);
+		stats.ranking_numberEpicFail = calcRankingNumberEpicFail();
 		
 		// change the status
 		stats.setInitialized(true);
 		return stats;
+	}
+	
+	/**
+	 * Calculate the evolution of the number of players by KTLC
+	 * @param ktlcs the list of KTLC Editions
+	 * @return
+	 */
+	public static int[][] calcNumberPlayersByKTLC(List<KTLCEdition> ktlcs) {
+		int[][] playersByKTLC = new int[ktlcs.size()][2];
+		for (int i = 0; i < ktlcs.size(); i++) {
+			playersByKTLC[i][0] = ktlcs.get(i).number;
+			playersByKTLC[i][1] = ktlcs.get(i).results.size();
+		}
+		
+		return playersByKTLC;
 	}
 	
 	/**
@@ -111,8 +123,8 @@ public class Statistics {
 	}
 	
 	/**
-	 * TODO
-	 * @param ktlcs
+	 * Calculate the number of KTLC TMU that have been played
+	 * @param ktlcs the list of KTLC Editions
 	 * @return
 	 */
 	public static int calcNumberKTLCTMU(List<KTLCEdition> ktlcs) {
@@ -127,8 +139,8 @@ public class Statistics {
 	}
 	
 	/**
-	 * TODO
-	 * @param ktlcs
+	 * Calculate the number of Super KTLC TMU that have been played
+	 * @param ktlcs the list of KTLC Editions
 	 * @return
 	 */
 	public static int calcNumberSuperKTLCTMU(List<KTLCEdition> ktlcs) {
@@ -153,8 +165,8 @@ public class Statistics {
 	}
 	
 	/**
-	 * TODO
-	 * @param ktlcs
+	 * Calculate the number of KTLC TM2
+	 * @param ktlcs the list of KTLC Editions
 	 * @return
 	 */
 	public static int calcNumberKTLCTM2(List<KTLCEdition> ktlcs) {
@@ -170,7 +182,7 @@ public class Statistics {
 	
 	/**
 	 * Calculate the average number of players for a list of KTLCs
-	 * @param ktlcs
+	 * @param ktlcs the list of KTLC Editions
 	 * @return the average number of players
 	 */
 	public static double calcAverageNumberPlayersByKTLC(List<KTLCEdition> ktlcs) {
@@ -183,7 +195,7 @@ public class Statistics {
 	
 	/**
 	 * Calculate the average number of maps for a list of KTLCs
-	 * @param ktlcs
+	 * @param ktlcs the list of KTLC Editions
 	 * @return the average number of maps
 	 */
 	public static double calcAverageNumberMapsByKTLC(List<KTLCEdition> ktlcs) {
@@ -196,7 +208,7 @@ public class Statistics {
 	
 	/**
 	 * Find the ktlc with the smallest number of players in a list of KTLCs
-	 * @param ktlcs
+	 * @param ktlcs the list of KTLC Editions
 	 * @return the smallest KTLCEdition
 	 */
 	public static KTLCEdition calcMinNumberPlayers(List<KTLCEdition> ktlcs) {
@@ -213,7 +225,7 @@ public class Statistics {
 	
 	/**
 	 * Find the ktlc with the biggest number of players in a list of KTLCs
-	 * @param ktlcs
+	 * @param ktlcs the list of KTLC Editions
 	 * @return the biggest KTLCEdition
 	 */
 	public static KTLCEdition calcMaxNumberPlayers(List<KTLCEdition> ktlcs) {
@@ -247,7 +259,7 @@ public class Statistics {
 	/**
 	 * Calculate the ranking regarding the Participation Ratio of a list of players, 
 	 * on ALL the KTLCs.
-	 * @param players
+	 * @param players the list of players
 	 * @return the list of size LENGTH_TOP of the best players with their values
 	 */
 	public static List<Rank> calcRankingParticipatioRatio(List<Player> players) {
@@ -292,7 +304,7 @@ public class Statistics {
 	/**
 	 * Calculate the ranking regarding the Best Average Rank of a list of players, 
 	 * on ALL the KTLCs.
-	 * @param players
+	 * @param players the list of players
 	 * @return the list of size LENGTH_TOP of the best players with their values
 	 */
 	public static List<Rank<Double>> calcRankingBestAverageRank(List<Player> players) {
@@ -342,7 +354,7 @@ public class Statistics {
 	/**
 	 * Calculate the ranking regarding the Worst Average Rank of a list of players, 
 	 * on ALL the KTLCs.
-	 * @param players
+	 * @param players the list of players
 	 * @return the list of size LENGTH_TOP of the best players with their values
 	 */
 	public static List<Rank<Double>> calcRankingWorstAverageRank(List<Player> players) {
@@ -567,6 +579,11 @@ public class Statistics {
 					countElimination++;
 				}
 			}
+			// retract one as 1 player at least should have finished the map if only one round has been played
+			if (countElimination == race.results.size()) {
+				countElimination-=1;
+			}
+			
 			numberEliminationFirstLapByRaceID[currentIndex][1] = countElimination;
 			currentIndex++;
 		}
@@ -598,7 +615,7 @@ public class Statistics {
 	}
 	
 	/**
-	 * TODO
+	 * Calculate the ranking for the player that finished at the last place of a race
 	 * @param players
 	 * @return
 	 */
@@ -653,7 +670,7 @@ public class Statistics {
 	}
 	
 	/**
-	 * TODO
+	 * Calculate the ranking for the player that finished at the last place of a KTLC
 	 * @param players
 	 * @return
 	 */
@@ -714,9 +731,8 @@ public class Statistics {
 	}
 	
 	/**
-	 * TODO
-	 * @param players
-	 * @return
+	 * Calculate the ranking for the player that made a "perfect" during a KTLC (finish all the map
+	 * at first place)
 	 */
 	public static List<Rank<List<KTLCEdition>>> calcRankingNumberPerfect() {
 		List<Rank<List<KTLCEdition>>> ranking = new ArrayList<Rank<List<KTLCEdition>>>();
@@ -755,7 +771,7 @@ public class Statistics {
 			currentIndex++;
 		}
 		
-		// sort the array by ASCENDING number of last place
+		// sort the array by ASCENDING number of perfect
 		Arrays.sort(numberPerfectByPlayerID, new Comparator<int[]>() {
             @Override
             public int compare(final int[] entry1, final int[] entry2) {
@@ -796,6 +812,110 @@ public class Statistics {
 			if (currentCount == listPerfectByPlayerID.keySet().size()) {
 				break;
 			}
+		}
+		
+		return ranking;
+	}
+	
+	/**
+	 * Calculate the ranking for the player that made a "epic fail" during a KTLC (eliminated at the 
+	 * first lap of each race of a KTLC)
+	 */
+	public static List<Rank<List<KTLCEdition>>> calcRankingNumberEpicFail() {
+		List<Rank<List<KTLCEdition>>> ranking = new ArrayList<Rank<List<KTLCEdition>>>();
+		HashMap<Long, List<KTLCEdition>> listEpicFailByPlayerID = new HashMap<Long, List<KTLCEdition>>(); 
+		
+		// find all the ktlc where a player finished last on all the maps (eliminated at 1st round)
+		List<KTLCEdition> ktlcs = KTLCEdition.findAll();
+		for (KTLCEdition ktlc : ktlcs) {
+			HashMap<Player, Integer> playersEliminatedAt1stLap = new HashMap<Player, Integer>();
+			
+			for (KTLCRace race : ktlc.races) {
+				List<KTLCRaceResult> results = race.results;
+				for (KTLCRaceResult result : results) {
+					// the players that has been eliminated at first lap
+					if (result.roundsCount == 1) {
+						Player player = Player.findByLogin(result.login.name);
+						if (playersEliminatedAt1stLap.containsKey(player)) {
+							int value = playersEliminatedAt1stLap.get(player);
+							playersEliminatedAt1stLap.put(player, value + 1);
+						} else {
+							playersEliminatedAt1stLap.put(player, 1);
+						}
+					}
+				}
+			}
+			
+			for (Player player : playersEliminatedAt1stLap.keySet()) {
+				int numberMapsPlayedByPlayer = KTLCResult.findByKTLCAndPlayer(ktlc, player).nbRaces;
+				
+				// if the player has been eliminated at first lap on all the maps AND played at lest x Maps,
+				// then it's a Epic Fail
+				if (playersEliminatedAt1stLap.get(player) == numberMapsPlayedByPlayer 
+						&& playersEliminatedAt1stLap.get(player) >= MIN_NUMBER_MAPS_FOR_EPIC_FAIL) {
+					List<KTLCEdition> editions;
+					if (listEpicFailByPlayerID.containsKey(player.id)) {
+						editions = listEpicFailByPlayerID.get(player.id);
+					} else {
+						editions = new ArrayList<KTLCEdition>();
+					}
+					//add the ktlc to the list of epic fial of the player
+					editions.add(ktlc);
+					listEpicFailByPlayerID.put(player.id, editions);
+				}
+			}
+		}
+		
+		// at this step, we know the players that really did a perfect and at which editions. Now, 
+		// we have to sort them to make the ranking. The sorting has to be done by number of ktlc, 
+		// and if equality, by editions...
+		int[][] numberEpicFailByPlayerID = new int[listEpicFailByPlayerID.keySet().size()][3];
+		int currentIndex = 0;
+		for (Long playerID : listEpicFailByPlayerID.keySet()) {
+			Player player = Player.findById(playerID);
+			numberEpicFailByPlayerID[currentIndex][0] = playerID.intValue();							// the player id
+			numberEpicFailByPlayerID[currentIndex][1] = listEpicFailByPlayerID.get(playerID).size();	// the number of epic fail
+			numberEpicFailByPlayerID[currentIndex][2] = KTLCResult.findByPlayer(player).size(); 		// the number of ktlc participated
+			currentIndex++;
+		}
+		
+		// sort the array by ASCENDING number of perfect
+		Arrays.sort(numberEpicFailByPlayerID, new Comparator<int[]>() {
+            @Override
+            public int compare(final int[] entry1, final int[] entry2) {
+                int numPerfect1 = entry1[1];
+                int numKTLC1 = entry1[2];
+                int numPerfect2 = entry2[1];
+                int numKTLC2 = entry2[2];
+                
+                if (numPerfect1 > numPerfect2) {
+                	return 1;
+                } else if (numPerfect1 < numPerfect2) {
+                	return -1;
+                } else {
+                	if (numKTLC1 > numKTLC2) {
+                		return -1;
+                	} else if (numKTLC1 < numKTLC2) {
+                		return 1;
+                	} else {
+                		return 0;
+                	}
+                }
+            }
+        });
+		
+		// create the structure for holding results		
+		for (int i = 0; i < listEpicFailByPlayerID.keySet().size(); i++) {
+			int index = listEpicFailByPlayerID.keySet().size() - 1 - i;
+			
+			Player player = Player.findById((long)numberEpicFailByPlayerID[index][0]);
+			int participation = numberEpicFailByPlayerID[index][2];
+			List<KTLCEdition> editions = listEpicFailByPlayerID.get((long)numberEpicFailByPlayerID[index][0]);
+			
+			//if (participation >= (MIN_PERCENTAGE_PARTICIPATIONS*0.01*numberKTLC)) {
+				Rank<List<KTLCEdition>> r = new Rank<List<KTLCEdition>>(player, participation, -1, editions);
+				ranking.add(i, r);
+			//}
 		}
 		
 		return ranking;

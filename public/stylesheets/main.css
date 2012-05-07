@@ -35,6 +35,10 @@ a{
 	text-decoration: none;
 }
 
+a:hover{
+	color: #fbe6b0;
+}
+
 table{
 	border-spacing: 0;
 	overflow: hidden;
@@ -462,6 +466,11 @@ td{
 	padding-top: 20px;
 	padding-bottom: 20px;
 }
+.statsSpace hr {
+	color: #FFF;
+ 	height: 3px;
+ 	background-color: #b6b6b6;
+}
 
 #bg_stats {
 	width: 351px;
@@ -531,6 +540,7 @@ td{
 .measures_list table {
 	background-color: #484742;
 	min-width: 225px;
+	margin-bottom: 15px;
 }
 
 .ranking_list caption {
@@ -542,9 +552,13 @@ td{
 	min-height: 55px;
 }
 
+.ranking_list caption.ranking_top {
+	min-height: 0;
+} 
+
 .ranking_list td,
 .measures_list td {
-	line-height: 10px;
+	line-height: 15px;
 	vertical-align: middle;
 	text-align: center;
 	color: #FEFADC;
