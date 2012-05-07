@@ -52,6 +52,7 @@ public class StatisticsGenerator {
 		stats.stats_numberSuperKTLC_TMU = calcNumberSuperKTLCTMU(ktlcs);
 		stats.stats_numberKTLC_TM2 = calcNumberKTLCTM2(ktlcs);
 		stats.stats_numberPlayers = players.size();
+		stats.stats_numberPlayersPercentage = calcNumberPlayerByPercentage(players, config.getMinPercentageParticipations());
 		stats.stats_numberMaps = maps.size();
 		stats.stats_numberRuns = calcTotalNumberRuns();
 		stats.stats_averageNumberPlayersByKTLC = calcAverageNumberPlayersByKTLC(ktlcs);
@@ -87,6 +88,25 @@ public class StatisticsGenerator {
 		Long endTime = System.nanoTime();
 		
 		return Math.abs(endTime - startTime) / 1000000;
+	}
+	
+	/**
+	 * Calculate the number of players that played at least x % of the KTLCS
+	 * @param players the list of players
+	 * @param percentage the percentage required
+	 * @return
+	 */
+	public static int calcNumberPlayerByPercentage(List<Player> players, int percentage) {
+		int result = 0;
+		int minKTLC = (int)(KTLCEdition.findAll().size() * percentage * 0.01);
+		
+		for (Player player : players) {
+			if (KTLCResult.findByPlayer(player).size() >= minKTLC) {
+				result++;
+			}
+		}
+		
+		return result;
 	}
 	
 	/**

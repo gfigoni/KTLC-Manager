@@ -40,6 +40,7 @@ public class StatisticGeneral {
 	public int stats_numberSuperKTLC_TMU;
 	public int stats_numberKTLC_TM2;
 	public int stats_numberPlayers;
+	public int stats_numberPlayersPercentage;
 	public int stats_numberMaps;
 	public int stats_numberRuns;
 	

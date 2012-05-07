@@ -543,6 +543,10 @@ td{
 	margin-bottom: 15px;
 }
 
+.measures_list table {
+	min-width: 0;
+}
+
 .ranking_list caption {
 	color: #aaa;
 	margin-top: 0px;
@@ -627,7 +631,7 @@ td{
 
 .measures_list td.details {
 	background: transparent url(img/list.png) no-repeat scroll;
-	background-position: 10px 8px;
+	background-position: 10px 11px;
 	padding-left: 20px;
 }
 

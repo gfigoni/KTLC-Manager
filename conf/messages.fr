@@ -55,6 +55,7 @@ stats.values = Valeurs
 stats.totalKTLCs = Nombre total de KTLCs
 stats.totalPlayers = Nombre total de joueurs
 stats.avgPlayers = Nombre de joueurs moyen par KTLC
+stats.playersPercentage = Nombre de joueurs ayant participé<br /> à au moins %d%% des KTLCs
 stats.totalMaps = Nombre total de map jouées
 stats.avgMaps = Nombre moyen de maps jouées par KTLC
 stats.totalRuns = Nombre total de runs joués
