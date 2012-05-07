@@ -40,13 +40,13 @@
 	    	<tr>
 	    		<td>
 	    			<form action="@{stats.StatisticsManager.regenStats()}" method="GET">
-				    	<input type="submit" value="Recalculate Statitistcs (I18N)" />
+				    	<input type="submit" value="Regenerate Statitistcs (I18N)" />
 					</form>
 	    		</td>
     		</tr>
     		<tr>
 	    		<td>
-	    			<form action="" method="GET">
+	    			<form action="@{stats.StatisticsManager.manageParameters()}" method="GET">
 				    	<input type="submit" value="Manage parameters (I18N)" />
 					</form>
 	    		</td>

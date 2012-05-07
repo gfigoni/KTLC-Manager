@@ -10,6 +10,7 @@ GET     /player/{loginName}                     Application.player
 GET		/player 								Application.players
 GET		/statistics								Application.statistics
 GET		/regenStats								stats.StatisticsManager.regenStats
+GET		/manageParameters						stats.StatisticsManager.manageParameters
 
 # Ignore favicon requests
 GET     /favicon.ico                            404

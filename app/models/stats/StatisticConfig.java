@@ -14,18 +14,21 @@ public class StatisticConfig {
 
 	/** The number of results that we want to have in the rankings */
 	private int lengthTop = 15;
+	public static final int MIN_LENGTH = 5;
+	public static final int MAX_LENGTH = 50;
+	
 	/** The ranks that are counted for the podiums */
 	private int rankInterest = 4;
-	/**
-	 * The minimal number of participation that are required to be counted in
-	 * some TOPs
-	 */
+	
+	/** The minimal number of participation that are required to be counted in some TOPs */
 	private int minPercentageParticipations = 10;
-	/**
-	 * The minimal number of map that a player have to play to be counted in the
-	 * epic fail ranking
-	 */
+	public static final int MIN_PERCENTAGE = 0;
+	public static final int MAX_PERCENTAGE = 75;
+	
+	/** The minimal number of map that a player have to play to be counted in the epic fail ranking */
 	private int minNumberMapsForEpicFail = 2;
+	public static final int MIN_EPICFAIL = 1;
+	public static final int MAX_EPICFAIL = 4;
 
 	public int getLengthTop() {
 		return lengthTop;

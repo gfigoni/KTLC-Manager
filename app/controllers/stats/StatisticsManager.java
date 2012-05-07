@@ -2,6 +2,7 @@ package controllers.stats;
 
 import java.text.DecimalFormat;
 
+import models.stats.StatisticConfig;
 import play.mvc.Controller;
 import play.mvc.With;
 import controllers.Check;
@@ -18,6 +19,53 @@ public class StatisticsManager extends Controller {
 
 		flash.success("Stats regenerated in %s seconds (I18N)", df.format(seconds));
 		redirect("/admin");
+	}
+	
+	@Check("isAdmin")
+	public static void manageParameters() {
+		StatisticConfig config = StatisticConfig.loadStatsConfig();
+		render("/admin/manageParameters.html", config);
+	}
+	
+	@Check("isAdmin")
+	public static void saveParameters(Integer newLengthTop, Integer newMinPercentage, Integer newEpicFail) {
+		// load the current config
+		StatisticConfig config = StatisticConfig.loadStatsConfig();
+
+		// validation...
+		validation.required(newLengthTop);
+		validation.min(newLengthTop, config.MIN_LENGTH);
+		validation.max(newLengthTop, config.MAX_LENGTH);
+		
+		validation.required(newMinPercentage);
+		validation.min(newMinPercentage, config.MIN_PERCENTAGE);
+		validation.max(newMinPercentage, config.MAX_PERCENTAGE);
+		
+		validation.required(newEpicFail);
+		validation.min(newEpicFail, config.MIN_EPICFAIL);
+		validation.max(newEpicFail, config.MAX_EPICFAIL);
+		
+		// errors
+		if(validation.hasErrors()) {
+			// reload page with error
+            flash.error("Error! (I18N)");
+    		render("/admin/manageParameters.html", config);
+        } else if (config.getLengthTop() != newLengthTop 
+        			|| config.getMinPercentageParticipations() != newMinPercentage
+        			|| config.getMinNumberMapsForEpicFail() != newEpicFail) {
+        	// if the new values are different, set the parameters
+			config.setLengthTop(newLengthTop);
+			config.setMinPercentageParticipations(newMinPercentage);
+			config.setMinNumberMapsForEpicFail(newEpicFail);
+			// save the parameters
+			StatisticConfig.saveStatsConfig(config);
+			//regenerate the stats
+			regenStats();
+    	} else {
+    		flash.success("No changes in the values (I18N)");
+    		redirect("/admin");
+    	}
+        	
 	}
 
 }

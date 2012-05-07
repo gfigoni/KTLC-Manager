@@ -1,0 +1,58 @@
+#{extends 'CRUD/layout.html' /} 
+#{set title:messages.get('admin.manageParameterStats.title (I18N))') /}
+
+
+<div>
+
+	<h2>General Statistics Management (I18N)</h2>
+
+	
+	<form action="@{stats.StatisticsManager.saveParameters()}" method="GET">
+		<table style="width: auto;">
+			<thead>
+				<tr>
+					<th>Parameters  (I18N)</th>
+					<th>Values  (I18N)</th>
+					<th>Explanations (I18N)</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td>Length top (I18N)</td>
+					<td><input type="text" name="newLengthTop" value="${config.getLengthTop()}" /> </td>
+					<td>bla bla value between ${config.MIN_LENGTH} and ${config.MAX_LENGTH} (I18N)</td>
+				</tr>
+				<tr>
+				</tr>
+					<td></td>
+					<td colspan="2"><span class="error" style="color:#c00">#{error 'newLengthTop' /}</span></td>
+				</tr>
+				<tr>
+					<td>Min Percentage participation (I18N)</td>
+					<td><input type="text" name="newMinPercentage" value="${config.getMinPercentageParticipations()}"/> </td>
+					<td>bla bla value between ${config.MIN_PERCENTAGE} and ${config.MAX_PERCENTAGE} (I18N)</td>
+				</tr>
+				</tr>
+					<td></td>
+					<td colspan="2"><span class="error" style="color:#c00">#{error 'newMinPercentage' /}</span></td>
+				</tr>
+				<tr>
+					<td>Min Number Maps for Epic Fail (I18N)</td>
+					<td><input type="text" name="newEpicFail" value="${config.getMinNumberMapsForEpicFail()}"/> </td>
+					<td>bla bla value between ${config.MIN_EPICFAIL} and ${config.MAX_EPICFAIL} (I18N)</td>
+				</tr>
+				</tr>
+					<td></td>
+					<td colspan="2"><span class="error" style="color:#c00">#{error 'newEpicFail' /}</span></td>
+				</tr>
+				<tr>
+					<td colspan="3">
+						<input type="submit" value="Validate (Regenerate Stats)"/>
+						<input type="reset" value="Reset" /></form>
+						<a href="/admin"><button>Cancel</button></a>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+
+</div>
