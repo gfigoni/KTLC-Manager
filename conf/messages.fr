@@ -48,6 +48,7 @@ stats.totalKTLC_TM2 = Nombre de KTLC TM2
 stats.list_ktlc_spacer = &#32;-&#32;
 stats.perfects = # Perfects / # KTLCs
 stats.epicFails = # Epic Fails / # KTLCs
+stats.players = joueurs
 
 stats.measures = Mesures
 stats.values = Valeurs
@@ -62,15 +63,14 @@ stats.smallest = KTLC avec le <strong>plus petit</strong> nombre de participants
 stats.time = Date de génération des statistiques
 stats.ranking_activity_title = Joueurs les Plus Actifs
 stats.ranking_activity_legend = Top%d des joueurs qui ont participé le plus souvent aux KTLCs.
-stats.ranking_avgRank_title = Meilleures Places Moyennes
-stats.ranking_avgRank_legend = Top%1$d des joueurs avec la <strong>Meilleure Place Moyenne</strong>. Seuls les joueurs ayant participé à au moins %2$d%% des KTLCs sont comptés.
+stats.ranking_bestAvgRank_title = Meilleures Places Moyennes
+stats.ranking_bestAvgRank_legend = Top%1$d des joueurs avec la <strong>Meilleure Place Moyenne</strong>. Seuls les joueurs ayant participé à au moins %2$d%% des KTLCs sont comptés.
 stats.ranking_mapper_title = Mappeurs les Plus Productifs
 stats.ranking_mapper_legend = Top%d des mappeurs ayant créé le plus grand nombre de maps pour la KTLC.
 stats.ranking_podiumKTLC_title = Nombre de Podiums par KTLC
 stats.ranking_podiumKTLC_legend = Top%s des joueurs ayant effectués le plus grand nombre de <strong>podiums</strong> durant la <strong>KTLC</strong>, par rapport au nombre total de KTLC jouées. Les résultats au-delà de la 4e place ne sont pas utilisés.
 stats.ranking_podiumRace_title = Nombre de Podiums par Maps
 stats.ranking_podiumRace_legend = Top%s des joueurs ayant effectués le plus grand nombre de <strong>podiums</strong> durant les <strong>courses</strong> des KTLCs, par rapport au nombre total de maps jouées. Les résultats au-delà de la 4e place ne sont pas utilisés.
-
 stats.ranking_perfect_title = Nombre de'Perfects'
 stats.ranking_perfect_legend = Montre le classement des joueurs ayant réussi à faire un 'Perfect' pendant une KTLC. Un 'Perfect' correspond à une situation où un joueur <strong>gagne toutes les maps</strong> jouées pendant une KTLC.
 stats.ranking_numberlastPlaceKTLC_title = Nombre de Dernières Places

@@ -48,6 +48,7 @@ stats.totalKTLC_TM2 = Number of KTLC TM2
 stats.list_ktlc_spacer = &#32;-&#32;
 stats.perfects = # Perfects / # KTLCs
 stats.epicFails = # Epic Fails / # KTLCs
+stats.players = players
 
 stats.measures = Measures
 stats.values = Values
