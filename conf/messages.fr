@@ -83,7 +83,7 @@ stats.ranking_worstAvgRank_legend = Top%1$d des joueurs ayant les <strong>Pires 
 stats.ranking_violentMap_title = Maps les Plus Violentes
 stats.ranking_violentMap_legend = Top%1$d des maps ayant éléminiés le plus grand nombre de joueurs au cours du <strong>premier tour</strong> (découverte). Le nombre de <em>victimes</em> qui ont échoué au premier tour est montré proportionnellent au nombre total de joueurs.
 stats.ranking_epicFail_title = Nombre "d'Echecs Critiques"
-stats.ranking_epicFail_legend = Montre le classement des joueurs ayant lamentablement échoué au cours d'une KTLC en étant <strong>éliminé au premier tour de toutes les maps</strong> qu'ils ont joué, réalisant ainsi un "Epic Fail", ou "Echec critique". Seuls les joueurs ayant joué au minimum %d%% maps pendant une KTLC sont comptés.
+stats.ranking_epicFail_legend = Montre le classement des joueurs ayant lamentablement échoué au cours d'une KTLC en étant <strong>éliminé au premier tour de toutes les maps</strong> qu'ils ont joué, réalisant ainsi un "Epic Fail", ou "Echec critique". Seuls les joueurs ayant joué au minimum %d maps pendant une KTLC sont comptés.
 
 error.wrongktlc = Cette KTLC n'existe pas.
 error.noktlc = Pas de KTLC
@@ -94,3 +94,25 @@ error.noStats = Pas de statistiques
 
 # administration
 validation.required = %s est obligatoire
+validation.min = Ne peut pas être plus petit que %s
+validation.max = Ne peut pas être plus grand que %s
+
+admin.generalStats = Gestion des Statistiques Générales
+admin.options = Options
+admin.regen = Recalculer les Statistiques
+admin.manageParams = Gérer les Paramètres
+manageParameters.params = Paramètres
+manageParameters.values = Valeurs
+manageParameters.explan = Explications
+manageParameters.length_top.title = Longueur des Tops
+manageParameters.length_top.legend = Ce paramètre permet de choisir la taille des classements (p.ex Top15) qui peuvent être vu sur la page des statistiques générales. La longueur peut être définie entre %1$d et %2$d, et doit être une valeur entière.
+manageParameters.min_participation_percentage.title = Poucentage de Participation
+manageParameters.min_participation_percentage.legend = Ce paramètre définit le pourcentage minimal de KTLCs qu'un joueurs doit avoir joué pour être pris en compte pour <strong>certains</strong> des des classements de la page dédiée aux statistiques générales. Le pourcentage peut être défini entre %1$d et %2$d%%, et doit être une valeur entière.
+manageParameters.min_maps.title = Nombre de maps pour les 'Epic Fails'
+manageParameters.min_maps.legend = Ce paramètre définit le nombre minimal de maps qu'un joueur doit avoir joué lors d'une KTLC pour être considéré dans le comptage des 'Epic Fails'. Le nombre de maps peu être compris entre %1$d et %2$d, et doit être une valeur entière.
+manageParameters.validate = Confirmer et Recalculer les Statistiques
+manageParameters.reset = Réinitialiser les valeurs
+manageParameters.cancel = Annuler
+manageParameters.noChanges = Aucun changements dans les valeurs des paramètres!
+manageParameters.regenInSecs = Statistiques recalculées en %s secondes!
+manageParameters.errors = Erreur(s)!

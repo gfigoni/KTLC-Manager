@@ -1,26 +1,26 @@
 #{extends 'CRUD/layout.html' /} 
-#{set title:messages.get('admin.manageParameterStats.title (I18N))') /}
+#{set title:messages.get('admin.generalStats') /}
 
 
 <div>
 
-	<h2>General Statistics Management (I18N)</h2>
+	<h2>&{'admin.generalStats'}</h2>
 
 	
 	<form action="@{stats.StatisticsManager.saveParameters()}" method="GET">
 		<table style="width: auto;">
 			<thead>
 				<tr>
-					<th>Parameters  (I18N)</th>
-					<th>Values  (I18N)</th>
-					<th>Explanations (I18N)</th>
+					<th>&{'manageParameters.params'}</th>
+					<th>&{'manageParameters.values'}</th>
+					<th>&{'manageParameters.explan'}</th>
 				</tr>
 			</thead>
 			<tbody>
 				<tr>
-					<td>Length top (I18N)</td>
-					<td><input type="text" name="newLengthTop" value="${config.getLengthTop()}" /> </td>
-					<td>bla bla value between ${config.MIN_LENGTH} and ${config.MAX_LENGTH} (I18N)</td>
+					<td>&{'manageParameters.length_top.title'}</td>
+					<td><input type="text" name="newLengthTop" value="${config.getLengthTop()}" size="5" style="text-align: right;"/> </td>
+					<td style="color:#777"><em>&{'manageParameters.length_top.legend', config.MIN_LENGTH, config.MAX_LENGTH }</em></td>
 				</tr>
 				<tr>
 				</tr>
@@ -28,18 +28,18 @@
 					<td colspan="2"><span class="error" style="color:#c00">#{error 'newLengthTop' /}</span></td>
 				</tr>
 				<tr>
-					<td>Min Percentage participation (I18N)</td>
-					<td><input type="text" name="newMinPercentage" value="${config.getMinPercentageParticipations()}"/> </td>
-					<td>bla bla value between ${config.MIN_PERCENTAGE} and ${config.MAX_PERCENTAGE} (I18N)</td>
+					<td>&{'manageParameters.min_participation_percentage.title'}</td>
+					<td><input type="text" name="newMinPercentage" value="${config.getMinPercentageParticipations()}" size="5" style="text-align: right;" /> </td>
+					<td style="color:#777"><em>&{'manageParameters.min_participation_percentage.legend', config.MIN_PERCENTAGE, config.MAX_PERCENTAGE }</em></td>
 				</tr>
 				</tr>
 					<td></td>
 					<td colspan="2"><span class="error" style="color:#c00">#{error 'newMinPercentage' /}</span></td>
 				</tr>
 				<tr>
-					<td>Min Number Maps for Epic Fail (I18N)</td>
-					<td><input type="text" name="newEpicFail" value="${config.getMinNumberMapsForEpicFail()}"/> </td>
-					<td>bla bla value between ${config.MIN_EPICFAIL} and ${config.MAX_EPICFAIL} (I18N)</td>
+					<td>&{'manageParameters.min_maps.title'}</td>
+					<td><input type="text" name="newEpicFail" value="${config.getMinNumberMapsForEpicFail()}"  size="5" style="text-align: right;" /> </td>
+					<td style="color:#777"><em>&{'manageParameters.min_maps.legend', config.MIN_EPICFAIL, config.MAX_EPICFAIL}</em></td>
 				</tr>
 				</tr>
 					<td></td>
@@ -47,9 +47,9 @@
 				</tr>
 				<tr>
 					<td colspan="3">
-						<input type="submit" value="Validate (Regenerate Stats)"/>
-						<input type="reset" value="Reset" /></form>
-						<a href="/admin"><button>Cancel</button></a>
+						<input type="submit" value="&{'manageParameters.validate'}"/>
+						<input type="reset" value="&{'manageParameters.reset'}" /></form>
+						<a href="/admin"><button style="text-decoration: none;">&{'manageParameters.cancel'}</button></a>
 					</td>
 				</tr>
 			</tbody>

@@ -94,3 +94,25 @@ error.noStats = No statistics
 
 # administration
 validation.required = %s is required
+validation.min = Cannot be lower than %s
+validation.max = Cannot be greater than %s
+
+admin.generalStats = General Statistics Management
+admin.options = Options
+admin.regen = Regenerate Statistics
+admin.manageParams = Manage Parameters
+manageParameters.params = Parameters
+manageParameters.values = Values
+manageParameters.explan = Explanations
+manageParameters.length_top.title = Length of the Tops
+manageParameters.length_top.legend = This parameter allows the customization of the length of the ranking tops (e.g. Top15) that can be seen in the general statistics page. The length can be set between %1$d and %2$d, and has to be an integer value.
+manageParameters.min_participation_percentage.title = Percentage of Participation
+manageParameters.min_participation_percentage.legend = This parameter defines the minimal percentage of KTLCs that a player should have played to be considered for <strong>some</strong> of the rankings shown in the general statistics page. The percentage can be set between %1$d and %2$d%%, and has to be an integer value.
+manageParameters.min_maps.title = Number of Maps for 'Epic Fails'
+manageParameters.min_maps.legend = This parameter defines the minimal number of maps that a player should have played in a KTLC to be considered for the count of 'Epic Fails'. The number of maps can be set between %1$d and %2$d, and has to be an integer value.
+manageParameters.validate = Confirm and Regenerate the Statistics
+manageParameters.reset = Reset Values
+manageParameters.cancel = Cancel
+manageParameters.noChanges = No changes in the values of the parameters!
+manageParameters.regenInSecs = Statistics regenerated in %s seconds!
+manageParameters.errors = Error(s)!

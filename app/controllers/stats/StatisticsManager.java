@@ -3,6 +3,7 @@ package controllers.stats;
 import java.text.DecimalFormat;
 
 import models.stats.StatisticConfig;
+import play.i18n.Messages;
 import play.mvc.Controller;
 import play.mvc.With;
 import controllers.Check;
@@ -17,7 +18,7 @@ public class StatisticsManager extends Controller {
 		Double seconds = miliseconds / 1000.0;
 		DecimalFormat df = new DecimalFormat("#.#####");
 
-		flash.success("Stats regenerated in %s seconds (I18N)", df.format(seconds));
+		flash.success(Messages.get("manageParameters.regenInSecs", df.format(seconds)));
 		redirect("/admin");
 	}
 	
@@ -48,7 +49,7 @@ public class StatisticsManager extends Controller {
 		// errors
 		if(validation.hasErrors()) {
 			// reload page with error
-            flash.error("Error! (I18N)");
+            flash.error(Messages.get("manageParameters.errors"));
     		render("/admin/manageParameters.html", config);
         } else if (config.getLengthTop() != newLengthTop 
         			|| config.getMinPercentageParticipations() != newMinPercentage
@@ -62,7 +63,7 @@ public class StatisticsManager extends Controller {
 			//regenerate the stats
 			regenStats();
     	} else {
-    		flash.success("No changes in the values (I18N)");
+    		flash.success(Messages.get("manageParameters.noChanges"));
     		redirect("/admin");
     	}
         	
