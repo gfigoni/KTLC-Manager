@@ -35,4 +35,8 @@ public class KTLCRace extends Model {
     public KTLCRaceResult findResult(Login login) {
         return KTLCRaceResult.find("race = ? and login = ?", this, login).first();
     }
+    
+    public static KTLCRace findByMap(TMMap map) {
+    	return KTLCRace.find("map = ?", map).first();
+    }
 }

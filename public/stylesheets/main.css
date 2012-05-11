@@ -196,8 +196,31 @@ td{
 .raceresult table,
 .ktlcs_box table,
 .players_box table,
-.player_box table {
+.player_box table,
+.map_box table {
 	background-color: #484742;
+}
+
+.player_box {
+	float: left;
+}
+
+.map_box {
+	float: right;
+}
+
+.map_box h1,
+.player_box h1 {
+	font-weight: bold;
+	font-size: 20px;
+	margin: 0;
+	padding: 0;
+	margin-bottom: 10px;
+}
+
+.map_box h1,
+.player_box h1 {
+	text-align: center;
 }
 
 .content_box table,
@@ -213,21 +236,27 @@ td{
 .raceresult td,
 .ktlcs_box td,
 .players_box td,
-.player_box td{
+.player_box td,
+.map_box td {
 	line-height: 10px;
 	vertical-align: middle;
 	color: #FEFADC;
 }
 
-.players_box td{
+.players_box td {
 	text-align: left;
 	padding-left: 20px;
 	min-width: 200px;
 	line-height: 10px;
 }
 
-.player_box td {
+.player_box td,
+.map_box td {
 	min-width: 100px;
+}
+
+.map_box td:FIRST-CHILD {
+	min-width: 150px;
 }
 
 .ktlcs_box td:last-child{
@@ -239,7 +268,8 @@ td{
 .raceresult tr:nth-child(odd),
 .ktlcs_box tr:nth-child(odd),
 .players_box tr:nth-child(odd),
-.player_box tr:nth-child(odd){
+.player_box tr:nth-child(odd),
+.map_box tr:nth-child(odd) {
 	background-color: #3D3B37;
 }
 

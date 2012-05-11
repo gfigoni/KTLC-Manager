@@ -1,12 +1,16 @@
 package controllers;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
 
 import models.KTLCEdition;
+import models.KTLCRace;
 import models.KTLCResult;
 import models.Player;
+import models.TMMap;
 import models.stats.StatisticGeneral;
 import play.i18n.Lang;
 import play.mvc.Controller;
@@ -36,7 +40,22 @@ public class Application extends Controller {
         // liste des ktlc, pour le graphe
         List<KTLCEdition> ktlcs = KTLCEdition.find("order by date asc").fetch();
         
-        render(player, results, ktlcs);
+        List<TMMap> maps = TMMap.findByPlayer(player);
+        List<KTLCRace> races = new ArrayList<KTLCRace>(maps.size());
+        for (TMMap map : maps) {
+			races.add(KTLCRace.findByMap(map));
+		}
+        
+        Collections.sort(races, new Comparator<KTLCRace>() {
+            @Override
+            public int compare(final KTLCRace entry1, final KTLCRace entry2) {
+                final Date dateKTLC1 = entry1.ktlc.date;
+                final Date dateKTLC2 = entry2.ktlc.date;
+                return -1*dateKTLC1.compareTo(dateKTLC2);
+            }
+        });
+        
+        render(player, results, ktlcs, races);
     }
 
     public static void players() {
