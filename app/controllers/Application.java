@@ -13,6 +13,7 @@ import models.Player;
 import models.TMMap;
 import models.stats.StatisticGeneral;
 import play.i18n.Lang;
+import play.modules.paginate.ValuePaginator;
 import play.mvc.Controller;
 import controllers.stats.StatisticsGenerator;
 
@@ -28,10 +29,10 @@ public class Application extends Controller {
         Player player = Player.findByLogin(loginName);
 
         // résultats du joueur
-        List<KTLCResult> results = KTLCResult.findByPlayer(player);
+        List<KTLCResult> resultsList = KTLCResult.findByPlayer(player);
 
         // tri par date de KTLC
-        Collections.sort(results, new Comparator<KTLCResult>() {
+        Collections.sort(resultsList, new Comparator<KTLCResult>() {
             public int compare(KTLCResult o1, KTLCResult o2) {
                 return o2.ktlc.date.compareTo(o1.ktlc.date);
             }
@@ -40,13 +41,15 @@ public class Application extends Controller {
         // liste des ktlc, pour le graphe
         List<KTLCEdition> ktlcs = KTLCEdition.find("order by date asc").fetch();
         
+        // maps du joueur
         List<TMMap> maps = TMMap.findByPlayer(player);
-        List<KTLCRace> races = new ArrayList<KTLCRace>(maps.size());
+        List<KTLCRace> racesList = new ArrayList<KTLCRace>(maps.size());
         for (TMMap map : maps) {
-			races.add(KTLCRace.findByMap(map));
+			racesList.add(KTLCRace.findByMap(map));
 		}
         
-        Collections.sort(races, new Comparator<KTLCRace>() {
+        // tri par ktlc descendant
+        Collections.sort(racesList, new Comparator<KTLCRace>() {
             @Override
             public int compare(final KTLCRace entry1, final KTLCRace entry2) {
                 final Date dateKTLC1 = entry1.ktlc.date;
@@ -54,6 +57,14 @@ public class Application extends Controller {
                 return -1*dateKTLC1.compareTo(dateKTLC2);
             }
         });
+        
+        ValuePaginator<KTLCResult> results = new ValuePaginator<KTLCResult>(resultsList);
+        results.setPagesDisplayed(3);
+        results.setParameterName("resultsPage");
+        
+        ValuePaginator<KTLCRace> races = new ValuePaginator<KTLCRace>(racesList);
+        races.setPagesDisplayed(3);
+        races.setParameterName("racesPage");
         
         render(player, results, ktlcs, races);
     }
