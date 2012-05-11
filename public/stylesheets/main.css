@@ -651,6 +651,62 @@ td{
 }
 
 /***********************************
+*           Pagination             *
+***********************************/
+
+div.pagination-container {
+	margin-bottom: 10px;
+	clear: both;
+}
+
+ul.pagination {
+	border: 0;
+	margin: 0;
+	padding: 0;
+	float: left;
+}
+
+.pagination li {
+	border: 0;
+	margin: 0;
+	padding: 0;
+	list-style: none;
+	border: solid 1px #1E1E1E;
+	float: left;
+	margin-right : 2px;
+}
+
+.pagination .previous-off a,
+.pagination .next-off a, 
+.pagination .off a:link, 
+.pagination .off a:visited {
+	color: #888888;
+	font-weight: bold;
+}
+
+.pagination .next a, .pagination .previous a, .pagination .first a, .pagination .last a {
+	font-weight: bold;
+	color: #00000;
+}
+
+.pagination .active {
+	color: #F39400;
+ 	background-color: #3D3B37;
+	font-weight : bold;
+}
+
+.pagination a:link, .pagination a:visited {
+	display : block;
+	float: left;
+	padding: 3px 6px;
+	text-decoration: none;
+}
+
+.pagination a:hover {
+	text-decoration: none;
+}
+
+/***********************************
 *             FOOTER               *
 ***********************************/
 

@@ -24,6 +24,8 @@ player.rank = Place
 player.score = Score
 player.nbraces = Courses
 player.rounds = Tours
+player.categories = Catégories
+player.mapper = Mappeur
 
 stats.title_generalStats = Statistiques Générales
 stats.title_playerChart = Nombre de Joueurs par KTLC

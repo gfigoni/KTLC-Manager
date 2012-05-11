@@ -4,14 +4,13 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import controllers.stats.StatisticsGenerator;
-
 import models.KTLCEdition;
 import models.KTLCResult;
 import models.Player;
 import models.stats.StatisticGeneral;
+import play.i18n.Lang;
 import play.mvc.Controller;
-import play.mvc.With;
+import controllers.stats.StatisticsGenerator;
 
 public class Application extends Controller {
 
@@ -61,5 +60,16 @@ public class Application extends Controller {
     		StatisticsGenerator.updateAllGeneralStatistics();
     	}
     	render(statistics);
+    }
+    
+    public static void changeLocale(String lang, String page) {
+    	String currentLang = Lang.get();
+    	
+    	if (!lang.equals(currentLang) && (lang.equals("fr") || lang.equals("en"))) {
+    		Lang.change(lang);
+    		redirect("/" + page);
+    	} else {
+    		redirect("/" + page);
+    	}
     }
 }

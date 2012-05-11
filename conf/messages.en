@@ -24,6 +24,8 @@ player.rank = Rank
 player.score = Score
 player.nbraces = Races
 player.rounds = Rounds
+player.categories = Categories
+player.mapper = Mapper
 
 stats.title_generalStats = General Statistics
 stats.title_playerChart = Number of Players by KTLC

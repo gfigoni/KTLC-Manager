@@ -11,12 +11,14 @@
 <div id="main">
     <div id="content">
         <div class="players_box">
+        	#{paginate.controls items:players /}
             <table>
                 <tr>
                     <th>&{'player'}</th>
                     <th>&{'player.login'}</th>
+                    <th>&{'player.categories'}</th>
                 </tr>
-                #{list items:players, as:'player'}
+                #{paginate.list items:players, as:'player'}
                 #{if player.logins}
                 <tr>
                     <td>#{a @Application.player(player.logins[0])}${player.name}#{/a}</td>
@@ -26,13 +28,20 @@
                         #{if !login_isLast}<br/>#{/if}
                         #{/list}
                     </td>
+                    <td>
+                    	#{if player.isPlayer() && !player.isMapper()}&{'player'}#{/if}
+                   		#{elseif !player.isPlayer() && player.isMapper()}&{'player.mapper'}#{/elseif}
+                   		#{elseif player.isPlayer() && player.isMapper()}&{'player'} / &{'player.mapper'}#{/elseif}
+                   		#{else}Unknown#{/else}
+                    </td>
                 </tr>
                 #{/if}
-                #{/list}
+                #{/paginate.list}
                 #{else}
                 &{'error.noplayer'}
                 #{/else}
             </table>
+            #{paginate.summary items:players /}
         </div>
     </div>
     <div class="cleaner"></div>

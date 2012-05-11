@@ -41,4 +41,12 @@ public class Player extends Model {
     public static Player findByLogin(String login) {
         return Player.find("select p from Player p, Login l where l.name = ? and l.player = p", login).first();
     }
+    
+    public boolean isPlayer() {
+    	return KTLCResult.findByPlayer(this).size() > 0;
+    }
+    
+    public boolean isMapper() {
+    	return TMMap.findByPlayer(this).size() > 0;
+    }
 }

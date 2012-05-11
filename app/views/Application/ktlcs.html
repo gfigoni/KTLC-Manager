@@ -11,6 +11,7 @@
 <div id="main">
     <div id="content">
         <div class="ktlcs_box">
+        	#{paginate.controls items:ktlcs /}
             <table>
                 <tr>
                     <th>&{'ktlc.number.title'}</th>
@@ -18,7 +19,7 @@
                     <th>&{'ktlc.size'}</th>
                     <th>Podium</th>
                 </tr>
-                #{list items:ktlcs, as:'ktlc'}
+                #{paginate.list items:ktlcs, as:'ktlc'} 
                 <tr>
                     <td>#{a @Application.ktlc(ktlc.number)}&{'ktlc.number', ktlc.number}#{/a}</td>
                     <td>${ktlc.date.format()}</td>
@@ -31,11 +32,12 @@
                         #{/list}
                     </td>
                 </tr>
-                #{/list}
+                #{/paginate.list}
                 #{else}
                     &{'error.noktlc'}
                 #{/else}
             </table>
+            #{paginate.summary items:ktlcs /}
         </div>
     </div>
     <div class="cleaner"></div>
