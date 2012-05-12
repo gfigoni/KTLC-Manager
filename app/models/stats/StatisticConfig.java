@@ -29,6 +29,11 @@ public class StatisticConfig {
 	private int minNumberMapsForEpicFail = 2;
 	public static final int MIN_EPICFAIL = 1;
 	public static final int MAX_EPICFAIL = 4;
+	
+	/** The number of rank to study for the player statistics */
+	private int rankLimit = 20;
+	public static final int MIN_RANKLIMIT = 5;
+	public static final int MAX_RANKLIMIT = 50;
 
 	public int getLengthTop() {
 		return lengthTop;
@@ -64,6 +69,15 @@ public class StatisticConfig {
 	@XmlElement
 	public void setMinNumberMapsForEpicFail(int minNumberMapsForEpicFail) {
 		this.minNumberMapsForEpicFail = minNumberMapsForEpicFail;
+	}
+	
+	public int getRankLimit() {
+		return rankLimit;
+	}
+
+	@XmlElement
+	public void setRankLimit(int rankLimit) {
+		this.rankLimit = rankLimit;
 	}
 
 	public static StatisticConfig loadStatsConfig() {

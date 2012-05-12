@@ -3,81 +3,236 @@
 #{set page:'player' /}
 
 #{set 'moreScripts'}
-    <script type="text/javascript">
-        var chartData = [
-            #{list items:ktlcs, as:'ktlc'}
-            { ktlc: "${ktlc.number}", ratio: ${ktlc.getRatio(player)}, rank: ${ktlc.getResult(player) ? ktlc.getResult(player).rank : 0}, total: ${ktlc.results.size()} }${ktlc_isLast ? '' : ','}
-            #{/list}
+    <script type="text/javascript">        
+        #{if player.isMapper()}
+        var chartEnviroData = [
+   			#{list items:stats.chart_numberMapsByEnviro.keySet(), as:'enviro'}
+   				{ enviro: "${enviro.capFirst()}", maps: ${stats.chart_numberMapsByEnviro.get(enviro)} },
+   			#{/list}
+   		];
+        
+        function compareEnviro(a,b) {
+       	  if (a.maps > b.maps)
+       	     return -1;
+       	  if (a.maps < b.maps)
+       	    return 1;
+       	  return 0;
+       	}
+    	chartEnviroData.sort(compareEnviro);
+    	
+    	var chartEnviro;
+        #{/if}
+        
+        #{if player.isPlayer()}
+        var chartRanksByKTLCsData = [
+			#{list items:0..(stats.chart_ranksByKTLCs.length - 1), as:'i'}
+			{ rank: "${i+1}", number: ${stats.chart_ranksByKTLCs[i]}, ratio: ${(stats.chart_ranksByKTLCs[i] / (double)stats.totalKTLCs)*100.0} },
+			#{/list}                   
         ];
         
-        var chart;
-
+        var chartRanksByRacesData = [
+			#{list items:0..(stats.chart_ranksByRaces.length - 1), as:'i'}
+			{ rank: "${i+1}", number: ${stats.chart_ranksByRaces[i]}, ratio: ${(stats.chart_ranksByRaces[i] / (double)stats.totalRaces)*100.0} },
+			#{/list}                   
+        ];
+        
+        var chartRanksByKTLCs;
+        var chartRanksByRaces;
+        #{/if}        
+        
+      	var chartDataKTLC = [
+	        #{list items:ktlcs, as:'ktlc'}
+	        { ktlc: "${ktlc.number}", ratio: ${ktlc.getRatio(player)}, rank: ${ktlc.getResult(player) ? ktlc.getResult(player).rank : 0}, total: ${ktlc.results.size()} }${ktlc_isLast ? '' : ','}
+	        #{/list}
+	    ];
+        	
+        var chartKTLC;
+        
         AmCharts.ready(function () {
-            chart = new AmCharts.AmSerialChart();
+        	// CHART KTLCs -------------------------------------------------------------------
+            chartKTLC = new AmCharts.AmSerialChart();
             
-            chart.pathToImages = "@{'/public/images/amcharts/'}/";
-            chart.panEventsEnabled = true;
-            chart.dataProvider = chartData;
-            chart.categoryField = "ktlc";
-            chart.marginTop = 0;
-            chart.marginLeft = 0;
-            chart.marginRight = 0;
-            chart.marginBottom = 0;
-            chart.color = "#FEFADC";
-            chart.zoomOutButton = {
+            chartKTLC.pathToImages = "@{'/public/images/amcharts/'}/";
+            chartKTLC.panEventsEnabled = true;
+            chartKTLC.dataProvider = chartDataKTLC;
+            chartKTLC.categoryField = "ktlc";
+            chartKTLC.marginTop = 0;
+            chartKTLC.marginLeft = 0;
+            chartKTLC.marginRight = 0;
+            chartKTLC.marginBottom = 0;
+            chartKTLC.color = "#FEFADC";
+            chartKTLC.zoomOutButton = {
                  backgroundColor: "#C37700",
                  backgroundAlpha: 0.5
             };
 
             // listen for "dataUpdated" event (fired when chart is rendered) and call zoomChart method when it happens
-            chart.addListener("dataUpdated", zoomChart);
+            chartKTLC.addListener("dataUpdated", zoomChart);
 
             // Axes
             // category
-            var catAxis = chart.categoryAxis;
-            catAxis.gridCount = chartData.length;
-            catAxis.labelRotation = 90;
+            var catKTLCAxis = chartKTLC.categoryAxis;
+            catKTLCAxis.gridCount = chartDataKTLC.length;
+            catKTLCAxis.labelRotation = 90;
             // value                
-            var valueAxis = new AmCharts.ValueAxis();
-            valueAxis.minimum = 0;
-            valueAxis.maximum = 100;
-            chart.addValueAxis(valueAxis);
+            var valueKTLCAxis = new AmCharts.ValueAxis();
+            valueKTLCAxis.minimum = 0;
+            valueKTLCAxis.maximum = 100;
+            chartKTLC.addValueAxis(valueKTLCAxis);
 
             // Graph
-            var graph = new AmCharts.AmGraph();
-            graph.balloonText = "ktlc #[[category]] - [[rank]]/[[total]]";
-            graph.valueField = "ratio"
-            graph.type = "column";
-            graph.lineAlpha = 0;
-            graph.fillAlphas = 1;
-            graph.fillColors = "#C37700"
-            chart.addGraph(graph);
+            var graphKTLC = new AmCharts.AmGraph();
+            graphKTLC.balloonText = "ktlc #[[category]] - [[rank]]/[[total]]";
+            graphKTLC.valueField = "ratio"
+            graphKTLC.type = "column";
+            graphKTLC.lineAlpha = 0;
+            graphKTLC.fillAlphas = 1;
+            graphKTLC.fillColors = "#C37700"
+            chartKTLC.addGraph(graphKTLC);
 
             // Cursor
-            var chartCursor = new AmCharts.ChartCursor();
-            chartCursor.cursorPosition = "middle";
-            chartCursor.categoryBalloonEnabled = false;
-            chartCursor.pan = true;
-            chart.addChartCursor(chartCursor);
+            var chartKTLCCursor = new AmCharts.ChartCursor();
+            chartKTLCCursor.cursorPosition = "middle";
+            chartKTLCCursor.categoryBalloonEnabled = false;
+            chartKTLCCursor.pan = true;
+            chartKTLC.addChartCursor(chartKTLCCursor);
 
             // scrollbar
-            var chartScrollbar = new AmCharts.ChartScrollbar();
-            chartScrollbar.graph = graph;
-            chartScrollbar.scrollbarHeight = 35;
-            chartScrollbar.autoGridCount = false;
-            chartScrollbar.hideResizeGrips = true;
-            chartScrollbar.backgroundAlpha = 0;
-            chartScrollbar.selectedBackgroundColor = "#C37700";
-            chartScrollbar.selectedBackgroundAlpha = 0.5;
-            chartScrollbar.graphFillColor = "#444444";
-            chartScrollbar.graphFillAlpha = 1;
-            chart.addChartScrollbar(chartScrollbar);
+            var chartKTLCScrollbar = new AmCharts.ChartScrollbar();
+            chartKTLCScrollbar.graph = graphKTLC;
+            chartKTLCScrollbar.scrollbarHeight = 35;
+            chartKTLCScrollbar.autoGridCount = false;
+            chartKTLCScrollbar.hideResizeGrips = true;
+            chartKTLCScrollbar.backgroundAlpha = 0;
+            chartKTLCScrollbar.selectedBackgroundColor = "#C37700";
+            chartKTLCScrollbar.selectedBackgroundAlpha = 0.5;
+            chartKTLCScrollbar.graphFillColor = "#444444";
+            chartKTLCScrollbar.graphFillAlpha = 1;
+            chartKTLC.addChartScrollbar(chartKTLCScrollbar);
 
-            chart.write('chartContainer');
+            chartKTLC.write('chartContainerKTLC');
+            
+            #{if player.isMapper()}
+         	// CHART Maps/Enviro  ------------------------------------------------------------------
+         	chartEnviro = new AmCharts.AmSerialChart();
+            
+        	chartEnviro.dataProvider = chartEnviroData;
+        	chartEnviro.categoryField = "enviro";
+        	chartEnviro.rotate= true;
+        	chartEnviro.color = "#FEFADC";
+        	chartEnviro.columnWidth = 0.5;
+        	chartEnviro.marginTop = 0;
+            chartEnviro.marginBottom = 0;
+			
+			// Graph
+	        var graphEnviro = new AmCharts.AmGraph();
+	        graphEnviro.balloonText = "[[value]] maps";
+	        graphEnviro.valueField = "maps";
+	        graphEnviro.type = "column";
+	        graphEnviro.lineAlpha = 0;
+	        graphEnviro.fillAlphas = 1;
+	        graphEnviro.fillColors = "#C37700";
+	        
+	        chartEnviro.addGraph(graphEnviro);
+	        
+	     	// Axes
+            // value                
+            var valueEnviroAxis = new AmCharts.ValueAxis();
+            valueEnviroAxis.minimum = 0;
+            chartEnviro.addValueAxis(valueEnviroAxis);
+            
+         	// Cursor
+            var chartEnviroCursor = new AmCharts.ChartCursor();
+            chartEnviroCursor.cursorPosition = "middle";
+            chartEnviroCursor.categoryBalloonEnabled = false;
+            chartEnviro.addChartCursor(chartEnviroCursor);
+	
+            chartEnviro.write('chartContainerEnviro');         	
+         	#{/if}
+         	
+       		#{if player.isPlayer()}
+           	// CHART Ranks by KTLCs  ------------------------------------------------------------------
+           	chartRanksByKTLCs = new AmCharts.AmSerialChart();
+               
+           	chartRanksByKTLCs.dataProvider = chartRanksByKTLCsData;
+           	chartRanksByKTLCs.categoryField = "rank";
+           	chartRanksByKTLCs.rotate= true;
+           	chartRanksByKTLCs.color = "#FEFADC";
+           	chartRanksByKTLCs.columnWidth = 0.5;
+           	chartRanksByKTLCs.marginTop = 0;
+           	chartRanksByKTLCs.marginBottom = 0;
+   			
+   			// Graph
+   	        var graphRanksByKTLCs = new AmCharts.AmGraph();
+   	     	graphRanksByKTLCs.balloonText = "[[value]]";
+   	     	graphRanksByKTLCs.valueField = "number";
+	   	  	graphRanksByKTLCs.type = "column";
+		   	graphRanksByKTLCs.lineAlpha = 0;
+		   	graphRanksByKTLCs.fillAlphas = 1;
+		   	graphRanksByKTLCs.fillColors = "#C37700";
+   	        
+		   	chartRanksByKTLCs.addGraph(graphRanksByKTLCs);
+   	        
+   	     	// Axes
+   	     	// category
+            var catRanksByKTLCsAxis = chartRanksByKTLCs.categoryAxis;
+            catRanksByKTLCsAxis.title = "Rank (I18N)";
+            // value                
+            var valueRanksByKTLCsAxis = new AmCharts.ValueAxis();
+            valueRanksByKTLCsAxis.minimum = 0;
+            chartRanksByKTLCs.addValueAxis(valueRanksByKTLCsAxis);
+            
+         	// Cursor
+            var chartRanksByKTLCsCursor = new AmCharts.ChartCursor();
+            chartRanksByKTLCsCursor.cursorPosition = "middle";
+            chartRanksByKTLCsCursor.categoryBalloonEnabled = false;
+            chartRanksByKTLCs.addChartCursor(chartRanksByKTLCsCursor);
+	
+            chartRanksByKTLCs.write('chartContainerRanksKTLCs');
+            
+         	// CHART Ranks by Racess  ------------------------------------------------------------------
+           	chartRanksByRaces = new AmCharts.AmSerialChart();
+               
+           	chartRanksByRaces.dataProvider = chartRanksByRacesData;
+           	chartRanksByRaces.categoryField = "rank";
+           	chartRanksByRaces.rotate= true;
+           	chartRanksByRaces.color = "#FEFADC";
+           	chartRanksByRaces.columnWidth = 0.5;
+           	chartRanksByRaces.marginTop = 0;
+           	chartRanksByRaces.marginBottom = 0;
+   			
+   			// Graph
+   	        var graphRanksByRaces = new AmCharts.AmGraph();
+   	     	graphRanksByRaces.balloonText = "[[value]]";
+   	     	graphRanksByRaces.valueField = "number";
+	   	  	graphRanksByRaces.type = "column";
+		   	graphRanksByRaces.lineAlpha = 0;
+		   	graphRanksByRaces.fillAlphas = 1;
+		   	graphRanksByRaces.fillColors = "#C37700";
+   	        
+		   	chartRanksByRaces.addGraph(graphRanksByRaces);
+   	        
+   	     	// Axes
+   	     	// category
+            var catRanksByRacesAxis = chartRanksByRaces.categoryAxis;
+            catRanksByRacesAxis.title = "Rank (I18N)";
+            // value                
+            var valueRanksByRacesAxis = new AmCharts.ValueAxis();
+            valueRanksByRacesAxis.minimum = 0;
+            chartRanksByRaces.addValueAxis(valueRanksByRacesAxis);
+            
+         	// Cursor
+            var chartRanksByRacesCursor = new AmCharts.ChartCursor();
+            chartRanksByRacesCursor.cursorPosition = "middle";
+            chartRanksByRacesCursor.categoryBalloonEnabled = false;
+            chartRanksByRaces.addChartCursor(chartRanksByRacesCursor);
+	
+            chartRanksByRaces.write('chartContainerRanksRaces');
+         	#{/if}
         });
         
         function zoomChart() {
-            chart.zoomToIndexes(chartData.length - 15, chartData.length - 1);
+            chartKTLC.zoomToIndexes(chartDataKTLC.length - 15, chartDataKTLC.length - 1);
         }
     </script>
 #{/set}
@@ -90,7 +245,7 @@
 </div>
 <div id="main">
     <div id="content">
-        <div id="chartContainer" style="width: 850px; height: 400px;"></div>
+        <div id="chartContainerKTLC" style="width: 850px; height: 400px;"></div>
         #{if results.size() != 0}
         <div class="player_box">
         	<div class="ranking_title">
@@ -144,9 +299,115 @@
         <div class="cleaner"></div>
     	<div class="statsSpace"><hr></div>
     	
-    	
+    	<div class="content_generalStats">
+    		#{if player.isPlayer()}
+    		<div class="content_chartLeft">
+   				<h2>Player stats (I18N)</h2>
+	    		<table>
+	    			<tr>
+	    				<th>measure (I18N)</th>
+	    				<th colspan="2">value (I18N)</th>
+	    			</tr>
+	    			<tr>
+	    				<td>avg rank (I18N)</td>
+	    				<td colspan="2">${stats.averageRank.format('0.00')}</td>
+	    			</tr>
+	    			<tr>
+	    				<td># KTLC (I18N)</td>
+	    				<td>${stats.numberKTLC} / ${stats.totalKTLCs}</td>
+	    				<td>(${(stats.partRatioKTLC*100.0).format('0.00')} %)</td>
+	    			</tr>
+	    			<tr>
+	    				<td>--> # KTLC TMU (I18N)</td>
+	    				<td>${stats.numberKTLC_TMU} / ${stats.totalKTLC_TMU}</td>
+	    				<td>(${(stats.partRatioKTLC_TMU*100.0).format('0.00')} %)</td>
+	    				
+	    			</tr>
+	    			<tr>
+	    				<td>--> # SKTLC TMU (I18N)</td>
+	    				<td>${stats.numberSuperKTLC_TMU} / ${stats.totalSuperKTLC_TMU}</td>
+	    				<td>(${(stats.partRatioSuperKTLC_TMU*100.0).format('0.00')} %)</td>
+	    			</tr>
+	    			<tr>
+	    				<td>--> # KTLC TM2 (I18N)</td>
+	    				<td>${stats.numberKTLC_TM2} / ${stats.totalKTLC_TM2}</td>
+	    				<td>(${(stats.partRatioKTLC_TM2*100.0).format('0.00')} %)</td>
+	    			</tr>
+	    			<tr>
+	    				<td># Races (I18N)</td>
+	    				<td colspan="2">${stats.totalRaces}</td>
+	    			</tr>
+	    			<tr>
+	    				<td># Runs (I18N)</td>
+	    				<td colspan="2">${stats.totalRuns}</td>
+	    			</tr>
+	    			<tr>
+	    				<td></td>
+	    				<td colspan="2"></td>
+	    			</tr>
+	    			<tr>
+	    				<td></td>
+	    				<td colspan="2"></td>
+	    			</tr>
+	    			<tr>
+	    				<td></td>
+	    				<td colspan="2"></td>
+	    			</tr>
+	    		</table>
+	    	</div>
+	    	#{/if}
+	    	
+	    	#{if player.isMapper()}
+	    	<div class="content_chartRight">
+		        <h2>Mapper stats (I18N)</h2>
+	    		<table>
+	    			<tr>
+	    				<th>measure (I18N)</th>
+	    				<th colspan="2">value (I18N)</th>
+	    			</tr>
+	    			<tr>
+	    				<td># Maps (I18N)</td>
+	    				<td>${stats.createdMaps} / ${stats.totalMaps}</td>
+	    				<td>(${(stats.ratioMaps*100.0).format('0.00')} %)</td>
+	    			</tr>
+	    			<tr>
+	    				<td></td>
+	    				<td colspan="2"></td>
+	    			</tr>
+	    			<tr>
+	    				<td></td>
+	    				<td colspan="2"></td>
+	    			</tr>
+	    			<tr>
+	    				<td></td>
+	    				<td colspan="2"></td>
+	    			</tr>
+	    		</table>
+	    		<h1>Maps / Enviro (I18N)</h1>
+		        <div id="chartContainerEnviro" style="width: 420px; height: 300px;"></div>
+	        </div>
+	        #{/if}
+	    </div>
+	    
+	    <div class="cleaner"></div>
+	    
+	    
+	    #{if player.isPlayer()}	    
+	    <div class="statsSpace"><hr></div>
+	    
+	    <div class="content_generalStats">
+	    	<div class="content_chartLeft">
+		    	<h1>Results in KTLCs (I18N)</h1>
+		    	<div id="chartContainerRanksKTLCs" style="width: 420px; height: 500px;"></div>
+	    	</div>
+	        <div class="content_chartRight">
+		        <h1>Results in Races (I18N)</h1>
+		        <div id="chartContainerRanksRaces" style="width: 420px; height: 500px;"></div>
+	        </div>
+	     </div>	    
+	    <div class="cleaner"></div>
+	    #{/if}
     </div>
-    <div class="cleaner"></div>
 </div>
 #{/if}
 

@@ -12,6 +12,7 @@ import models.KTLCResult;
 import models.Player;
 import models.TMMap;
 import models.stats.StatisticGeneral;
+import models.stats.StatisticPlayer;
 import play.i18n.Lang;
 import play.modules.paginate.ValuePaginator;
 import play.mvc.Controller;
@@ -58,6 +59,7 @@ public class Application extends Controller {
             }
         });
         
+        // create the paginators for the ktlcs and the maps
         ValuePaginator<KTLCResult> results = new ValuePaginator<KTLCResult>(resultsList);
         results.setPagesDisplayed(3);
         results.setParameterName("resultsPage");
@@ -66,7 +68,10 @@ public class Application extends Controller {
         races.setPagesDisplayed(3);
         races.setParameterName("racesPage");
         
-        render(player, results, ktlcs, races);
+        // get the stats
+        StatisticPlayer stats = StatisticsGenerator.generateStatisticsPlayer(player);
+        
+        render(player, results, ktlcs, races, stats);
     }
 
     public static void players() {
