@@ -1,11 +1,13 @@
 package controllers.stats;
 
+import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
-import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import models.KTLCEdition;
 import models.KTLCRace;
@@ -96,52 +98,148 @@ public class StatisticsGenerator {
 		
 		// set the parameters from the config
 		config = StatisticConfig.loadStatsConfig();
-		stats.RANK_LIMIT = config.getRankLimit();
-		
-		// init the lists
-		List<KTLCEdition> ktlcs = KTLCEdition.find("order by date asc").fetch();
-		List<KTLCResult> ktlcResults = KTLCResult.findByPlayer(player);
-		List<KTLCEdition> ktlcEditions = new ArrayList<KTLCEdition>();
-		for (KTLCResult result : ktlcResults) { ktlcEditions.add(result.ktlc); }		
-		List<TMMap> maps = TMMap.findByPlayer(player);
-		
+		stats.RANK_LIMIT = config.getRankLimit(); // TODO backend manage value
+
 		// set the stats
 		stats.player = player;
 		
-		stats.numberKTLC = ktlcResults.size();
-		stats.totalKTLCs = ktlcs.size();
-		stats.partRatioKTLC = stats.numberKTLC / (double)stats.totalKTLCs;
+		if (player.isPlayer()) {
+			List<KTLCEdition> ktlcs = KTLCEdition.find("order by date asc").fetch();
+			List<KTLCResult> ktlcResults = KTLCResult.findByPlayer(player);
+			List<KTLCEdition> ktlcEditions = new ArrayList<KTLCEdition>(ktlcResults.size());
+			for (KTLCResult result : ktlcResults) { ktlcEditions.add(result.ktlc); }	
+			
+			stats.numberPlayedKTLCs = ktlcResults.size();
+			stats.totalKTLCs = ktlcs.size();
+			stats.partRatioKTLC = stats.numberPlayedKTLCs / (double)stats.totalKTLCs;
+			
+			stats.numberPlayedKTLC_TMU = calcNumberKTLCTMU(ktlcEditions);
+			stats.totalKTLC_TMU = calcNumberKTLCTMU(ktlcs);
+			stats.partRatioKTLC_TMU = stats.numberPlayedKTLC_TMU / (double)stats.totalKTLC_TMU;
+			
+			stats.numberPlayedSuperKTLC_TMU = calcNumberSuperKTLCTMU(ktlcEditions);
+			stats.totalSuperKTLC_TMU = calcNumberSuperKTLCTMU(ktlcs);
+			stats.partRatioSuperKTLC_TMU = stats.numberPlayedSuperKTLC_TMU / (double)stats.totalSuperKTLC_TMU;
+			
+			stats.numberPlayedKTLC_TM2 = calcNumberKTLCTM2(ktlcEditions);
+			stats.totalKTLC_TM2 = calcNumberKTLCTM2(ktlcs);
+			stats.partRatioKTLC_TM2 = stats.numberPlayedKTLC_TM2 / (double)stats.totalKTLC_TM2;
+			
+			stats.averageRank = averageRankByPlayer(player);
+			
+			stats.numberPlayedRaces = calcNumberMapsPlayed(ktlcResults);
+			stats.numberPlayedRuns = calcTotalNumberRuns(player);
+			
+			stats.chart_ranksByKTLCs = ktlcResultsByRanksByPlayer(player, config.getRankLimit());
+			stats.chart_ranksByRaces = raceResultsByRanksByPlayer(player, config.getRankLimit());
+		}
 		
-		stats.numberKTLC_TMU = calcNumberKTLCTMU(ktlcEditions);
-		stats.totalKTLC_TMU = calcNumberKTLCTMU(ktlcs);
-		stats.partRatioKTLC_TMU = stats.numberKTLC_TMU / (double)stats.totalKTLC_TMU;
-		
-		stats.numberSuperKTLC_TMU = calcNumberSuperKTLCTMU(ktlcEditions);
-		stats.totalSuperKTLC_TMU = calcNumberSuperKTLCTMU(ktlcs);
-		stats.partRatioSuperKTLC_TMU = stats.numberSuperKTLC_TMU / (double)stats.totalSuperKTLC_TMU;
-		
-		stats.numberKTLC_TM2 = calcNumberKTLCTM2(ktlcEditions);
-		stats.totalKTLC_TM2 = calcNumberKTLCTM2(ktlcs);
-		stats.partRatioKTLC_TM2 = stats.numberKTLC_TM2 / (double)stats.totalKTLC_TM2;
-		
-		stats.averageRank = averageRankByPlayer(player);
-		
-		stats.totalRaces = calcNumberMapsPlayed(ktlcResults);
-		stats.totalRuns = calcTotalNumberRuns(player);
-		
-		stats.createdMaps = maps.size();
-		stats.totalMaps = TMMap.findAll().size();
-		stats.ratioMaps = stats.createdMaps / (double)stats.totalMaps;
-		
-		stats.chart_ranksByKTLCs = ktlcResultsByRanksByPlayer(player, config.getRankLimit());
-		stats.chart_ranksByRaces = raceResultsByRanksByPlayer(player, config.getRankLimit());
-		
-		stats.chart_numberMapsByEnviro = calcMapsByEnviro(maps);
+		if (player.isMapper()) {
+			List<TMMap> maps = TMMap.findByPlayer(player);
+			List<KTLCRace> races = new ArrayList<KTLCRace>(maps.size());
+			for (TMMap map : maps) { races.add(KTLCRace.findByMap(map)); }
+			
+			stats.chart_numberMapsByEnviro = calcMapsByEnviro(maps);
+			
+			stats.numberCreatedMaps = maps.size();
+			stats.totalMaps = TMMap.findAll().size();
+			stats.ratioMaps = stats.numberCreatedMaps / (double)stats.totalMaps;			
+			stats.numberDistinctPlayersOnMaps = calcNumberDistinctPlayersOnMaps(races);
+			stats.numberRunsOnMaps = calcNumberRunsOnMaps(races);
+			stats.numberDistinctKTLCsAsMapper = calcNumberDistinctKTLCsAsMapper(races);
+			
+			stats.averageNumberPlayersOnMaps = calcAverageNumberPlayersOnMaps(races);
+			
+			stats.favoriteMappingEnviros = calcFavoriteMappingEnviro(stats.chart_numberMapsByEnviro);
+		}
 		
 		return stats;
 	}
 	
+	/**
+	 * TODO
+	 * @param mapsByEnviro
+	 * @return
+	 */
+	private static List<TMEnvironment> calcFavoriteMappingEnviro(HashMap<TMEnvironment, Integer> mapsByEnviro) {
+		int maxNumberMaps = 0;
+		List<TMEnvironment> maxEnviro = new ArrayList<TMEnvironment>();
+		
+		for (TMEnvironment enviro : mapsByEnviro.keySet()) {
+			if (mapsByEnviro.get(enviro) > maxNumberMaps) {
+				maxEnviro = new ArrayList<TMEnvironment>();
+				maxEnviro.add(enviro);
+				maxNumberMaps = mapsByEnviro.get(enviro);
+			} else if (mapsByEnviro.get(enviro) == maxNumberMaps) {
+				maxEnviro.add(enviro);
+			}
+		}
+		
+		return maxEnviro;
+	}
+
+	/**
+	 * TODO
+	 * @param maps
+	 * @return
+	 */
+	private static int calcNumberDistinctPlayersOnMaps(List<KTLCRace> races) {
+		Set<Player> players = new HashSet<Player>();
+		for (KTLCRace race : races) {
+			for (KTLCRaceResult result : race.results) {
+				players.add(Player.findByLogin(result.login.name));
+			}
+		}
+		
+		return players.size();
+	}
 	
+	/**
+	 * TODO
+	 * @param maps
+	 * @return
+	 */
+	private static double calcAverageNumberPlayersOnMaps(List<KTLCRace> races) {
+		double sum = 0;
+		for (KTLCRace race : races) {
+			sum += race.results.size();			
+		}
+		
+		return sum / (double)races.size();
+	}
+	
+	/**
+	 * TODO
+	 * @param maps
+	 * @return
+	 */
+	private static int calcNumberRunsOnMaps(List<KTLCRace> races) {
+		int count = 0;
+		for (KTLCRace race : races) {
+			for (KTLCRaceResult result : race.results) {
+				if (result.rank == 1) {
+					count += result.roundsCount;
+				}
+			}	
+		}
+		
+		return count;
+	}
+	
+	/**
+	 * TODO
+	 * @param maps
+	 * @return
+	 */
+	private static int calcNumberDistinctKTLCsAsMapper(List<KTLCRace> races) {
+		Set<Integer> ktlcs = new HashSet<Integer>();
+		for (KTLCRace race : races) {
+			ktlcs.add(race.ktlc.number);
+		}
+		
+		return ktlcs.size();
+	}
+
 	/**
 	 * Calculate the number of players that played at least x % of the KTLCS
 	 * @param players the list of players
@@ -203,6 +301,13 @@ public class StatisticsGenerator {
 				count.put(map.environment, currentCount + 1);
 			} else {
 				count.put(map.environment, 1);
+			}
+		}
+		
+		// add the remaining enviros
+		for (TMEnvironment enviro : TMEnvironment.values()) {
+			if (!count.containsKey(enviro)) {
+				count.put(enviro, 0);
 			}
 		}
 		

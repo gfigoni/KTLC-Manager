@@ -26,13 +26,13 @@
         #{if player.isPlayer()}
         var chartRanksByKTLCsData = [
 			#{list items:0..(stats.chart_ranksByKTLCs.length - 1), as:'i'}
-			{ rank: "${i+1}", number: ${stats.chart_ranksByKTLCs[i]}, ratio: ${(stats.chart_ranksByKTLCs[i] / (double)stats.totalKTLCs)*100.0} },
+			{ rank: "${i+1}", number: ${stats.chart_ranksByKTLCs[i]}, ratio: ${(stats.chart_ranksByKTLCs[i] / (double)stats.numberPlayedKTLCs)*100.0} },
 			#{/list}                   
         ];
         
         var chartRanksByRacesData = [
 			#{list items:0..(stats.chart_ranksByRaces.length - 1), as:'i'}
-			{ rank: "${i+1}", number: ${stats.chart_ranksByRaces[i]}, ratio: ${(stats.chart_ranksByRaces[i] / (double)stats.totalRaces)*100.0} },
+			{ rank: "${i+1}", number: ${stats.chart_ranksByRaces[i]}, ratio: ${(stats.chart_ranksByRaces[i] / (double)stats.numberPlayedRaces)*100.0} },
 			#{/list}                   
         ];
         
@@ -314,32 +314,32 @@
 	    			</tr>
 	    			<tr>
 	    				<td># KTLC (I18N)</td>
-	    				<td>${stats.numberKTLC} / ${stats.totalKTLCs}</td>
+	    				<td>${stats.numberPlayedKTLCs} / ${stats.totalKTLCs}</td>
 	    				<td>(${(stats.partRatioKTLC*100.0).format('0.00')} %)</td>
 	    			</tr>
 	    			<tr>
 	    				<td>--> # KTLC TMU (I18N)</td>
-	    				<td>${stats.numberKTLC_TMU} / ${stats.totalKTLC_TMU}</td>
+	    				<td>${stats.numberPlayedKTLC_TMU} / ${stats.totalKTLC_TMU}</td>
 	    				<td>(${(stats.partRatioKTLC_TMU*100.0).format('0.00')} %)</td>
 	    				
 	    			</tr>
 	    			<tr>
 	    				<td>--> # SKTLC TMU (I18N)</td>
-	    				<td>${stats.numberSuperKTLC_TMU} / ${stats.totalSuperKTLC_TMU}</td>
+	    				<td>${stats.numberPlayedSuperKTLC_TMU} / ${stats.totalSuperKTLC_TMU}</td>
 	    				<td>(${(stats.partRatioSuperKTLC_TMU*100.0).format('0.00')} %)</td>
 	    			</tr>
 	    			<tr>
 	    				<td>--> # KTLC TM2 (I18N)</td>
-	    				<td>${stats.numberKTLC_TM2} / ${stats.totalKTLC_TM2}</td>
+	    				<td>${stats.numberPlayedKTLC_TM2} / ${stats.totalKTLC_TM2}</td>
 	    				<td>(${(stats.partRatioKTLC_TM2*100.0).format('0.00')} %)</td>
 	    			</tr>
 	    			<tr>
 	    				<td># Races (I18N)</td>
-	    				<td colspan="2">${stats.totalRaces}</td>
+	    				<td colspan="2">${stats.numberPlayedRaces}</td>
 	    			</tr>
 	    			<tr>
 	    				<td># Runs (I18N)</td>
-	    				<td colspan="2">${stats.totalRuns}</td>
+	    				<td colspan="2">${stats.numberPlayedRuns}</td>
 	    			</tr>
 	    			<tr>
 	    				<td></td>
@@ -367,20 +367,34 @@
 	    			</tr>
 	    			<tr>
 	    				<td># Maps (I18N)</td>
-	    				<td>${stats.createdMaps} / ${stats.totalMaps}</td>
+	    				<td>${stats.numberCreatedMaps} / ${stats.totalMaps}</td>
 	    				<td>(${(stats.ratioMaps*100.0).format('0.00')} %)</td>
 	    			</tr>
 	    			<tr>
-	    				<td></td>
-	    				<td colspan="2"></td>
+	    				<td># distinct players on maps (I18N)</td>
+	    				<td colspan="2">${stats.numberDistinctPlayersOnMaps}</td>
 	    			</tr>
 	    			<tr>
-	    				<td></td>
-	    				<td colspan="2"></td>
+	    				<td>avg number players on maps (I18N)</td>
+	    				<td colspan="2">${stats.averageNumberPlayersOnMaps.format('0.00')}</td>
+	    			</tr>	    			
+	    			<tr>
+	    				<td># played runs on maps (I18N)</td>
+	    				<td colspan="2">${stats.numberRunsOnMaps}</td>
 	    			</tr>
 	    			<tr>
-	    				<td></td>
-	    				<td colspan="2"></td>
+	    				<td># distinct KTLCs as mapper (I18N)</td>
+	    				<td colspan="2">${stats.numberDistinctKTLCsAsMapper}</td>
+	    			</tr>
+	    			<tr>
+	    				<td>Favorite mapping Environment (I18N)</td>
+	    				<td>
+							#{list items:stats.favoriteMappingEnviros, as:'enviro'}
+	                        ${enviro.capFirst()}
+	                        #{if !enviro_isLast}<br/>#{/if}
+	                        #{/list}
+	    				</td>
+	    				<td>(${stats.chart_numberMapsByEnviro.get(stats.favoriteMappingEnviros.get(0))} maps (I18N))</td>
 	    			</tr>
 	    		</table>
 	    		<h1>Maps / Enviro (I18N)</h1>

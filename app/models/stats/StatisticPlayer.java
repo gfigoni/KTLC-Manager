@@ -1,6 +1,7 @@
 package models.stats;
 
 import java.util.HashMap;
+import java.util.List;
 
 import models.Player;
 import models.TMEnvironment;
@@ -11,36 +12,43 @@ public class StatisticPlayer {
 	
 	public Player player;
 	
-	public int totalKTLCs;
-	public int totalRaces;
-	public int totalRuns;
-	
-	public int createdMaps;
+	// stats player
 	public int totalMaps;
 	public double ratioMaps;
 	
-	public int numberKTLC;	
+	public int numberPlayedKTLCs;
+	public int totalKTLCs;
 	public double partRatioKTLC;
 	
-	public int numberKTLC_TMU;
+	public int numberPlayedKTLC_TMU;
 	public int totalKTLC_TMU;
 	public double partRatioKTLC_TMU;
 	
-	public int numberSuperKTLC_TMU;
+	public int numberPlayedSuperKTLC_TMU;
 	public int totalSuperKTLC_TMU;
 	public double partRatioSuperKTLC_TMU;
 	
-	public int numberKTLC_TM2;
+	public int numberPlayedKTLC_TM2;
 	public int totalKTLC_TM2;
 	public double partRatioKTLC_TM2;
 	
-	public int numberMapsPlayed;
-	public int numberRunsPlayed;
+	public int numberPlayedRaces;
+	public int numberPlayedRuns;
 	
 	public double averageRank;
 	
 	public int[] chart_ranksByKTLCs;
 	public int[] chart_ranksByRaces;
 	
+	// stats mapper
 	public HashMap<TMEnvironment, Integer> chart_numberMapsByEnviro;
+	
+	public int numberCreatedMaps;
+	public int numberDistinctPlayersOnMaps;
+	public int numberRunsOnMaps;
+	public int numberDistinctKTLCsAsMapper;
+	
+	public List<TMEnvironment> favoriteMappingEnviros;
+	
+	public double averageNumberPlayersOnMaps;
 }
