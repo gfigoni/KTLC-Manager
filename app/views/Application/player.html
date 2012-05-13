@@ -2,6 +2,8 @@
 #{set title:messages.get('title.player', player?.name) /}
 #{set page:'player' /}
 
+#{if player}
+
 #{set 'moreScripts'}
     <script type="text/javascript">        
         #{if player.isMapper()}
@@ -237,7 +239,6 @@
     </script>
 #{/set}
 
-#{if player}
 <div id="content_top">
     <ul>
         <li><h1><a>${player.name}</a></h1></li>

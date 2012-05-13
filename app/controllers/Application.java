@@ -28,48 +28,61 @@ public class Application extends Controller {
     public static void player(String loginName) {
         // Récupération du joueur à partir du login
         Player player = Player.findByLogin(loginName);
-
+        
         // résultats du joueur
-        List<KTLCResult> resultsList = KTLCResult.findByPlayer(player);
-
-        // tri par date de KTLC
-        Collections.sort(resultsList, new Comparator<KTLCResult>() {
-            public int compare(KTLCResult o1, KTLCResult o2) {
-                return o2.ktlc.date.compareTo(o1.ktlc.date);
-            }
-        });
+        List<KTLCResult> resultsList = null;
         
         // liste des ktlc, pour le graphe
-        List<KTLCEdition> ktlcs = KTLCEdition.find("order by date asc").fetch();
-        
-        // maps du joueur
-        List<TMMap> maps = TMMap.findByPlayer(player);
-        List<KTLCRace> racesList = new ArrayList<KTLCRace>(maps.size());
-        for (TMMap map : maps) {
-			racesList.add(KTLCRace.findByMap(map));
-		}
-        
-        // tri par ktlc descendant
-        Collections.sort(racesList, new Comparator<KTLCRace>() {
-            @Override
-            public int compare(final KTLCRace entry1, final KTLCRace entry2) {
-                final Date dateKTLC1 = entry1.ktlc.date;
-                final Date dateKTLC2 = entry2.ktlc.date;
-                return -1*dateKTLC1.compareTo(dateKTLC2);
-            }
-        });
-        
-        // create the paginators for the ktlcs and the maps
-        ValuePaginator<KTLCResult> results = new ValuePaginator<KTLCResult>(resultsList);
-        results.setPagesDisplayed(3);
-        results.setParameterName("resultsPage");
-        
-        ValuePaginator<KTLCRace> races = new ValuePaginator<KTLCRace>(racesList);
-        races.setPagesDisplayed(3);
-        races.setParameterName("racesPage");
+        List<KTLCEdition> ktlcs = null;
         
         // get the stats
-        StatisticPlayer stats = StatisticsGenerator.generateStatisticsPlayer(player);
+        StatisticPlayer stats = null;
+        
+        ValuePaginator<KTLCRace> races = null;
+        ValuePaginator<KTLCResult> results = null;
+        
+        if (player != null) {	        
+	        resultsList = KTLCResult.findByPlayer(player);
+	
+	        // tri par date de KTLC
+	        Collections.sort(resultsList, new Comparator<KTLCResult>() {
+	            public int compare(KTLCResult o1, KTLCResult o2) {
+	                return o2.ktlc.date.compareTo(o1.ktlc.date);
+	            }
+	        });
+	        
+	        // liste des ktlc, pour le graphe
+	        ktlcs = KTLCEdition.find("order by date asc").fetch();
+	        
+	        // maps du joueur
+	        List<TMMap> maps = TMMap.findByPlayer(player);
+	        List<KTLCRace> racesList = new ArrayList<KTLCRace>(maps.size());
+	        for (TMMap map : maps) {
+				racesList.add(KTLCRace.findByMap(map));
+			}
+	        
+	        // tri par ktlc descendant
+	        Collections.sort(racesList, new Comparator<KTLCRace>() {
+	            @Override
+	            public int compare(final KTLCRace entry1, final KTLCRace entry2) {
+	                final Date dateKTLC1 = entry1.ktlc.date;
+	                final Date dateKTLC2 = entry2.ktlc.date;
+	                return -1*dateKTLC1.compareTo(dateKTLC2);
+	            }
+	        });
+	        
+	        // create the paginators for the ktlcs and the maps
+	        results = new ValuePaginator<KTLCResult>(resultsList);
+	        results.setPagesDisplayed(3);
+	        results.setParameterName("resultsPage");
+	        
+	        races = new ValuePaginator<KTLCRace>(racesList);
+	        races.setPagesDisplayed(3);
+	        races.setParameterName("racesPage");
+	        
+	        // get the stats
+	        stats = StatisticsGenerator.generateStatisticsPlayer(player);
+        }
         
         render(player, results, ktlcs, races, stats);
     }
@@ -100,6 +113,12 @@ public class Application extends Controller {
     public static void changeLocale(String lang, String page) {
     	String currentLang = Lang.get();
     	
+    	// avoid index
+    	if (page.equals("home")) {
+    		page = "";
+    	}
+    	
+    	// redirect
     	if (!lang.equals(currentLang) && (lang.equals("fr") || lang.equals("en"))) {
     		Lang.change(lang);
     		redirect("/" + page);
