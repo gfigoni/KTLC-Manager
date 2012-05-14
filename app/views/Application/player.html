@@ -35,7 +35,7 @@
         
         var chartRanksByKTLCsData = [
 			#{list items:0..(stats.chart_ranksByKTLCs.length - 1), as:'i'}
-			{ rank: "${i+1}", number: ${stats.chart_ranksByKTLCs[i]}, ratio: ${(stats.chart_ranksByKTLCs[i] / (double)stats.numberPlayedKTLCs)*100.0} },
+			{ rank: "${i+1}", number: ${stats.chart_ranksByKTLCs[i]}, ratio: ${(stats.chart_ranksByKTLCs[i] / (double)stats.playedKTLCs.value)*100.0} },
 			#{/list}                   
         ];
         
@@ -69,7 +69,7 @@
  			#{list items:stats.chart_averageRankByEnviro.keySet(), as:'enviro'}
  				{ 
  				  enviro: "${enviro.capFirst()}", 
- 				  avg: ${stats.chart_averageRankByEnviro.get(enviro)[0].format('0.00')},
+ 				  avg: ${stats.chart_averageRankByEnviro.get(enviro)[0]}.toFixed(2),
  				  numberMaps: ${(int)stats.chart_averageRankByEnviro.get(enviro)[1]}
  				},
  			#{/list}  
@@ -168,7 +168,7 @@
    	     	// Axes
    	     	// category
             var catRanksByKTLCsAxis = chartRanksByKTLCs.categoryAxis;
-            catRanksByKTLCsAxis.title = "Rank (I18N)";
+            catRanksByKTLCsAxis.title = "&{'player.stats.Rank'}";
             // value                
             var valueRanksByKTLCsAxis = new AmCharts.ValueAxis();
             valueRanksByKTLCsAxis.minimum = 0;
@@ -208,7 +208,7 @@
    	     	// Axes
    	     	// category
             var catRanksByRacesAxis = chartRanksByRaces.categoryAxis;
-            catRanksByRacesAxis.title = "Rank (I18N)";
+            catRanksByRacesAxis.title = "&{'player.stats.Rank'}";
             // value                
             var valueRanksByRacesAxis = new AmCharts.ValueAxis();
             valueRanksByRacesAxis.minimum = 0;
@@ -299,7 +299,7 @@
    			
    			// Graph
    	        var graphAvgRankByEnviro = new AmCharts.AmGraph();
-   	     	graphAvgRankByEnviro.balloonText = "[[value]] ([[numberMaps]] races (I18N))";
+   	     	graphAvgRankByEnviro.balloonText = "[[value]] ([[numberMaps]] &{'player.nbraces'})";
    	     	graphAvgRankByEnviro.valueField = "avg";
 	   	  	graphAvgRankByEnviro.type = "column";
 		   	graphAvgRankByEnviro.lineAlpha = 0;
@@ -348,7 +348,7 @@
             // GRAPHS
             // first graph    
             var graph = new AmCharts.AmGraph();
-            graph.title = "1st Places"; // I18N
+            graph.title = "&{'player.stats.first'}";
             graph.labelText = "[[value]]";
             graph.balloonText = "[[value]] / [[total]]";
             graph.valueField = "rank_1st";
@@ -362,7 +362,7 @@
 
             // second graph              
             graph = new AmCharts.AmGraph();
-            graph.title = "2nd Places"; // I18N
+            graph.title = "&{'player.stats.second'}";
             graph.labelText = "[[value]]";
             graph.balloonText = "[[value]] / [[total]]";
             graph.valueField = "rank_2nd";
@@ -376,7 +376,7 @@
 
             // third graph                              
             graph = new AmCharts.AmGraph();
-            graph.title = "3rd Places"; // I18N
+            graph.title = "&{'player.stats.third'}";
             graph.labelText = "[[value]]";
             graph.balloonText = "[[value]] / [[total]]";
             graph.valueField = "rank_3rd";
@@ -426,7 +426,7 @@
 	        <div class="content_chartLeft">
 		        <div class="player_box">
 		        	<div class="ranking_title">
-		                <h2>KTLC EDITIONS (I18N)</h2>
+		                <h2>&{'player.stats.ktlcEd'}</h2>
 		            </div>
 		       		#{paginate.controls items:results /}
 		            <table>
@@ -452,132 +452,168 @@
 	        <!-- RIGHT PART 1 PLAYER --------------------------------------------------------------------- -->
 	        <div class="content_chartRight">
 	        	<div class="ranking_title">
-	                <h2>PLAYER STATISTICS (I18N)</h2>
-	                <p>Bla bla bla</p>
+	                <h2>&{'player.stats.playerStats'}</h2>
+	                <p>&{'player.stats.playerStats_legend'}</p>
 	            </div>
-	    		<table>
-	    			<tr>
-	    				<th>measure (I18N)</th>
-	    				<th colspan="2">value (I18N)</th>
-	    			</tr>
-	    			<tr>
-	    				<td>avg rank (I18N)</td>
-	    				<td>${stats.averageRank.format('0.00')}</td>
-	    				<td></td>
-	    			</tr>
-	    			<tr>
-	    				<td>avg number opponents by KTLC(I18N)</td>
-	    				<td>${stats.averageNumberOpponents.format('0.00')}</td>
-	    				<td></td>
-	    			</tr>
-	    			<tr>
-	    				<td>Number of played KTLCs (I18N)</td>
-	    				<td>${stats.numberPlayedKTLCs} / ${stats.totalKTLCs}</td>
-	    				<td>(${(stats.partRatioKTLC*100.0).format('0.00')} %)</td>
-	    			</tr>
-	    			<tr>
-	    				<td>--> KTLC TMU (I18N)</td>
-	    				<td>${stats.numberPlayedKTLC_TMU} / ${stats.totalKTLC_TMU}</td>
-	    				<td>(${(stats.partRatioKTLC_TMU*100.0).format('0.00')} %)</td>
-	    				
-	    			</tr>
-	    			<tr>
-	    				<td>--> SKTLC TMU (I18N)</td>
-	    				<td>${stats.numberPlayedSuperKTLC_TMU} / ${stats.totalSuperKTLC_TMU}</td>
-	    				<td>(${(stats.partRatioSuperKTLC_TMU*100.0).format('0.00')} %)</td>
-	    			</tr>
-	    			<tr>
-	    				<td>--> KTLC TM2 (I18N)</td>
-	    				<td>${stats.numberPlayedKTLC_TM2} / ${stats.totalKTLC_TM2}</td>
-	    				<td>(${(stats.partRatioKTLC_TM2*100.0).format('0.00')} %)</td>
-	    			</tr>
-	    			<tr>
-	    				<td>Number of played Races (I18N)</td>
-	    				<td>${stats.numberPlayedRaces}</td>
-	    				<td></td>
-	    			</tr>
-	    			<tr>
-	    				<td>Number of played Runs (I18N)</td>
-	    				<td>${stats.numberPlayedRuns}</td>
-	    				<td></td>
-	    			</tr>
-	    			<tr>
-	    				<td>Best environment (I18N)</td>
-	    				<td></td>
-	    				<td></td>
-	    			</tr>
-	    			<tr>
-	    				<td>--> from rank avg (I18N)</td>
-	    				<td>
-	    					#{list items:stats.bestEnviroFromAvgRank, as:'enviro'}
-	                        ${enviro.capFirst()}
-	                        #{if !enviro_isLast}<br/>#{/if}
-	                        #{/list}
-	    				</td>
-	    				<td>(${(stats.chart_averageRankByEnviro.get(stats.bestEnviroFromAvgRank.get(0))[0]).format('0.00')})
-	    				</td>
-	    			</tr>
-	    			<tr>
-	    				<td>--> from # podiums (I18N)</td>
-	    				#{if stats.bestEviroFromPodiums != null}
-	    				<td>
-	    					#{list items:stats.bestEviroFromPodiums, as:'enviro'}
-	                        ${enviro.capFirst()}
-	                        #{if !enviro_isLast}<br/>#{/if}
-	                        #{/list}
-	    				</td>
-	    				<td>(${stats.chart_numberPodiumsByEnviro.get(stats.bestEviroFromPodiums.get(0))[3]} Podiums)</td>
-	    				#{/if}#{else}
-	    				<td>No Podiums (I18N)</td>
-	    				<td></td>
-	    				#{/else}
-	    			</tr>
-	    			<tr>
-	    				<td>Number of Podiums</td>
-	    				<td></td>
-	    				<td>(1st / 2nd / 3rd)</td>
-	    			</tr>
-	    			<tr>
-	    				<td>--> by KTLCs</td>
-	    				<td>${stats.chart_ranksByKTLCs[0] + stats.chart_ranksByKTLCs[1] + stats.chart_ranksByKTLCs[2]}</td>
-	    				<td>(${stats.chart_ranksByKTLCs[0]} / ${stats.chart_ranksByKTLCs[1]} / ${stats.chart_ranksByKTLCs[2]})</td>
-	    			</tr>
-	    			<tr>
-	    				<td>--> by Races</td>
-	    				<td>${stats.chart_ranksByRaces[0] + stats.chart_ranksByRaces[1] + stats.chart_ranksByRaces[2]}</td>
-	    				<td>(${stats.chart_ranksByRaces[0]} / ${stats.chart_ranksByRaces[1]} / ${stats.chart_ranksByRaces[2]})</td>
-	    			</tr>
-	    			<tr>
-	    				<td>Number of 'Perfects'</td>
-	    				<td>?</td>
-	    				<td>KTLCs...</td>
-	    			</tr>
-	    			<tr>
-	    				<td>Number of Podium in a row</td>
-	    				<td>?</td>
-	    				<td>first KTLC to last KTLC...</td>
-	    			</tr>
-	    			<tr>
-	    				<td>Number of Last places</td>
-	    				<td></td>
-	    				<td></td>
-	    			</tr>
-	    			<tr>
-	    				<td>--> by KTLCs</td>
-	    				<td>?</td>
-	    				<td></td>
-	    			</tr>
-	    			<tr>
-	    				<td>--> by Races</td>
-	    				<td>?</td>
-	    				<td></td>
-	    			</tr>
-	    			<tr>
-	    				<td>Number of 'Epic Fails'</td>
-	    				<td>?</td>
-	    				<td>KTLCs...</td>
-	    			</tr>
-	    		</table>
+	            <div class="player_stats">
+		    		<table>
+		    			<tr class="subtitle">
+		    				<td>&{'player.stats.participation'}</td>
+		    				<td></td>
+		    				<td></td>
+		    			</tr>
+		    			<tr>
+		    				<td>&{'player.stats.numKTLC'}</td>
+		    				<td>${stats.playedKTLCs.value} / ${stats.playedKTLCs.total}</td>
+		    				<td>(${(stats.playedKTLCs.ratio*100.0).format('0.00')} %)</td>
+		    			</tr>
+		    			<tr>
+		    				<td class="details">&{'player.stats.numKTLC_TMU'}</td>
+		    				<td>${stats.playedKTLC_TMU.value} / ${stats.playedKTLC_TMU.total}</td>
+		    				<td>(${(stats.playedKTLC_TMU.ratio*100.0).format('0.00')} %)</td>
+		    			</tr>
+		    			<tr>
+		    				<td class="details">&{'player.stats.numSKTLC_TMU'}</td>
+		    				<td>${stats.playedSuperKTLC_TMU.value} / ${stats.playedSuperKTLC_TMU.total}</td>
+		    				<td>(${(stats.playedSuperKTLC_TMU.ratio*100.0).format('0.00')} %)</td>
+		    			</tr>
+		    			<tr>
+		    				<td class="details">&{'player.stats.numKTLC_TM2'}</td>
+		    				<td>${stats.playedKTLC_TM2.value} / ${stats.playedKTLC_TM2.total}</td>
+		    				<td>(${(stats.playedKTLC_TM2.ratio*100.0).format('0.00')} %)</td>
+		    			</tr>
+		    			<tr>
+		    				<td>&{'player.stats.numRaces'}</td>
+		    				<td>${stats.numberPlayedRaces}</td>
+		    				<td></td>
+		    			</tr>
+		    			<tr>
+		    				<td>&{'player.stats.numRuns'}</td>
+		    				<td>${stats.numberPlayedRuns}</td>
+		    				<td></td>
+		    			</tr>
+		    			<tr>
+		    				<td>&{'player.stats.avgRankKTLC'}</td>
+		    				<td>${stats.averageRank.format('0.00')}</td>
+		    				<td></td>
+		    			</tr>
+		    			<tr>
+		    				<td>&{'player.stats.avgOpponents'}</td>
+		    				<td>${stats.averageNumberOpponents.format('0.00')}</td>
+		    				<td></td>
+		    			</tr>
+		    			<tr class="subtitle">
+		    				<td>&{'player.stats.bestEnviro'}</td>
+		    				<td></td>
+		    				<td></td>
+		    			</tr>
+		    			<tr>
+		    				<td>&{'player.stats.bestAvgRank'}</td>
+		    				<td>
+		    					#{list items:stats.bestEnviroFromAvgRank, as:'enviro'}
+		                        ${enviro.capFirst()}
+		                        #{if !enviro_isLast}<br/>#{/if}
+		                        #{/list}
+		    				</td>
+		    				<td>(${(stats.chart_averageRankByEnviro.get(stats.bestEnviroFromAvgRank.get(0))[0]).format('0.00')})</td>
+		    			</tr>
+		    			<tr>
+		    				<td>&{'player.stats.higestNumPodium'}</td>
+		    				#{if stats.bestEviroFromPodiums != null}
+		    				<td>
+		    					#{list items:stats.bestEviroFromPodiums, as:'enviro'}
+		                        ${enviro.capFirst()}
+		                        #{if !enviro_isLast}<br/>#{/if}
+		                        #{/list}
+		    				</td>
+		    				<td>(${stats.chart_numberPodiumsByEnviro.get(stats.bestEviroFromPodiums.get(0))[3]} Podiums)</td>
+		    				#{/if}#{else}
+		    				<td>&{'player.stats.noPodium'}</td>
+		    				<td></td>
+		    				#{/else}
+		    			</tr>
+		    			<tr class="subtitle">
+		    				<td>&{'player.stats.podiums'}</td>
+		    				<td></td>
+		    				<td></td>
+		    			</tr>
+		    			<tr>
+		    				<td>&{'player.stats.byKTLCs'}</td>
+		    				<td>${stats.numberPodiumsKTLC.value} / ${stats.numberPodiumsKTLC.total}</td>
+		    				<td>(${(stats.numberPodiumsKTLC.ratio*100.0).format('0.00')} %)</td>
+		    			</tr>
+		    			<tr>
+		    				<td>&{'player.stats.byRaces'}</td>
+		    				<td>${stats.numberPodiumsRace.value} / ${stats.numberPodiumsRace.total}</td>
+		    				<td>(${(stats.numberPodiumsRace.ratio*100.0).format('0.00')} %)</td>
+		    			</tr>
+		    			<tr>
+		    				<td>&{'player.stats.numPerfects'}</td>
+		    				<td>
+		    					#{if stats.perfects.size() > 0}
+		    						${stats.perfects.size()} / ${stats.playedKTLCs.value}
+		    					#{/if}#{else}
+		    						${stats.perfects.size()}
+		    					#{/else}
+							</td>
+		    				<td>
+		    					#{if stats.perfects.size() > 0}
+			    					#{list items:0..stats.perfects.size() - 1, as:'i'}
+		                        	#{if (stats.perfects.size() > 1 && i > 0)}<br />#{/if}
+		                        	#{a @Application.ktlc(stats.perfects.get(i).number)}&{'ktlc.number', stats.perfects.get(i).number} (${stats.perfects.get(i).date.format()})#{/a}
+		                        	#{/list}
+	                        	#{/if}
+	                      	</td>
+		    			</tr>
+		    			<tr>
+		    				<td>&{'player.stats.longSeriePodium'}</td>
+		    				<td>${stats.longestPodiumSerie.size()}</td>
+		    				<td>
+		    					#{if stats.longestPodiumSerie.size() == 1}
+		    						#{a @Application.ktlc(stats.longestPodiumSerie.get(0).number)}&{'ktlc.number', stats.longestPodiumSerie.get(0).number} (${stats.longestPodiumSerie.get(0).date.format()})#{/a}
+		    					#{/if}
+		    					#{elseif stats.longestPodiumSerie.size() > 1}
+		    						&{'player.stats.from'} #{a @Application.ktlc(stats.longestPodiumSerie.get(stats.longestPodiumSerie.size()-1).number)}&{'ktlc.number', stats.longestPodiumSerie.get(stats.longestPodiumSerie.size()-1).number} (${stats.longestPodiumSerie.get(stats.longestPodiumSerie.size()-1).date.format()})#{/a}<br/>
+		    						&{'player.stats.to'} #{a @Application.ktlc(stats.longestPodiumSerie.get(0).number)}&{'ktlc.number', stats.longestPodiumSerie.get(0).number} (${stats.longestPodiumSerie.get(0).date.format()})#{/a}
+		    					#{/elseif}
+	    					</td>
+		    			</tr>
+		    			<tr class = subtitle>
+		    				<td>&{'player.stats.lastPlaces'}</td>
+		    				<td></td>
+		    				<td></td>
+		    			</tr>
+		    			<tr>
+		    				<td>&{'player.stats.byKTLCs'}</td>
+		    				<td>${stats.numberLastPlaceKTLC.value} / ${stats.numberLastPlaceKTLC.total}</td>
+		    				<td>(${(stats.numberLastPlaceKTLC.ratio*100.0).format('0.00')} %)</td>
+		    			</tr>
+		    			<tr>
+		    				<td>&{'player.stats.byRaces'}</td>
+		    				<td>${stats.numberLastPlaceRace.value} / ${stats.numberLastPlaceRace.total}</td>
+		    				<td>(${(stats.numberLastPlaceRace.ratio*100.0).format('0.00')} %)</td>
+		    			</tr>
+		    			<tr>
+		    				<td>&{'player.stats.numEpicFails'}</td>
+		    				<td>
+		    					#{if stats.epicFails.size() > 0}
+		    						${stats.epicFails.size()} / ${stats.playedKTLCs.value}
+		    					#{/if}#{else}
+		    						${stats.epicFails.size()}
+		    					#{/else}
+							</td>
+		    				<td>
+		    					#{if stats.epicFails.size() > 0}
+			    					#{list items:0..stats.epicFails.size() - 1, as:'i'}
+		                        	#{if (stats.epicFails.size() > 1 && i > 0)}<br />#{/if}
+		                        	#{a @Application.ktlc(stats.epicFails.get(i).number)}&{'ktlc.number', stats.epicFails.get(i).number} 
+		   							(${stats.epicFails.get(i).date.format()})#{/a}
+		                        	#{/list}
+	                        	#{/if}
+	                      	</td>
+		    			</tr>
+		    		</table>
+	    		</div>
 	        </div>
         </div>
         
@@ -587,12 +623,12 @@
 	    <div class="content_generalStats">
 	    	<!-- LEFT PART 2 PLAYER --------------------------------------------------------------------- -->
 	    	<div class="content_chartLeft">
-		    	<h1>Results in KTLCs (I18N)</h1>
+		    	<h1>&{'player.stats.ktlcResultsbyRank'}</h1>
 		    	<div id="chartContainerRanksKTLCs" style="width: 420px; height: 500px;"></div>
 	    	</div>
 	    	<!-- RIGHT PART 2 PLAYER --------------------------------------------------------------------- -->
 	        <div class="content_chartRight">
-		        <h1>Results in Races (I18N)</h1>
+		        <h1>&{'player.stats.raceResultsbyRank'}</h1>
 		        <div id="chartContainerRanksRaces" style="width: 420px; height: 500px;"></div>
 	        </div>
 	     </div>
@@ -603,12 +639,12 @@
 	    <div class="content_generalStats">
 	    	<!-- LEFT PART 3 PLAYER --------------------------------------------------------------------- -->
 	    	<div class="content_chartLeft">
-		    	<h1>Avg Rank by Enviro (I18N)</h1>
+		    	<h1>&{'player.stats.avgRankByEnviro'}</h1>
 		    	<div id="chartContainerAvgRankByEnviro" style="width: 420px; height: 360px;"></div>
 	    	</div>
 	    	<!-- RIGHT PART 3 PLAYER --------------------------------------------------------------------- -->
 	        <div class="content_chartRight">
-		        <h1>Podiums By Enviro (I18N)</h1>
+		        <h1>&{'player.stats.numPodiumsByEnviro'}</h1>
 		        <div id="chartContainerPodiumsByEnviro" style="width: 420px; height: 400px;"></div>
 	        </div>
 	     </div>
@@ -625,14 +661,14 @@
 		    <div class="content_chartLeft">
 		        <div class="map_box">
 		        	<div class="ranking_title">
-		                <h2>CREATED MAPS (I18N)</h2>
+		                <h2>&{'player.stats.createdMaps'}</h2>
 		            </div>
 		       		#{paginate.controls items:races /}
 		            <table>
 		                <tr>
-		                    <th>map name (I18N)</th>
-		                    <th>enviro (I18N)</th>
-		                    <th>ktlc edition (I18N)</th>
+		                    <th>&{'player.stats.mapName'}</th>
+		                    <th>&{'player.stats.enviro'}</th>
+		                    <th>player.stats.ktlc</th>
 		                </tr>
 		                #{paginate.list items:races, as:'race'}
 		                <tr>
@@ -649,55 +685,57 @@
 	    	<!-- RIGHT PART 1 MAPPER  --------------------------------------------------------------------- -->
 	    	<div class="content_chartRight">
 	    		<div class="ranking_title">
-	                <h2>MAPPER STATISTICS (I18N)</h2>
-	                <p>Bla bla bla</p>
+	                <h2>&{'player.stats.mapperStats'}</h2>
+	                <p>&{'player.stats.mapperStats_legend'}</p>
 	            </div>
-		        
-	    		<table>
-	    			<tr>
-	    				<th>measure (I18N)</th>
-	    				<th colspan="2">value (I18N)</th>
-	    			</tr>
-	    			<tr>
-	    				<td># Maps (I18N)</td>
-	    				<td>${stats.numberCreatedMaps} / ${stats.totalMaps}</td>
-	    				<td>(${(stats.ratioMaps*100.0).format('0.00')} %)</td>
-	    			</tr>
-	    			<tr>
-	    				<td># distinct players on maps (I18N)</td>
-	    				<td>${stats.numberDistinctPlayersOnMaps}</td>
-	    				<td></td>
-	    			</tr>
-	    			<tr>
-	    				<td>avg number players on maps (I18N)</td>
-	    				<td>${stats.averageNumberPlayersOnMaps.format('0.00')}</td>
-	    				<td></td>
-	    			</tr>	    			
-	    			<tr>
-	    				<td># played runs on maps (I18N)</td>
-	    				<td>${stats.numberRunsOnMaps}</td>
-	    				<td></td>
-	    			</tr>
-	    			<tr>
-	    				<td># distinct KTLCs as mapper (I18N)</td>
-	    				<td>${stats.numberDistinctKTLCsAsMapper}</td>
-	    				<td></td>
-	    			</tr>
-	    			<tr>
-	    				<td>Favorite mapping Environment (I18N)</td>
-	    				<td>
-							#{list items:stats.favoriteMappingEnviros, as:'enviro'}
-	                        ${enviro.capFirst()}
-	                        #{if !enviro_isLast}<br/>#{/if}
-	                        #{/list}
-	    				</td>
-	    				<td>(${stats.chart_numberMapsByEnviro.get(stats.favoriteMappingEnviros.get(0))} maps (I18N))</td>
-	    			</tr>
-	    		</table>
+		        <div class="player_stats">
+		    		<table>
+		    			<tr>
+		    				<th>&{'player.stats.measures'}</th>
+		    				<th>&{'player.stats.values'}</th>
+		    				<th></th>
+		    			</tr>
+		    			<tr>
+		    				<td>&{'player.stats.numCreated'}</td>
+		    				<td>${stats.createdMaps.value} / ${stats.createdMaps.total}</td>
+		    				<td>(${(stats.createdMaps.ratio*100.0).format('0.00')} %)</td>
+		    			</tr>
+		    			<tr>
+		    				<td>&{'player.stats.numDistinctPlayer'}</td>
+		    				<td>${stats.distinctPlayersOnMaps.value} / ${stats.distinctPlayersOnMaps.total}</td>
+		    				<td>(${(stats.distinctPlayersOnMaps.ratio*100.0).format('0.00')} %)</td>
+		    			</tr>
+		    			<tr>
+		    				<td>&{'player.stats.avgNumPlayer'}</td>
+		    				<td>${stats.averageNumberPlayersOnMaps.format('0.00')}</td>
+		    				<td></td>
+		    			</tr>	    			
+		    			<tr>
+		    				<td>&{'player.stats.numRunsOnMaps'}</td>
+		    				<td>${stats.numberRunsOnMaps}</td>
+		    				<td></td>
+		    			</tr>
+		    			<tr>
+		    				<td>&{'player.stats.numDistinctKtlcs'}</td>
+		    				<td>${stats.numberDistinctKTLCsAsMapper}</td>
+		    				<td></td>
+		    			</tr>
+		    			<tr>
+		    				<td>&{'player.stats.favEnviro'}</td>
+		    				<td>
+								#{list items:stats.favoriteMappingEnviros, as:'enviro'}
+		                        ${enviro.capFirst()}
+		                        #{if !enviro_isLast}<br/>#{/if}
+		                        #{/list}
+		    				</td>
+		    				<td>(${stats.chart_numberMapsByEnviro.get(stats.favoriteMappingEnviros.get(0))} maps)</td>
+		    			</tr>
+		    		</table>
+	    		</div>
 	    		
 	    		<div class="statsSpace"></div>
 	    		
-	    		<h1>Maps / Enviro (I18N)</h1>
+	    		<h1>&{'player.stats.numMapsByEnviro'}</h1>
 		        <div id="chartContainerEnviro" style="width: 420px; height: 300px;"></div>
 	        </div>
 	        

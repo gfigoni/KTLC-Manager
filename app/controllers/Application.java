@@ -76,6 +76,7 @@ public class Application extends Controller {
 	        // create the paginators for the ktlcs and the maps
 	        results = new ValuePaginator<KTLCResult>(resultsList);
 	        results.setPagesDisplayed(3);
+	        results.setPageSize(26);
 	        results.setParameterName("resultsPage");
 	        
 	        races = new ValuePaginator<KTLCRace>(racesList);
@@ -115,20 +116,18 @@ public class Application extends Controller {
     	render(statistics);
     }
     
-    public static void changeLocale(String lang, String page) {
+    public static void changeLocale(String lang, String requestUrl) {
     	String currentLang = Lang.get();
     	
-    	// avoid index
-    	if (page.equals("home")) {
-    		page = "";
-    	}
+    	// remove the first '/'
+    	requestUrl = requestUrl.substring(1, requestUrl.length());
     	
     	// redirect
     	if (!lang.equals(currentLang) && (lang.equals("fr") || lang.equals("en"))) {
     		Lang.change(lang);
-    		redirect("/" + page);
+    		redirect("/" + requestUrl);
     	} else {
-    		redirect("/" + page);
+    		redirect("/" + requestUrl);
     	}
     }
 }

@@ -3,6 +3,7 @@ package models.stats;
 import java.util.HashMap;
 import java.util.List;
 
+import models.KTLCEdition;
 import models.Player;
 import models.TMEnvironment;
 
@@ -12,28 +13,21 @@ public class StatisticPlayer {
 	
 	public Player player;
 	
-	// stats player
-	public int totalMaps;
-	public double ratioMaps;
-	
-	public int numberPlayedKTLCs;
-	public int totalKTLCs;
-	public double partRatioKTLC;
-	
-	public int numberPlayedKTLC_TMU;
-	public int totalKTLC_TMU;
-	public double partRatioKTLC_TMU;
-	
-	public int numberPlayedSuperKTLC_TMU;
-	public int totalSuperKTLC_TMU;
-	public double partRatioSuperKTLC_TMU;
-	
-	public int numberPlayedKTLC_TM2;
-	public int totalKTLC_TM2;
-	public double partRatioKTLC_TM2;
+	// stats player	
+	public StatsEntry playedKTLCs;
+	public StatsEntry playedKTLC_TMU;
+	public StatsEntry playedSuperKTLC_TMU;
+	public StatsEntry playedKTLC_TM2;
 	
 	public int numberPlayedRaces;
 	public int numberPlayedRuns;
+	public List<KTLCEdition> perfects;
+	public List<KTLCEdition> epicFails;
+	public List<KTLCEdition> longestPodiumSerie;
+	public StatsEntry numberLastPlaceRace;
+	public StatsEntry numberLastPlaceKTLC;
+	public StatsEntry numberPodiumsRace;
+	public StatsEntry numberPodiumsKTLC;
 	
 	public double averageRank;
 	public double averageNumberOpponents;
@@ -50,8 +44,8 @@ public class StatisticPlayer {
 	// stats mapper
 	public HashMap<TMEnvironment, Integer> chart_numberMapsByEnviro;
 	
-	public int numberCreatedMaps;
-	public int numberDistinctPlayersOnMaps;
+	public StatsEntry createdMaps;
+	public StatsEntry distinctPlayersOnMaps;
 	public int numberRunsOnMaps;
 	public int numberDistinctKTLCsAsMapper;
 	

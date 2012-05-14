@@ -3,11 +3,16 @@ package controllers.stats;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
+
+import org.hibernate.mapping.Array;
 
 import models.KTLCEdition;
 import models.KTLCRace;
@@ -20,6 +25,7 @@ import models.stats.Rank;
 import models.stats.StatisticConfig;
 import models.stats.StatisticGeneral;
 import models.stats.StatisticPlayer;
+import models.stats.StatsEntry;
 
 /**
  * This class is used to generate general statistics regarding the whole KTLC history.
@@ -108,39 +114,50 @@ public class StatisticsGenerator {
 			List<KTLCEdition> ktlcs = KTLCEdition.find("order by date asc").fetch();
 			// the results of the player on the ktlcs he played
 			List<KTLCResult> ktlcResults = KTLCResult.findByPlayer(player);
-			// the editions of the ktlcs on which the player played
-			List<KTLCEdition> ktlcEditions = new ArrayList<KTLCEdition>(ktlcResults.size());
-			for (KTLCResult result : ktlcResults) { ktlcEditions.add(result.ktlc); }
 			// the results of the player for all the maps he played
 			List<KTLCRaceResult> raceResults = KTLCRaceResult.findByPlayer(player);
+			// the editions of the ktlcs on which the player played
+			List<KTLCEdition> ktlcPlayed = new ArrayList<KTLCEdition>(ktlcResults.size());
+			for (KTLCResult result : ktlcResults) { ktlcPlayed.add(result.ktlc); }
 			
-			stats.numberPlayedKTLCs = ktlcResults.size();
-			stats.totalKTLCs = ktlcs.size();
-			stats.partRatioKTLC = stats.numberPlayedKTLCs / (double)stats.totalKTLCs;
+			//participations
+			stats.playedKTLCs = new StatsEntry(ktlcResults.size(), ktlcs.size());
+			stats.playedKTLC_TMU = new StatsEntry(calcNumberKTLCTMU(ktlcPlayed), calcNumberKTLCTMU(ktlcs));
+			stats.playedSuperKTLC_TMU = new StatsEntry(calcNumberSuperKTLCTMU(ktlcPlayed), calcNumberSuperKTLCTMU(ktlcs));
+			stats.playedKTLC_TM2 = new StatsEntry(calcNumberKTLCTM2(ktlcPlayed), calcNumberKTLCTM2(ktlcs));
 			
-			stats.numberPlayedKTLC_TMU = calcNumberKTLCTMU(ktlcEditions);
-			stats.totalKTLC_TMU = calcNumberKTLCTMU(ktlcs);
-			stats.partRatioKTLC_TMU = stats.numberPlayedKTLC_TMU / (double)stats.totalKTLC_TMU;
-			
-			stats.numberPlayedSuperKTLC_TMU = calcNumberSuperKTLCTMU(ktlcEditions);
-			stats.totalSuperKTLC_TMU = calcNumberSuperKTLCTMU(ktlcs);
-			stats.partRatioSuperKTLC_TMU = stats.numberPlayedSuperKTLC_TMU / (double)stats.totalSuperKTLC_TMU;
-			
-			stats.numberPlayedKTLC_TM2 = calcNumberKTLCTM2(ktlcEditions);
-			stats.totalKTLC_TM2 = calcNumberKTLCTM2(ktlcs);
-			stats.partRatioKTLC_TM2 = stats.numberPlayedKTLC_TM2 / (double)stats.totalKTLC_TM2;
-			
+			// averages
 			stats.averageRank = averageRankByPlayer(player);
-			stats.averageNumberOpponents = averageNumberOpponents(ktlcEditions);
+			stats.averageNumberOpponents = calcAverageNumberOpponents(ktlcPlayed);
 			
+			//others
 			stats.numberPlayedRaces = calcNumberMapsPlayed(ktlcResults);
 			stats.numberPlayedRuns = calcTotalNumberRuns(player);
+			stats.numberLastPlaceKTLC = calcNumberLastPlaceKTLC(ktlcResults);
+			stats.numberLastPlaceRace = calcNumberlastPlaceRace(raceResults);
+			stats.perfects = calcPerfects(ktlcResults);
+			stats.epicFails = calcEpicFails(ktlcResults, config.getMinNumberMapsForEpicFail());
+			stats.longestPodiumSerie = calcLongestPodiumSeries(ktlcResults);
 			
+			// charts
 			stats.chart_ranksByKTLCs = ktlcResultsByRanksByPlayer(player, config.getRankLimit());
+			stats.numberPodiumsKTLC = new StatsEntry(
+					stats.chart_ranksByKTLCs[0] + 
+					stats.chart_ranksByKTLCs[1] + 
+					stats.chart_ranksByKTLCs[2], 
+					stats.playedKTLCs.value);
+			
 			stats.chart_ranksByRaces = raceResultsByRanksByPlayer(player, config.getRankLimit());
+			stats.numberPodiumsRace = new StatsEntry(
+					stats.chart_ranksByRaces[0] + 
+					stats.chart_ranksByRaces[1] + 
+					stats.chart_ranksByRaces[2], 
+					stats.numberPlayedRaces);
+			
 			stats.chart_averageRankByEnviro = calcAverageRankByEnviro(raceResults);
 			stats.chart_numberPodiumsByEnviro = calcNumberPodiumsByEnviro(raceResults);
 			
+			// best enviros
 			stats.bestEnviroFromAvgRank = calcBestEnvirofromAvgRank(stats.chart_averageRankByEnviro);
 			stats.bestEviroFromPodiums = calcBestEnviroFromPodiums(stats.chart_numberPodiumsByEnviro);
 		}
@@ -152,10 +169,8 @@ public class StatisticsGenerator {
 			
 			stats.chart_numberMapsByEnviro = calcMapsByEnviro(maps);
 			
-			stats.numberCreatedMaps = maps.size();
-			stats.totalMaps = TMMap.findAll().size();
-			stats.ratioMaps = stats.numberCreatedMaps / (double)stats.totalMaps;			
-			stats.numberDistinctPlayersOnMaps = calcNumberDistinctPlayersOnMaps(races);
+			stats.createdMaps = new StatsEntry(maps.size(), TMMap.findAll().size());
+			stats.distinctPlayersOnMaps = calcNumberDistinctPlayersOnMaps(races);
 			stats.numberRunsOnMaps = calcNumberRunsOnMaps(races);
 			stats.numberDistinctKTLCsAsMapper = calcNumberDistinctKTLCsAsMapper(races);
 			
@@ -168,11 +183,82 @@ public class StatisticsGenerator {
 	}
 	
 	/**
-	 * TODO
-	 * @param ktlcs
-	 * @return
+	 * Calculate the size of the longest series of KTLC where the player finished on the podium
+	 * @param ktlcResults the results of the player
+	 * @return the list of KTLC Editions of the longest series
 	 */
-	private static double averageNumberOpponents(List<KTLCEdition> ktlcs) {
+	private static List<KTLCEdition> calcLongestPodiumSeries(List<KTLCResult> ktlcResults) {
+		List<KTLCEdition> podiums = new ArrayList<KTLCEdition>();
+		List<KTLCEdition> currentSerie = new ArrayList<KTLCEdition>();
+		
+		// sort the results of the ktlc by date
+		Collections.sort(ktlcResults, new Comparator<KTLCResult>() {
+	            @Override
+	            public int compare(final KTLCResult entry1, final KTLCResult entry2) {
+	                final Date dateKTLC1 = entry1.ktlc.date;
+	                final Date dateKTLC2 = entry2.ktlc.date;
+	                return -1*dateKTLC1.compareTo(dateKTLC2);
+	            }
+	        });
+		
+		for (KTLCResult result : ktlcResults) {
+			// if podium, add the ktlc to the current serie
+			if (result.rank <= 3) {
+				currentSerie.add(result.ktlc);
+			} else {
+				// start a new serie and save the current
+				if (currentSerie.size() > podiums.size()) {					
+					podiums = currentSerie;
+				}
+				currentSerie = new ArrayList<KTLCEdition>();
+			}
+		}
+		
+		return podiums;
+	}
+
+	/**
+	 * Calculate the number of last places in races for the player
+	 * @param results the race results of the player
+	 * @return a stats entry with the number of last places in races
+	 */
+	private static StatsEntry calcNumberlastPlaceRace(List<KTLCRaceResult> results) {
+		
+		int numberLastPlaces = 0;
+		
+		for (KTLCRaceResult result : results) {
+			int numberPlayers = result.race.results.size();
+			if (result.rank == numberPlayers) {
+				numberLastPlaces++;
+			}
+		}	
+		return new StatsEntry(numberLastPlaces, results.size());		
+	}
+	
+	/**
+	 * Calculate the number of last places in KTLCs for the player
+	 * @param results the ktlcs results of the player
+	 * @return a StatsEntry with the number of last places in ktlcs
+	 */
+	private static StatsEntry calcNumberLastPlaceKTLC(List<KTLCResult> results) {
+		
+		int numberLastPlaces = 0;
+		
+		for (KTLCResult result : results) {
+			int numberPlayers = result.ktlc.results.size();
+			if (result.rank == numberPlayers) {
+				numberLastPlaces++;
+			}
+		}	
+		return new StatsEntry(numberLastPlaces, results.size());		
+	}
+	
+	/**
+	 * Calculate the average number of opponent of the player
+	 * @param ktlcs the KTLCs at which the player participated
+	 * @return the average number of opponents
+	 */
+	private static double calcAverageNumberOpponents(List<KTLCEdition> ktlcs) {
 		int numberOpponents = 0;
 		for (KTLCEdition ktlc : ktlcs) {
 			numberOpponents += (ktlc.results.size() - 1); // remove the player himself
@@ -182,9 +268,9 @@ public class StatisticsGenerator {
 	}
 
 	/**
-	 * TODO
-	 * @param chart_numberPodiumsByEnviro
-	 * @return
+	 * Calculate the best environment with respect to the number of podiums
+	 * @param the hashmaps with the number of podiums by environment
+	 * @return the environments (several if equalities)
 	 */
 	private static List<TMEnvironment> calcBestEnviroFromPodiums(HashMap<TMEnvironment, int[]> numberPodiumsByEnviro) {
 		List<TMEnvironment> bestEnviros = null;
@@ -206,9 +292,9 @@ public class StatisticsGenerator {
 	}
 
 	/**
-	 * TODO
-	 * @param chart_averageRankByEnviro
-	 * @return
+	 * Calculate the best environment with respect to the average rank
+	 * @param the hashmaps with the average ranking by environment
+	 * @return the environments (several if equalities)
 	 */
 	private static List<TMEnvironment> calcBestEnvirofromAvgRank(HashMap<TMEnvironment, Double[]> averageRankByEnviro) {
 		List<TMEnvironment> bestEnviros = null;
@@ -230,9 +316,9 @@ public class StatisticsGenerator {
 	}
 
 	/**
-	 * TODO
-	 * @param raceResults
-	 * @return Double[0] = average rank on the enviro, Double[1] = numberMaps played on the enviro
+	 * Calculate the average rank by environment
+	 * @param raceResults the results by races
+	 * @return a HashMap with an array of double for each environment. Double[0] = average rank on the enviro, Double[1] = numberMaps played on the enviro
 	 */
 	private static HashMap<TMEnvironment, Double[]> calcAverageRankByEnviro(List<KTLCRaceResult> raceResults) {
 		HashMap<TMEnvironment, Integer> countedMaps = new HashMap<TMEnvironment, Integer>();
@@ -267,9 +353,9 @@ public class StatisticsGenerator {
 	}
 	
 	/**
-	 * TODO
-	 * @param raceResults
-	 * @return int[0-2] = number of podiums (1st, 2nd, 3rd ranks) on the enviro, int[4] = numberMaps played on the enviro
+	 * Calculate the number of podiums by environment
+	 * @param raceResults the results by races of the player
+	 * @return an hashMap with an array of int by environment. int[0-2] = number of podiums (1st, 2nd, 3rd ranks) on the enviro, int[4] = numberMaps played on the enviro
 	 */
 	private static HashMap<TMEnvironment, int[]> calcNumberPodiumsByEnviro(List<KTLCRaceResult> raceResults) {
 		HashMap<TMEnvironment, Integer> countedMaps = new HashMap<TMEnvironment, Integer>();
@@ -311,9 +397,9 @@ public class StatisticsGenerator {
 	}
 
 	/**
-	 * TODO
-	 * @param mapsByEnviro
-	 * @return
+	 * Calculate the favorite environment of the mapper
+	 * @param mapsByEnviro the HashMap with the number of maps by environment
+	 * @return the environment with the highest number of maps (several if equalities)
 	 */
 	private static List<TMEnvironment> calcFavoriteMappingEnviro(HashMap<TMEnvironment, Integer> mapsByEnviro) {
 		int maxNumberMaps = 0;
@@ -333,25 +419,24 @@ public class StatisticsGenerator {
 	}
 
 	/**
-	 * TODO
-	 * @param maps
-	 * @return
+	 * Calculate the number of distinct players that played on the maps of the mapper
+	 * @param races the list of the races where the maps were played
+	 * @return a StatsEntry with the number of players
 	 */
-	private static int calcNumberDistinctPlayersOnMaps(List<KTLCRace> races) {
+	private static StatsEntry calcNumberDistinctPlayersOnMaps(List<KTLCRace> races) {
 		Set<Player> players = new HashSet<Player>();
 		for (KTLCRace race : races) {
 			for (KTLCRaceResult result : race.results) {
 				players.add(Player.findByLogin(result.login.name));
 			}
 		}
-		
-		return players.size();
+		return new StatsEntry(players.size(), Player.findAll().size());
 	}
 	
 	/**
-	 * TODO
-	 * @param maps
-	 * @return
+	 * Calculate the average number of players that palyed on the map of the mapper
+	 * @param races the list of the races where the maps were played
+	 * @return the average number of players
 	 */
 	private static double calcAverageNumberPlayersOnMaps(List<KTLCRace> races) {
 		double sum = 0;
@@ -363,9 +448,9 @@ public class StatisticsGenerator {
 	}
 	
 	/**
-	 * TODO
-	 * @param maps
-	 * @return
+	 * Calculate the number of runs played on the maps of the mappers
+	 * @param races the list of the races where the maps were played
+	 * @return the total number of runs
 	 */
 	private static int calcNumberRunsOnMaps(List<KTLCRace> races) {
 		int count = 0;
@@ -381,9 +466,9 @@ public class StatisticsGenerator {
 	}
 	
 	/**
-	 * TODO
-	 * @param maps
-	 * @return
+	 * Calculate the number of distinct KTLC where the player provided maps
+	 * @param races the list of the races where the maps were played
+	 * @return the total number of ktlcs
 	 */
 	private static int calcNumberDistinctKTLCsAsMapper(List<KTLCRace> races) {
 		Set<Integer> ktlcs = new HashSet<Integer>();
@@ -414,8 +499,8 @@ public class StatisticsGenerator {
 	}
 	
 	/**
-	 * TODO
-	 * @param results
+	 * Calculate the number of maps played by the player
+	 * @param results the list of results by KTLC of the player
 	 * @return
 	 */
 	private static int calcNumberMapsPlayed(List<KTLCResult> results) {
@@ -1355,5 +1440,51 @@ public class StatisticsGenerator {
 		} else {
 			return Double.MAX_VALUE;
 		}
+	}
+	
+	/**
+	 * Calculate the number of "perfect" of a player, regarding its results
+	 * @return the list of KTLCs where the player performed perfects
+	 */
+	private static List<KTLCEdition> calcPerfects(List<KTLCResult> results) {
+		List<KTLCEdition> editions = new ArrayList<KTLCEdition>();
+		
+		for (KTLCResult result : results) {
+			// if the player did win all the maps
+			if (result.rankAvg == 1.0 && result.nbRaces == result.ktlc.races.size()) {
+				editions.add(result.ktlc);
+			}
+		}
+		
+		return editions;
+	}
+	
+	/**
+	 * Calculate the number of "epic fail" of a player, regarding its results
+	 * @param minNumberMaps the minimal number of maps that the player should have played during a KTLC to be considered
+	 * @return the list of players that performed epic fails
+	 */
+	private static List<KTLCEdition> calcEpicFails(List<KTLCResult> results, int minNumberMaps) {
+		List<KTLCEdition> editions = new ArrayList<KTLCEdition>();
+		
+		// find all the ktlc where a player finished last on all the maps (eliminated at 1st round)
+		for (KTLCResult ktlcResult : results) {
+			int numberElimiation = 0;
+			for (KTLCRace race : ktlcResult.ktlc.races) {
+				for (KTLCRaceResult raceResult : race.results) {
+					// if its the good player and if he did only 1 lap
+					if (raceResult.login.equals(ktlcResult.login) && raceResult.roundsCount == 1) {
+						numberElimiation++;
+					}
+				}
+			}
+			
+			// if the player has been eliminated at first lap on all the maps AND played at lest x Maps,
+			// then it's a Epic Fail
+			if (numberElimiation >= minNumberMaps && ktlcResult.nbRaces == numberElimiation) {
+				editions.add(ktlcResult.ktlc);
+			}
+		}		
+		return editions;
 	}
 }
