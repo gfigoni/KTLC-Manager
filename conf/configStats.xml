@@ -4,4 +4,5 @@
     <minNumberMapsForEpicFail>4</minNumberMapsForEpicFail>
     <minPercentageParticipations>10</minPercentageParticipations>
     <rankInterest>4</rankInterest>
+    <rankLimit>20</rankLimit>
 </statisticConfig>

@@ -104,7 +104,7 @@ public class StatisticsGenerator {
 		
 		// set the parameters from the config
 		config = StatisticConfig.loadStatsConfig();
-		stats.RANK_LIMIT = config.getRankLimit(); // TODO backend manage value
+		stats.RANK_LIMIT = config.getRankLimit();
 
 		// set the stats
 		stats.player = player;

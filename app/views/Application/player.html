@@ -69,23 +69,25 @@
  			#{list items:stats.chart_averageRankByEnviro.keySet(), as:'enviro'}
  				{ 
  				  enviro: "${enviro.capFirst()}", 
- 				  avg: ${stats.chart_averageRankByEnviro.get(enviro)[0]}.toFixed(2),
+ 				  avg: ${stats.chart_averageRankByEnviro.get(enviro)[0]},
+ 				  cleanValue: ${stats.chart_averageRankByEnviro.get(enviro)[0]}.toFixed(2),
  				  numberMaps: ${(int)stats.chart_averageRankByEnviro.get(enviro)[1]}
  				},
  			#{/list}  
  		];
         function compareAvgRankEnviro(a,b) {
-        	if (a.avg != 0 && b.avg != 0) {
-	       	  if (a.avg > b.avg)
+        	var avgA = a.avg, avgB = b.avg;
+        	if (avgA != 0 && avgB != 0) {
+	       	  if (avgA > avgB)
 	       	     return 1;
-	       	  if (a.avg < b.avg)
+	       	  if (avgA < avgB)
 	       	    return -1;
 	       	  return 0;
         	}
-        	if (a.avg != 0 && b.avg == 0) {
+        	if (avgA != 0 && avgB == 0) {
         		return -1;
         	}
-        	if (a.avg == 0 && b.avg != 0) {
+        	if (avgA == 0 && avgB != 0) {
         		return 1;
         	}
         	return 0;
@@ -156,7 +158,7 @@
    			
    			// Graph
    	        var graphRanksByKTLCs = new AmCharts.AmGraph();
-   	     	graphRanksByKTLCs.balloonText = "[[value]]";
+   	     	graphRanksByKTLCs.balloonText = "([[category]].) [[value]] KTLCs";
    	     	graphRanksByKTLCs.valueField = "number";
 	   	  	graphRanksByKTLCs.type = "column";
 		   	graphRanksByKTLCs.lineAlpha = 0;
@@ -196,7 +198,7 @@
    			
    			// Graph
    	        var graphRanksByRaces = new AmCharts.AmGraph();
-   	     	graphRanksByRaces.balloonText = "[[value]]";
+   	     	graphRanksByRaces.balloonText = "([[category]].) [[value]] &{'player.nbraces'}";
    	     	graphRanksByRaces.valueField = "number";
 	   	  	graphRanksByRaces.type = "column";
 		   	graphRanksByRaces.lineAlpha = 0;
@@ -299,7 +301,7 @@
    			
    			// Graph
    	        var graphAvgRankByEnviro = new AmCharts.AmGraph();
-   	     	graphAvgRankByEnviro.balloonText = "[[value]] ([[numberMaps]] &{'player.nbraces'})";
+   	     	graphAvgRankByEnviro.balloonText = "[[cleanValue]] ([[numberMaps]] &{'player.nbraces'})";
    	     	graphAvgRankByEnviro.valueField = "avg";
 	   	  	graphAvgRankByEnviro.type = "column";
 		   	graphAvgRankByEnviro.lineAlpha = 0;
@@ -350,7 +352,7 @@
             var graph = new AmCharts.AmGraph();
             graph.title = "&{'player.stats.first'}";
             graph.labelText = "[[value]]";
-            graph.balloonText = "[[value]] / [[total]]";
+            graph.balloonText = "(&{'player.stats.first_short'}) [[enviro]]: [[value]] / [[total]]";
             graph.valueField = "rank_1st";
             graph.type = "column";
             graph.lineAlpha = 0;
@@ -364,7 +366,7 @@
             graph = new AmCharts.AmGraph();
             graph.title = "&{'player.stats.second'}";
             graph.labelText = "[[value]]";
-            graph.balloonText = "[[value]] / [[total]]";
+            graph.balloonText = "(&{'player.stats.second_short'}) [[enviro]]: [[value]] / [[total]]";
             graph.valueField = "rank_2nd";
             graph.type = "column";
             graph.lineAlpha = 0;
@@ -378,7 +380,7 @@
             graph = new AmCharts.AmGraph();
             graph.title = "&{'player.stats.third'}";
             graph.labelText = "[[value]]";
-            graph.balloonText = "[[value]] / [[total]]";
+            graph.balloonText = "(&{'player.stats.third_short'}) [[enviro]]: [[value]] / [[total]]";
             graph.valueField = "rank_3rd";
             graph.type = "column";
             graph.lineAlpha = 0;

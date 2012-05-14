@@ -46,6 +46,15 @@
 					<td colspan="2"><span class="error" style="color:#c00">#{error 'newEpicFail' /}</span></td>
 				</tr>
 				<tr>
+					<td>&{'manageParameters.rankLimit.title'}</td>
+					<td><input type="text" name="newRankLimit" value="${config.getRankLimit()}"  size="5" style="text-align: right;" /> </td>
+					<td style="color:#777"><em>&{'manageParameters.rankLimit.legend', config.MIN_RANKLIMIT, config.MAX_RANKLIMIT}</em></td>
+				</tr>
+				</tr>
+					<td></td>
+					<td colspan="2"><span class="error" style="color:#c00">#{error 'newRankLimit' /}</span></td>
+				</tr>
+				<tr>
 					<td colspan="3">
 						<input type="submit" value="&{'manageParameters.validate'}"/>
 						<input type="reset" value="&{'manageParameters.reset'}" /></form>
