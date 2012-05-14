@@ -5,14 +5,16 @@
 #{if player}
 
 #{set 'moreScripts'}
-    <script type="text/javascript">        
+    <script type="text/javascript">
         #{if player.isMapper()}
+     	// the chart
+        var chartEnviro;
+     	
         var chartEnviroData = [
    			#{list items:stats.chart_numberMapsByEnviro.keySet(), as:'enviro'}
    				{ enviro: "${enviro.capFirst()}", maps: ${stats.chart_numberMapsByEnviro.get(enviro)} },
    			#{/list}
    		];
-        
         function compareEnviro(a,b) {
        	  if (a.maps > b.maps)
        	     return -1;
@@ -21,11 +23,16 @@
        	  return 0;
        	}
     	chartEnviroData.sort(compareEnviro);
-    	
-    	var chartEnviro;
         #{/if}
         
         #{if player.isPlayer()}
+     	// the charts
+		var chartRanksByKTLCs;
+	    var chartRanksByRaces;
+	    var chartKTLC;
+	    var chartAvgRankByEnviro;
+	    var chartNumberPodiumsByEnviro;
+        
         var chartRanksByKTLCsData = [
 			#{list items:0..(stats.chart_ranksByKTLCs.length - 1), as:'i'}
 			{ rank: "${i+1}", number: ${stats.chart_ranksByKTLCs[i]}, ratio: ${(stats.chart_ranksByKTLCs[i] / (double)stats.numberPlayedKTLCs)*100.0} },
@@ -38,20 +45,185 @@
 			#{/list}                   
         ];
         
-        var chartRanksByKTLCs;
-        var chartRanksByRaces;
-        #{/if}        
+        var chartNumberPodiumsByEnviroData = [
+			#{list items:stats.chart_numberPodiumsByEnviro.keySet(), as:'enviro'}
+				{ 
+				  enviro: "${enviro.capFirst()}", 
+				  rank_1st: ${stats.chart_numberPodiumsByEnviro.get(enviro)[0]},
+				  rank_2nd: ${stats.chart_numberPodiumsByEnviro.get(enviro)[1]},
+				  rank_3rd: ${stats.chart_numberPodiumsByEnviro.get(enviro)[2]},
+				  total: ${stats.chart_numberPodiumsByEnviro.get(enviro)[3]},
+				},
+			#{/list}  
+		];
+        function comparePodiumsEnviro(a,b) {
+         	  if (a.total > b.total)
+         	     return -1;
+         	  if (a.total < b.total)
+         	    return 1;
+         	  return 0;
+        }
+        chartNumberPodiumsByEnviroData.sort(comparePodiumsEnviro);
         
-      	var chartDataKTLC = [
-	        #{list items:ktlcs, as:'ktlc'}
-	        { ktlc: "${ktlc.number}", ratio: ${ktlc.getRatio(player)}, rank: ${ktlc.getResult(player) ? ktlc.getResult(player).rank : 0}, total: ${ktlc.results.size()} }${ktlc_isLast ? '' : ','}
-	        #{/list}
-	    ];
-        	
-        var chartKTLC;
+        var chartAvgRankByEnviroData = [
+ 			#{list items:stats.chart_averageRankByEnviro.keySet(), as:'enviro'}
+ 				{ 
+ 				  enviro: "${enviro.capFirst()}", 
+ 				  avg: ${stats.chart_averageRankByEnviro.get(enviro)[0].format('0.00')},
+ 				  numberMaps: ${(int)stats.chart_averageRankByEnviro.get(enviro)[1]}
+ 				},
+ 			#{/list}  
+ 		];
+        function compareAvgRankEnviro(a,b) {
+        	if (a.avg != 0 && b.avg != 0) {
+	       	  if (a.avg > b.avg)
+	       	     return 1;
+	       	  if (a.avg < b.avg)
+	       	    return -1;
+	       	  return 0;
+        	}
+        	if (a.avg != 0 && b.avg == 0) {
+        		return -1;
+        	}
+        	if (a.avg == 0 && b.avg != 0) {
+        		return 1;
+        	}
+        	return 0;
+       	}
+        chartAvgRankByEnviroData.sort(compareAvgRankEnviro);
         
-        AmCharts.ready(function () {
-        	// CHART KTLCs -------------------------------------------------------------------
+        var chartDataKTLC = [
+  	        #{list items:ktlcs, as:'ktlc'}
+  	        { ktlc: "${ktlc.number}", ratio: ${ktlc.getRatio(player)}, rank: ${ktlc.getResult(player) ? ktlc.getResult(player).rank : 0}, total: ${ktlc.results.size()} }${ktlc_isLast ? '' : ','}
+  	        #{/list}
+  	    ];
+        #{/if}
+        
+        AmCharts.ready(function () {           
+            #{if player.isMapper()}
+         	// CHART Maps/Enviro  ------------------------------------------------------------------
+         	chartEnviro = new AmCharts.AmSerialChart();
+            
+        	chartEnviro.dataProvider = chartEnviroData;
+        	chartEnviro.categoryField = "enviro";
+        	chartEnviro.rotate= true;
+        	chartEnviro.color = "#FEFADC";
+        	chartEnviro.columnWidth = 0.5;
+        	chartEnviro.marginTop = 0;
+            chartEnviro.marginBottom = 0;
+			
+			// Graph
+	        var graphEnviro = new AmCharts.AmGraph();
+	        graphEnviro.balloonText = "[[value]] maps";
+	        graphEnviro.valueField = "maps";
+	        graphEnviro.type = "column";
+	        graphEnviro.lineAlpha = 0;
+	        graphEnviro.fillAlphas = 1;
+	        graphEnviro.fillColors = "#C37700";
+	        
+	        chartEnviro.addGraph(graphEnviro);
+	        
+	     	// Axes
+	     	// category
+            var categoryEnviroAxis = chartEnviro.categoryAxis;
+            categoryEnviroAxis.gridPosition = "start";
+            // value                
+            var valueEnviroAxis = new AmCharts.ValueAxis();
+            valueEnviroAxis.minimum = 0;
+            valueEnviroAxis.integersOnly = true;
+            chartEnviro.addValueAxis(valueEnviroAxis);
+            
+         	// Cursor
+            var chartEnviroCursor = new AmCharts.ChartCursor();
+            chartEnviroCursor.cursorPosition = "middle";
+            chartEnviroCursor.categoryBalloonEnabled = false;
+            chartEnviro.addChartCursor(chartEnviroCursor);
+	
+            chartEnviro.write('chartContainerEnviro');         	
+         	#{/if}
+         	
+       		#{if player.isPlayer()}            
+           	// CHART Ranks by KTLCs  ------------------------------------------------------------------
+           	chartRanksByKTLCs = new AmCharts.AmSerialChart();
+               
+           	chartRanksByKTLCs.dataProvider = chartRanksByKTLCsData;
+           	chartRanksByKTLCs.categoryField = "rank";
+           	chartRanksByKTLCs.rotate= true;
+           	chartRanksByKTLCs.color = "#FEFADC";
+           	chartRanksByKTLCs.columnWidth = 0.5;
+           	chartRanksByKTLCs.marginTop = 0;
+           	chartRanksByKTLCs.marginBottom = 0;
+   			
+   			// Graph
+   	        var graphRanksByKTLCs = new AmCharts.AmGraph();
+   	     	graphRanksByKTLCs.balloonText = "[[value]]";
+   	     	graphRanksByKTLCs.valueField = "number";
+	   	  	graphRanksByKTLCs.type = "column";
+		   	graphRanksByKTLCs.lineAlpha = 0;
+		   	graphRanksByKTLCs.fillAlphas = 1;
+		   	graphRanksByKTLCs.fillColors = "#C37700";
+   	        
+		   	chartRanksByKTLCs.addGraph(graphRanksByKTLCs);
+   	        
+   	     	// Axes
+   	     	// category
+            var catRanksByKTLCsAxis = chartRanksByKTLCs.categoryAxis;
+            catRanksByKTLCsAxis.title = "Rank (I18N)";
+            // value                
+            var valueRanksByKTLCsAxis = new AmCharts.ValueAxis();
+            valueRanksByKTLCsAxis.minimum = 0;
+            valueRanksByKTLCsAxis.integersOnly = true;
+            chartRanksByKTLCs.addValueAxis(valueRanksByKTLCsAxis);
+            
+         	// Cursor
+            var chartRanksByKTLCsCursor = new AmCharts.ChartCursor();
+            chartRanksByKTLCsCursor.cursorPosition = "middle";
+            chartRanksByKTLCsCursor.categoryBalloonEnabled = false;
+            chartRanksByKTLCs.addChartCursor(chartRanksByKTLCsCursor);
+	
+            chartRanksByKTLCs.write('chartContainerRanksKTLCs');
+            
+         	// CHART Ranks by Races  ------------------------------------------------------------------
+           	chartRanksByRaces = new AmCharts.AmSerialChart();
+               
+           	chartRanksByRaces.dataProvider = chartRanksByRacesData;
+           	chartRanksByRaces.categoryField = "rank";
+           	chartRanksByRaces.rotate= true;
+           	chartRanksByRaces.color = "#FEFADC";
+           	chartRanksByRaces.columnWidth = 0.5;
+           	chartRanksByRaces.marginTop = 0;
+           	chartRanksByRaces.marginBottom = 0;
+   			
+   			// Graph
+   	        var graphRanksByRaces = new AmCharts.AmGraph();
+   	     	graphRanksByRaces.balloonText = "[[value]]";
+   	     	graphRanksByRaces.valueField = "number";
+	   	  	graphRanksByRaces.type = "column";
+		   	graphRanksByRaces.lineAlpha = 0;
+		   	graphRanksByRaces.fillAlphas = 1;
+		   	graphRanksByRaces.fillColors = "#C37700";
+   	        
+		   	chartRanksByRaces.addGraph(graphRanksByRaces);
+   	        
+   	     	// Axes
+   	     	// category
+            var catRanksByRacesAxis = chartRanksByRaces.categoryAxis;
+            catRanksByRacesAxis.title = "Rank (I18N)";
+            // value                
+            var valueRanksByRacesAxis = new AmCharts.ValueAxis();
+            valueRanksByRacesAxis.minimum = 0;
+            valueRanksByRacesAxis.integersOnly = true;
+            chartRanksByRaces.addValueAxis(valueRanksByRacesAxis);
+            
+         	// Cursor
+            var chartRanksByRacesCursor = new AmCharts.ChartCursor();
+            chartRanksByRacesCursor.cursorPosition = "middle";
+            chartRanksByRacesCursor.categoryBalloonEnabled = false;
+            chartRanksByRaces.addChartCursor(chartRanksByRacesCursor);
+	
+            chartRanksByRaces.write('chartContainerRanksRaces');
+            
+         	// CHART KTLCs -------------------------------------------------------------------
             chartKTLC = new AmCharts.AmSerialChart();
             
             chartKTLC.pathToImages = "@{'/public/images/amcharts/'}/";
@@ -114,122 +286,119 @@
 
             chartKTLC.write('chartContainerKTLC');
             
-            #{if player.isMapper()}
-         	// CHART Maps/Enviro  ------------------------------------------------------------------
-         	chartEnviro = new AmCharts.AmSerialChart();
-            
-        	chartEnviro.dataProvider = chartEnviroData;
-        	chartEnviro.categoryField = "enviro";
-        	chartEnviro.rotate= true;
-        	chartEnviro.color = "#FEFADC";
-        	chartEnviro.columnWidth = 0.5;
-        	chartEnviro.marginTop = 0;
-            chartEnviro.marginBottom = 0;
-			
-			// Graph
-	        var graphEnviro = new AmCharts.AmGraph();
-	        graphEnviro.balloonText = "[[value]] maps";
-	        graphEnviro.valueField = "maps";
-	        graphEnviro.type = "column";
-	        graphEnviro.lineAlpha = 0;
-	        graphEnviro.fillAlphas = 1;
-	        graphEnviro.fillColors = "#C37700";
-	        
-	        chartEnviro.addGraph(graphEnviro);
-	        
-	     	// Axes
-            // value                
-            var valueEnviroAxis = new AmCharts.ValueAxis();
-            valueEnviroAxis.minimum = 0;
-            chartEnviro.addValueAxis(valueEnviroAxis);
-            
-         	// Cursor
-            var chartEnviroCursor = new AmCharts.ChartCursor();
-            chartEnviroCursor.cursorPosition = "middle";
-            chartEnviroCursor.categoryBalloonEnabled = false;
-            chartEnviro.addChartCursor(chartEnviroCursor);
-	
-            chartEnviro.write('chartContainerEnviro');         	
-         	#{/if}
-         	
-       		#{if player.isPlayer()}
-           	// CHART Ranks by KTLCs  ------------------------------------------------------------------
-           	chartRanksByKTLCs = new AmCharts.AmSerialChart();
+         	// CHART avg rank by enviro  ------------------------------------------------------------------
+           	chartAvgRankByEnviro = new AmCharts.AmSerialChart();
                
-           	chartRanksByKTLCs.dataProvider = chartRanksByKTLCsData;
-           	chartRanksByKTLCs.categoryField = "rank";
-           	chartRanksByKTLCs.rotate= true;
-           	chartRanksByKTLCs.color = "#FEFADC";
-           	chartRanksByKTLCs.columnWidth = 0.5;
-           	chartRanksByKTLCs.marginTop = 0;
-           	chartRanksByKTLCs.marginBottom = 0;
+           	chartAvgRankByEnviro.dataProvider = chartAvgRankByEnviroData;
+           	chartAvgRankByEnviro.categoryField = "enviro";
+           	chartAvgRankByEnviro.rotate= true;
+           	chartAvgRankByEnviro.color = "#FEFADC";
+           	chartAvgRankByEnviro.columnWidth = 0.5;
+           	chartAvgRankByEnviro.marginTop = 0;
+           	chartAvgRankByEnviro.marginBottom = 0;
    			
    			// Graph
-   	        var graphRanksByKTLCs = new AmCharts.AmGraph();
-   	     	graphRanksByKTLCs.balloonText = "[[value]]";
-   	     	graphRanksByKTLCs.valueField = "number";
-	   	  	graphRanksByKTLCs.type = "column";
-		   	graphRanksByKTLCs.lineAlpha = 0;
-		   	graphRanksByKTLCs.fillAlphas = 1;
-		   	graphRanksByKTLCs.fillColors = "#C37700";
+   	        var graphAvgRankByEnviro = new AmCharts.AmGraph();
+   	     	graphAvgRankByEnviro.balloonText = "[[value]] ([[numberMaps]] races (I18N))";
+   	     	graphAvgRankByEnviro.valueField = "avg";
+	   	  	graphAvgRankByEnviro.type = "column";
+		   	graphAvgRankByEnviro.lineAlpha = 0;
+		   	graphAvgRankByEnviro.fillAlphas = 1;
+		   	graphAvgRankByEnviro.fillColors = "#C37700";
    	        
-		   	chartRanksByKTLCs.addGraph(graphRanksByKTLCs);
+		   	chartAvgRankByEnviro.addGraph(graphAvgRankByEnviro);
    	        
    	     	// Axes
    	     	// category
-            var catRanksByKTLCsAxis = chartRanksByKTLCs.categoryAxis;
-            catRanksByKTLCsAxis.title = "Rank (I18N)";
+            var categoryAvgRankByEnviroAxis = chartAvgRankByEnviro.categoryAxis;
+            categoryAvgRankByEnviroAxis.gridPosition = "start";
             // value                
-            var valueRanksByKTLCsAxis = new AmCharts.ValueAxis();
-            valueRanksByKTLCsAxis.minimum = 0;
-            chartRanksByKTLCs.addValueAxis(valueRanksByKTLCsAxis);
+            var valueAvgRankByEnviroAxis = new AmCharts.ValueAxis();
+            valueAvgRankByEnviroAxis.minimum = 0;
+            chartAvgRankByEnviro.addValueAxis(valueAvgRankByEnviroAxis);
             
          	// Cursor
-            var chartRanksByKTLCsCursor = new AmCharts.ChartCursor();
-            chartRanksByKTLCsCursor.cursorPosition = "middle";
-            chartRanksByKTLCsCursor.categoryBalloonEnabled = false;
-            chartRanksByKTLCs.addChartCursor(chartRanksByKTLCsCursor);
+            var chartAvgRankByEnviroCursor = new AmCharts.ChartCursor();
+            chartAvgRankByEnviroCursor.cursorPosition = "middle";
+            chartAvgRankByEnviroCursor.categoryBalloonEnabled = false;
+            chartAvgRankByEnviro.addChartCursor(chartAvgRankByEnviroCursor);
 	
-            chartRanksByKTLCs.write('chartContainerRanksKTLCs');
+            chartAvgRankByEnviro.write('chartContainerAvgRankByEnviro');
             
-         	// CHART Ranks by Racess  ------------------------------------------------------------------
-           	chartRanksByRaces = new AmCharts.AmSerialChart();
-               
-           	chartRanksByRaces.dataProvider = chartRanksByRacesData;
-           	chartRanksByRaces.categoryField = "rank";
-           	chartRanksByRaces.rotate= true;
-           	chartRanksByRaces.color = "#FEFADC";
-           	chartRanksByRaces.columnWidth = 0.5;
-           	chartRanksByRaces.marginTop = 0;
-           	chartRanksByRaces.marginBottom = 0;
-   			
-   			// Graph
-   	        var graphRanksByRaces = new AmCharts.AmGraph();
-   	     	graphRanksByRaces.balloonText = "[[value]]";
-   	     	graphRanksByRaces.valueField = "number";
-	   	  	graphRanksByRaces.type = "column";
-		   	graphRanksByRaces.lineAlpha = 0;
-		   	graphRanksByRaces.fillAlphas = 1;
-		   	graphRanksByRaces.fillColors = "#C37700";
-   	        
-		   	chartRanksByRaces.addGraph(graphRanksByRaces);
-   	        
-   	     	// Axes
-   	     	// category
-            var catRanksByRacesAxis = chartRanksByRaces.categoryAxis;
-            catRanksByRacesAxis.title = "Rank (I18N)";
-            // value                
-            var valueRanksByRacesAxis = new AmCharts.ValueAxis();
-            valueRanksByRacesAxis.minimum = 0;
-            chartRanksByRaces.addValueAxis(valueRanksByRacesAxis);
-            
-         	// Cursor
-            var chartRanksByRacesCursor = new AmCharts.ChartCursor();
-            chartRanksByRacesCursor.cursorPosition = "middle";
-            chartRanksByRacesCursor.categoryBalloonEnabled = false;
-            chartRanksByRaces.addChartCursor(chartRanksByRacesCursor);
-	
-            chartRanksByRaces.write('chartContainerRanksRaces');
+         	// CHART podiums by enviro  ------------------------------------------------------------------
+           	chartPodiumsByEnviro = new AmCharts.AmSerialChart();
+           	chartPodiumsByEnviro.dataProvider = chartNumberPodiumsByEnviroData;
+           	chartPodiumsByEnviro.categoryField = "enviro";
+           	chartPodiumsByEnviro.rotate= true;
+           	chartPodiumsByEnviro.color = "#FEFADC";
+           	chartPodiumsByEnviro.columnWidth = 0.5;
+           	chartPodiumsByEnviro.marginTop = 0;
+           	chartPodiumsByEnviro.marginBottom = 0;
+
+            // AXES
+            // category
+            var categoryPodiumsByEnviroAxis = chartPodiumsByEnviro.categoryAxis;
+            categoryPodiumsByEnviroAxis.gridPosition = "start";
+            // value
+            var valuePodiumsByEnviroAxis = new AmCharts.ValueAxis();
+            valuePodiumsByEnviroAxis.stackType = "regular";
+            valuePodiumsByEnviroAxis.integersOnly = true;
+            chartPodiumsByEnviro.addValueAxis(valuePodiumsByEnviroAxis);
+
+            // GRAPHS
+            // first graph    
+            var graph = new AmCharts.AmGraph();
+            graph.title = "1st Places"; // I18N
+            graph.labelText = "[[value]]";
+            graph.balloonText = "[[value]] / [[total]]";
+            graph.valueField = "rank_1st";
+            graph.type = "column";
+            graph.lineAlpha = 0;
+            graph.fillAlphas = 1;
+            //graph.lineColor = "#C98910"; // gold
+            graph.fillColors = ["#e39a12", "#9c690c"];
+            graph.gradientOrientation = "horizontal";
+            chartPodiumsByEnviro.addGraph(graph);
+
+            // second graph              
+            graph = new AmCharts.AmGraph();
+            graph.title = "2nd Places"; // I18N
+            graph.labelText = "[[value]]";
+            graph.balloonText = "[[value]] / [[total]]";
+            graph.valueField = "rank_2nd";
+            graph.type = "column";
+            graph.lineAlpha = 0;
+            graph.fillAlphas = 1;
+            //graph.lineColor = "#A8A8A8"; // silver
+            graph.fillColors = ["#c2c2c2", "#7d7d7d"];
+            graph.gradientOrientation = "horizontal";
+            chartPodiumsByEnviro.addGraph(graph);
+
+            // third graph                              
+            graph = new AmCharts.AmGraph();
+            graph.title = "3rd Places"; // I18N
+            graph.labelText = "[[value]]";
+            graph.balloonText = "[[value]] / [[total]]";
+            graph.valueField = "rank_3rd";
+            graph.type = "column";
+            graph.lineAlpha = 0;
+            graph.fillAlphas = 1;
+            //graph.lineColor = "#965A38"; // bronze
+            graph.fillColors = ["#c9794b", "#6e4129"];
+            graph.gradientOrientation = "horizontal";
+            chartPodiumsByEnviro.addGraph(graph);
+
+            // LEGEND                  
+            var legend = new AmCharts.AmLegend();
+            legend.color = "#FEFADC";
+            legend.autoMargins = false;
+            legend.horizontalGap = 0;
+            legend.valueWidth = 11;
+            legend.spacing = 0;
+            legend.align = "center";
+            chartPodiumsByEnviro.addLegend(legend);
+
+            chartPodiumsByEnviro.write('chartContainerPodiumsByEnviro');
          	#{/if}
         });
         
@@ -245,65 +414,47 @@
     </ul>
 </div>
 <div id="main">
-    <div id="content">
+    <div id="content">        
+        #{if player.isPlayer()}
+        <!-- WIDE PART 0 PLAYER --------------------------------------------------------------------- -->
         <div id="chartContainerKTLC" style="width: 850px; height: 400px;"></div>
-        #{if results.size() != 0}
-        <div class="player_box">
-        	<div class="ranking_title">
-                <h2>KTLC EDITIONS (I18N)</h2>
-            </div>
-       		#{paginate.controls items:results /}
-            <table>
-                <tr>
-                    <th>&{'ktlc.number.title'}</th>
-                    <th>&{'player.rank'}</th>
-                    <th>&{'player.score'}</th>
-                    <th>&{'player.nbraces'}</th>
-                </tr>
-                #{paginate.list items:results, as:'result'}
-                <tr>
-                    <td>#{a @Application.ktlc(result.ktlc.number)}&{'ktlc.number', result.ktlc.number}#{/a}</td>
-                    <td>${result.rank} / ${result.ktlc.results.size()}</td>
-                    <td>${result.score}</td>
-                    <td>${result.nbRaces}</td>
-                </tr>
-                #{/paginate.list}
-            </table>
-            #{paginate.summary items:results /}
-        </div>
-        #{/if}
         
-        #{if races.size() != 0}
-        <div class="map_box">
-        	<div class="ranking_title">
-                <h2>CREATED MAPS (I18N)</h2>
-            </div>
-       		#{paginate.controls items:races /}
-            <table>
-                <tr>
-                    <th>map name (I18N)</th>
-                    <th>enviro (I18N)</th>
-                    <th>ktlc edition (I18N)</th>
-                </tr>
-                #{paginate.list items:races, as:'race'}
-                <tr>
-                    <td style="text-align: left;">${race.map.name}</td>
-                    <td style="text-align: left;">${race.map.environment.capFirst()}</td>
-                    <td>#{a @Application.ktlc(race.ktlc.number)}&{'ktlc.number', race.ktlc.number}#{/a}</td>
-                </tr>
-                #{/paginate.list}
-            </table>
-            #{paginate.summary items:races /}
-        </div>
-        #{/if}
-        
-        <div class="cleaner"></div>
-    	<div class="statsSpace"><hr></div>
+        <div class="content_generalStats">
+    		<div class="statsSpace"><hr></div>
     	
-    	<div class="content_generalStats">
-    		#{if player.isPlayer()}
-    		<div class="content_chartLeft">
-   				<h2>Player stats (I18N)</h2>
+        	<!-- LEFT PART 1 PLAYER --------------------------------------------------------------------- -->
+	        <div class="content_chartLeft">
+		        <div class="player_box">
+		        	<div class="ranking_title">
+		                <h2>KTLC EDITIONS (I18N)</h2>
+		            </div>
+		       		#{paginate.controls items:results /}
+		            <table>
+		                <tr>
+		                    <th>&{'ktlc.number.title'}</th>
+		                    <th>&{'player.rank'}</th>
+		                    <th>&{'player.score'}</th>
+		                    <th>&{'player.nbraces'}</th>
+		                </tr>
+		                #{paginate.list items:results, as:'result'}
+		                <tr>
+		                    <td>#{a @Application.ktlc(result.ktlc.number)}&{'ktlc.number', result.ktlc.number}#{/a}</td>
+		                    <td>${result.rank} / ${result.ktlc.results.size()}</td>
+		                    <td>${result.score}</td>
+		                    <td>${result.nbRaces}</td>
+		                </tr>
+		                #{/paginate.list}
+		            </table>
+		            #{paginate.summary items:results /}
+		        </div>
+	        </div>
+	        
+	        <!-- RIGHT PART 1 PLAYER --------------------------------------------------------------------- -->
+	        <div class="content_chartRight">
+	        	<div class="ranking_title">
+	                <h2>PLAYER STATISTICS (I18N)</h2>
+	                <p>Bla bla bla</p>
+	            </div>
 	    		<table>
 	    			<tr>
 	    				<th>measure (I18N)</th>
@@ -311,56 +462,197 @@
 	    			</tr>
 	    			<tr>
 	    				<td>avg rank (I18N)</td>
-	    				<td colspan="2">${stats.averageRank.format('0.00')}</td>
+	    				<td>${stats.averageRank.format('0.00')}</td>
+	    				<td></td>
 	    			</tr>
 	    			<tr>
-	    				<td># KTLC (I18N)</td>
+	    				<td>avg number opponents by KTLC(I18N)</td>
+	    				<td>${stats.averageNumberOpponents.format('0.00')}</td>
+	    				<td></td>
+	    			</tr>
+	    			<tr>
+	    				<td>Number of played KTLCs (I18N)</td>
 	    				<td>${stats.numberPlayedKTLCs} / ${stats.totalKTLCs}</td>
 	    				<td>(${(stats.partRatioKTLC*100.0).format('0.00')} %)</td>
 	    			</tr>
 	    			<tr>
-	    				<td>--> # KTLC TMU (I18N)</td>
+	    				<td>--> KTLC TMU (I18N)</td>
 	    				<td>${stats.numberPlayedKTLC_TMU} / ${stats.totalKTLC_TMU}</td>
 	    				<td>(${(stats.partRatioKTLC_TMU*100.0).format('0.00')} %)</td>
 	    				
 	    			</tr>
 	    			<tr>
-	    				<td>--> # SKTLC TMU (I18N)</td>
+	    				<td>--> SKTLC TMU (I18N)</td>
 	    				<td>${stats.numberPlayedSuperKTLC_TMU} / ${stats.totalSuperKTLC_TMU}</td>
 	    				<td>(${(stats.partRatioSuperKTLC_TMU*100.0).format('0.00')} %)</td>
 	    			</tr>
 	    			<tr>
-	    				<td>--> # KTLC TM2 (I18N)</td>
+	    				<td>--> KTLC TM2 (I18N)</td>
 	    				<td>${stats.numberPlayedKTLC_TM2} / ${stats.totalKTLC_TM2}</td>
 	    				<td>(${(stats.partRatioKTLC_TM2*100.0).format('0.00')} %)</td>
 	    			</tr>
 	    			<tr>
-	    				<td># Races (I18N)</td>
-	    				<td colspan="2">${stats.numberPlayedRaces}</td>
-	    			</tr>
-	    			<tr>
-	    				<td># Runs (I18N)</td>
-	    				<td colspan="2">${stats.numberPlayedRuns}</td>
-	    			</tr>
-	    			<tr>
+	    				<td>Number of played Races (I18N)</td>
+	    				<td>${stats.numberPlayedRaces}</td>
 	    				<td></td>
-	    				<td colspan="2"></td>
 	    			</tr>
 	    			<tr>
+	    				<td>Number of played Runs (I18N)</td>
+	    				<td>${stats.numberPlayedRuns}</td>
 	    				<td></td>
-	    				<td colspan="2"></td>
 	    			</tr>
 	    			<tr>
+	    				<td>Best environment (I18N)</td>
 	    				<td></td>
-	    				<td colspan="2"></td>
+	    				<td></td>
+	    			</tr>
+	    			<tr>
+	    				<td>--> from rank avg (I18N)</td>
+	    				<td>
+	    					#{list items:stats.bestEnviroFromAvgRank, as:'enviro'}
+	                        ${enviro.capFirst()}
+	                        #{if !enviro_isLast}<br/>#{/if}
+	                        #{/list}
+	    				</td>
+	    				<td>(${(stats.chart_averageRankByEnviro.get(stats.bestEnviroFromAvgRank.get(0))[0]).format('0.00')})
+	    				</td>
+	    			</tr>
+	    			<tr>
+	    				<td>--> from # podiums (I18N)</td>
+	    				#{if stats.bestEviroFromPodiums != null}
+	    				<td>
+	    					#{list items:stats.bestEviroFromPodiums, as:'enviro'}
+	                        ${enviro.capFirst()}
+	                        #{if !enviro_isLast}<br/>#{/if}
+	                        #{/list}
+	    				</td>
+	    				<td>(${stats.chart_numberPodiumsByEnviro.get(stats.bestEviroFromPodiums.get(0))[3]} Podiums)</td>
+	    				#{/if}#{else}
+	    				<td>No Podiums (I18N)</td>
+	    				<td></td>
+	    				#{/else}
+	    			</tr>
+	    			<tr>
+	    				<td>Number of Podiums</td>
+	    				<td></td>
+	    				<td>(1st / 2nd / 3rd)</td>
+	    			</tr>
+	    			<tr>
+	    				<td>--> by KTLCs</td>
+	    				<td>${stats.chart_ranksByKTLCs[0] + stats.chart_ranksByKTLCs[1] + stats.chart_ranksByKTLCs[2]}</td>
+	    				<td>(${stats.chart_ranksByKTLCs[0]} / ${stats.chart_ranksByKTLCs[1]} / ${stats.chart_ranksByKTLCs[2]})</td>
+	    			</tr>
+	    			<tr>
+	    				<td>--> by Races</td>
+	    				<td>${stats.chart_ranksByRaces[0] + stats.chart_ranksByRaces[1] + stats.chart_ranksByRaces[2]}</td>
+	    				<td>(${stats.chart_ranksByRaces[0]} / ${stats.chart_ranksByRaces[1]} / ${stats.chart_ranksByRaces[2]})</td>
+	    			</tr>
+	    			<tr>
+	    				<td>Number of 'Perfects'</td>
+	    				<td>?</td>
+	    				<td>KTLCs...</td>
+	    			</tr>
+	    			<tr>
+	    				<td>Number of Podium in a row</td>
+	    				<td>?</td>
+	    				<td>first KTLC to last KTLC...</td>
+	    			</tr>
+	    			<tr>
+	    				<td>Number of Last places</td>
+	    				<td></td>
+	    				<td></td>
+	    			</tr>
+	    			<tr>
+	    				<td>--> by KTLCs</td>
+	    				<td>?</td>
+	    				<td></td>
+	    			</tr>
+	    			<tr>
+	    				<td>--> by Races</td>
+	    				<td>?</td>
+	    				<td></td>
+	    			</tr>
+	    			<tr>
+	    				<td>Number of 'Epic Fails'</td>
+	    				<td>?</td>
+	    				<td>KTLCs...</td>
 	    			</tr>
 	    		</table>
+	        </div>
+        </div>
+        
+        <div class="cleaner"></div>
+        <div class="statsSpace"></div>
+	    
+	    <div class="content_generalStats">
+	    	<!-- LEFT PART 2 PLAYER --------------------------------------------------------------------- -->
+	    	<div class="content_chartLeft">
+		    	<h1>Results in KTLCs (I18N)</h1>
+		    	<div id="chartContainerRanksKTLCs" style="width: 420px; height: 500px;"></div>
 	    	</div>
+	    	<!-- RIGHT PART 2 PLAYER --------------------------------------------------------------------- -->
+	        <div class="content_chartRight">
+		        <h1>Results in Races (I18N)</h1>
+		        <div id="chartContainerRanksRaces" style="width: 420px; height: 500px;"></div>
+	        </div>
+	     </div>
+	     
+	    <div class="cleaner"></div>
+	    <div class="statsSpace"></div>
+	    
+	    <div class="content_generalStats">
+	    	<!-- LEFT PART 3 PLAYER --------------------------------------------------------------------- -->
+	    	<div class="content_chartLeft">
+		    	<h1>Avg Rank by Enviro (I18N)</h1>
+		    	<div id="chartContainerAvgRankByEnviro" style="width: 420px; height: 360px;"></div>
+	    	</div>
+	    	<!-- RIGHT PART 3 PLAYER --------------------------------------------------------------------- -->
+	        <div class="content_chartRight">
+		        <h1>Podiums By Enviro (I18N)</h1>
+		        <div id="chartContainerPodiumsByEnviro" style="width: 420px; height: 400px;"></div>
+	        </div>
+	     </div>
+	    <div class="cleaner"></div>
+	    #{/if}
+	    
+	    #{if player.isMapper()}
+	    <div class="content_generalStats">
+	    	#{if player.isPlayer()}
+	    	<div class="statsSpace"><hr></div>
 	    	#{/if}
-	    	
-	    	#{if player.isMapper()}
+	    
+	    	<!-- LEFT PART 1 MAPPER  --------------------------------------------------------------------- -->
+		    <div class="content_chartLeft">
+		        <div class="map_box">
+		        	<div class="ranking_title">
+		                <h2>CREATED MAPS (I18N)</h2>
+		            </div>
+		       		#{paginate.controls items:races /}
+		            <table>
+		                <tr>
+		                    <th>map name (I18N)</th>
+		                    <th>enviro (I18N)</th>
+		                    <th>ktlc edition (I18N)</th>
+		                </tr>
+		                #{paginate.list items:races, as:'race'}
+		                <tr>
+		                    <td style="text-align: left;">#{if race.map.name.length() > 25}${race.map.name.substring(0,25)}...#{/if}#{else}${race.map.name}#{/else}</td>
+		                    <td style="text-align: left;">${race.map.environment.capFirst()}</td>
+		                    <td>#{a @Application.ktlc(race.ktlc.number)}&{'ktlc.number', race.ktlc.number}#{/a}</td>
+		                </tr>
+		                #{/paginate.list}
+		            </table>
+		            #{paginate.summary items:races /}
+		        </div>
+	        </div>
+	    
+	    	<!-- RIGHT PART 1 MAPPER  --------------------------------------------------------------------- -->
 	    	<div class="content_chartRight">
-		        <h2>Mapper stats (I18N)</h2>
+	    		<div class="ranking_title">
+	                <h2>MAPPER STATISTICS (I18N)</h2>
+	                <p>Bla bla bla</p>
+	            </div>
+		        
 	    		<table>
 	    			<tr>
 	    				<th>measure (I18N)</th>
@@ -373,19 +665,23 @@
 	    			</tr>
 	    			<tr>
 	    				<td># distinct players on maps (I18N)</td>
-	    				<td colspan="2">${stats.numberDistinctPlayersOnMaps}</td>
+	    				<td>${stats.numberDistinctPlayersOnMaps}</td>
+	    				<td></td>
 	    			</tr>
 	    			<tr>
 	    				<td>avg number players on maps (I18N)</td>
-	    				<td colspan="2">${stats.averageNumberPlayersOnMaps.format('0.00')}</td>
+	    				<td>${stats.averageNumberPlayersOnMaps.format('0.00')}</td>
+	    				<td></td>
 	    			</tr>	    			
 	    			<tr>
 	    				<td># played runs on maps (I18N)</td>
-	    				<td colspan="2">${stats.numberRunsOnMaps}</td>
+	    				<td>${stats.numberRunsOnMaps}</td>
+	    				<td></td>
 	    			</tr>
 	    			<tr>
 	    				<td># distinct KTLCs as mapper (I18N)</td>
-	    				<td colspan="2">${stats.numberDistinctKTLCsAsMapper}</td>
+	    				<td>${stats.numberDistinctKTLCsAsMapper}</td>
+	    				<td></td>
 	    			</tr>
 	    			<tr>
 	    				<td>Favorite mapping Environment (I18N)</td>
@@ -398,30 +694,16 @@
 	    				<td>(${stats.chart_numberMapsByEnviro.get(stats.favoriteMappingEnviros.get(0))} maps (I18N))</td>
 	    			</tr>
 	    		</table>
+	    		
+	    		<div class="statsSpace"></div>
+	    		
 	    		<h1>Maps / Enviro (I18N)</h1>
 		        <div id="chartContainerEnviro" style="width: 420px; height: 300px;"></div>
 	        </div>
-	        #{/if}
-	    </div>
-	    
-	    <div class="cleaner"></div>
-	    
-	    
-	    #{if player.isPlayer()}	    
-	    <div class="statsSpace"><hr></div>
-	    
-	    <div class="content_generalStats">
-	    	<div class="content_chartLeft">
-		    	<h1>Results in KTLCs (I18N)</h1>
-		    	<div id="chartContainerRanksKTLCs" style="width: 420px; height: 500px;"></div>
-	    	</div>
-	        <div class="content_chartRight">
-		        <h1>Results in Races (I18N)</h1>
-		        <div id="chartContainerRanksRaces" style="width: 420px; height: 500px;"></div>
-	        </div>
-	     </div>	    
-	    <div class="cleaner"></div>
-	    #{/if}
+	        
+        	<div class="cleaner"></div>
+        </div>
+        #{/if}
     </div>
 </div>
 #{/if}

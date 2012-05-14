@@ -19,6 +19,9 @@ import play.mvc.Controller;
 import controllers.stats.StatisticsGenerator;
 
 public class Application extends Controller {
+	
+	// avoid the regeneration of the player stats at every refresh of the page.
+	private static StatisticPlayer currentPlayerStats = null;
 
     public static void index() {
         KTLCEdition ktlc = KTLCEdition.find("order by date desc").first();
@@ -35,11 +38,10 @@ public class Application extends Controller {
         // liste des ktlc, pour le graphe
         List<KTLCEdition> ktlcs = null;
         
-        // get the stats
-        StatisticPlayer stats = null;
-        
         ValuePaginator<KTLCRace> races = null;
         ValuePaginator<KTLCResult> results = null;
+        
+        StatisticPlayer stats = null;
         
         if (player != null) {	        
 	        resultsList = KTLCResult.findByPlayer(player);
@@ -81,7 +83,10 @@ public class Application extends Controller {
 	        races.setParameterName("racesPage");
 	        
 	        // get the stats
-	        stats = StatisticsGenerator.generateStatisticsPlayer(player);
+	        if (currentPlayerStats == null || !player.equals(currentPlayerStats.player)) {
+	        	currentPlayerStats = StatisticsGenerator.generateStatisticsPlayer(player);
+	        }
+	        stats = currentPlayerStats;	        
         }
         
         render(player, results, ktlcs, races, stats);

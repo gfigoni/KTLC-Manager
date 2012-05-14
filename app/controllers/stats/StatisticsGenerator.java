@@ -104,10 +104,15 @@ public class StatisticsGenerator {
 		stats.player = player;
 		
 		if (player.isPlayer()) {
+			// all the ktlcs
 			List<KTLCEdition> ktlcs = KTLCEdition.find("order by date asc").fetch();
+			// the results of the player on the ktlcs he played
 			List<KTLCResult> ktlcResults = KTLCResult.findByPlayer(player);
+			// the editions of the ktlcs on which the player played
 			List<KTLCEdition> ktlcEditions = new ArrayList<KTLCEdition>(ktlcResults.size());
-			for (KTLCResult result : ktlcResults) { ktlcEditions.add(result.ktlc); }	
+			for (KTLCResult result : ktlcResults) { ktlcEditions.add(result.ktlc); }
+			// the results of the player for all the maps he played
+			List<KTLCRaceResult> raceResults = KTLCRaceResult.findByPlayer(player);
 			
 			stats.numberPlayedKTLCs = ktlcResults.size();
 			stats.totalKTLCs = ktlcs.size();
@@ -126,12 +131,18 @@ public class StatisticsGenerator {
 			stats.partRatioKTLC_TM2 = stats.numberPlayedKTLC_TM2 / (double)stats.totalKTLC_TM2;
 			
 			stats.averageRank = averageRankByPlayer(player);
+			stats.averageNumberOpponents = averageNumberOpponents(ktlcEditions);
 			
 			stats.numberPlayedRaces = calcNumberMapsPlayed(ktlcResults);
 			stats.numberPlayedRuns = calcTotalNumberRuns(player);
 			
 			stats.chart_ranksByKTLCs = ktlcResultsByRanksByPlayer(player, config.getRankLimit());
 			stats.chart_ranksByRaces = raceResultsByRanksByPlayer(player, config.getRankLimit());
+			stats.chart_averageRankByEnviro = calcAverageRankByEnviro(raceResults);
+			stats.chart_numberPodiumsByEnviro = calcNumberPodiumsByEnviro(raceResults);
+			
+			stats.bestEnviroFromAvgRank = calcBestEnvirofromAvgRank(stats.chart_averageRankByEnviro);
+			stats.bestEviroFromPodiums = calcBestEnviroFromPodiums(stats.chart_numberPodiumsByEnviro);
 		}
 		
 		if (player.isMapper()) {
@@ -156,6 +167,149 @@ public class StatisticsGenerator {
 		return stats;
 	}
 	
+	/**
+	 * TODO
+	 * @param ktlcs
+	 * @return
+	 */
+	private static double averageNumberOpponents(List<KTLCEdition> ktlcs) {
+		int numberOpponents = 0;
+		for (KTLCEdition ktlc : ktlcs) {
+			numberOpponents += (ktlc.results.size() - 1); // remove the player himself
+		}
+		
+		return numberOpponents / (double)ktlcs.size();
+	}
+
+	/**
+	 * TODO
+	 * @param chart_numberPodiumsByEnviro
+	 * @return
+	 */
+	private static List<TMEnvironment> calcBestEnviroFromPodiums(HashMap<TMEnvironment, int[]> numberPodiumsByEnviro) {
+		List<TMEnvironment> bestEnviros = null;
+		
+		int maxPodium = Integer.MIN_VALUE;
+		for (TMEnvironment enviro : numberPodiumsByEnviro.keySet()) {
+			// 1st value = #1st places, 2nd value = #2nd places, 3rd value = #3rd places, 4th value = total of podiums
+			int numberPodiums = numberPodiumsByEnviro.get(enviro)[3];
+			if (numberPodiums > maxPodium && numberPodiums != 0) {
+				maxPodium = numberPodiums;
+				bestEnviros = new ArrayList<TMEnvironment>();
+				bestEnviros.add(enviro);
+			} else if (numberPodiums == maxPodium  && numberPodiums != 0) {
+				bestEnviros.add(enviro);
+			}
+		}
+		
+		return bestEnviros;
+	}
+
+	/**
+	 * TODO
+	 * @param chart_averageRankByEnviro
+	 * @return
+	 */
+	private static List<TMEnvironment> calcBestEnvirofromAvgRank(HashMap<TMEnvironment, Double[]> averageRankByEnviro) {
+		List<TMEnvironment> bestEnviros = null;
+		
+		double bestAVG = Double.MAX_VALUE;
+		for (TMEnvironment enviro : averageRankByEnviro.keySet()) {
+			// 1st value = average, 2nd value = numberMaps in double...
+			double avg = averageRankByEnviro.get(enviro)[0];
+			if (avg < bestAVG && avg != 0) {
+				bestAVG = avg;
+				bestEnviros = new ArrayList<TMEnvironment>();
+				bestEnviros.add(enviro);
+			} else if (avg == bestAVG  && avg != 0) {
+				bestEnviros.add(enviro);
+			}
+		}
+		
+		return bestEnviros;
+	}
+
+	/**
+	 * TODO
+	 * @param raceResults
+	 * @return Double[0] = average rank on the enviro, Double[1] = numberMaps played on the enviro
+	 */
+	private static HashMap<TMEnvironment, Double[]> calcAverageRankByEnviro(List<KTLCRaceResult> raceResults) {
+		HashMap<TMEnvironment, Integer> countedMaps = new HashMap<TMEnvironment, Integer>();
+		HashMap<TMEnvironment, Integer> sumRanks = new HashMap<TMEnvironment, Integer>();
+				
+		for (KTLCRaceResult result : raceResults) {
+			TMEnvironment enviro = result.race.map.environment;
+			int numberMaps = 1;
+			int currentSum = result.rank;
+			
+			if (countedMaps.containsKey(enviro)) {
+				numberMaps += countedMaps.get(enviro);
+				currentSum += sumRanks.get(enviro);
+			}
+			
+			countedMaps.put(enviro, numberMaps);
+			sumRanks.put(enviro, currentSum);			
+		}
+		
+		HashMap<TMEnvironment, Double[]> average = new HashMap<TMEnvironment, Double[]>();
+		for (TMEnvironment enviro : TMEnvironment.values()) {
+			// 1st value = average, 2nd value = numberMaps in double...
+			Double[] resultOfEnviro = {0.0, 0.0};
+			if (countedMaps.containsKey(enviro)) {
+				resultOfEnviro[0] = sumRanks.get(enviro) / (double) countedMaps.get(enviro);
+				resultOfEnviro[1] = (double) countedMaps.get(enviro);
+			}
+			average.put(enviro, resultOfEnviro);
+		}
+		
+		return average;
+	}
+	
+	/**
+	 * TODO
+	 * @param raceResults
+	 * @return int[0-2] = number of podiums (1st, 2nd, 3rd ranks) on the enviro, int[4] = numberMaps played on the enviro
+	 */
+	private static HashMap<TMEnvironment, int[]> calcNumberPodiumsByEnviro(List<KTLCRaceResult> raceResults) {
+		HashMap<TMEnvironment, Integer> countedMaps = new HashMap<TMEnvironment, Integer>();
+		HashMap<TMEnvironment, int[]> sumRanks = new HashMap<TMEnvironment, int[]>();
+				
+		for (KTLCRaceResult result : raceResults) {
+			TMEnvironment enviro = result.race.map.environment;
+			int numberMaps = 1;
+			int[] currentSum = {0, 0, 0};
+			
+			if (countedMaps.containsKey(enviro)) {
+				numberMaps += countedMaps.get(enviro);
+				currentSum = sumRanks.get(enviro);
+			}
+			
+			// on the podium
+			if (result.rank <= 3) {
+				currentSum[result.rank - 1] += 1;
+			}
+			
+			countedMaps.put(enviro, numberMaps);
+			sumRanks.put(enviro, currentSum);			
+		}
+		
+		HashMap<TMEnvironment, int[]> numberPodiums = new HashMap<TMEnvironment, int[]>();
+		for (TMEnvironment enviro : TMEnvironment.values()) {
+			// 1st value = #1st places, 2nd value = #2nd places, 3rd value = #3rd places, 4th value = total of podiums
+			int[] resultOfEnviro = {0, 0, 0, 0};
+			if (countedMaps.containsKey(enviro)) {
+				resultOfEnviro[0] = sumRanks.get(enviro)[0];
+				resultOfEnviro[1] = sumRanks.get(enviro)[1];
+				resultOfEnviro[2] = sumRanks.get(enviro)[2];
+				resultOfEnviro[3] = sumRanks.get(enviro)[0] + sumRanks.get(enviro)[1] + sumRanks.get(enviro)[2];
+			}
+			numberPodiums.put(enviro, resultOfEnviro);
+		}
+		
+		return numberPodiums;
+	}
+
 	/**
 	 * TODO
 	 * @param mapsByEnviro

@@ -36,9 +36,16 @@ public class StatisticPlayer {
 	public int numberPlayedRuns;
 	
 	public double averageRank;
+	public double averageNumberOpponents;
+	
+	public List<TMEnvironment> bestEnviroFromAvgRank;
+	public List<TMEnvironment> bestEviroFromPodiums;
 	
 	public int[] chart_ranksByKTLCs;
 	public int[] chart_ranksByRaces;
+	
+	public HashMap<TMEnvironment, Double[]> chart_averageRankByEnviro;
+	public HashMap<TMEnvironment, int[]> chart_numberPodiumsByEnviro;
 	
 	// stats mapper
 	public HashMap<TMEnvironment, Integer> chart_numberMapsByEnviro;

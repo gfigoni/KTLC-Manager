@@ -201,12 +201,9 @@ td{
 	background-color: #484742;
 }
 
-.player_box {
-	float: left;
-}
-
+.player_box, 
 .map_box {
-	float: right;
+	float: left;
 }
 
 .map_box h1,
@@ -216,10 +213,6 @@ td{
 	margin: 0;
 	padding: 0;
 	margin-bottom: 10px;
-}
-
-.map_box h1,
-.player_box h1 {
 	text-align: center;
 }
 
@@ -250,9 +243,13 @@ td{
 	line-height: 10px;
 }
 
-.player_box td,
 .map_box td {
 	min-width: 100px;
+}
+
+.player_box td {
+	min-width: 80px;
+	text-align: center;
 }
 
 .map_box td:FIRST-CHILD {
@@ -514,10 +511,6 @@ td{
 	color: #b6b6b6;
 }
 
-.content_generalStats td {
-	text-align: left;
-}
-
 .content_generalStats h1 {
 	font-weight: bold;
 	font-size: 20px;
@@ -716,7 +709,7 @@ ul.pagination {
 
 .pagination .next a, .pagination .previous a, .pagination .first a, .pagination .last a {
 	font-weight: bold;
-	color: #00000;
+	color: #ffde88;
 }
 
 .pagination .active {
