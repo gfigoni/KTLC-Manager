@@ -76,11 +76,12 @@ public class Application extends Controller {
 	        // create the paginators for the ktlcs and the maps
 	        results = new ValuePaginator<KTLCResult>(resultsList);
 	        results.setPagesDisplayed(3);
-	        results.setPageSize(26);
+	        results.setPageSize(25);
 	        results.setParameterName("resultsPage");
 	        
 	        races = new ValuePaginator<KTLCRace>(racesList);
 	        races.setPagesDisplayed(3);
+	        races.setPageSize(25);
 	        races.setParameterName("racesPage");
 	        
 	        // get the stats
@@ -94,7 +95,11 @@ public class Application extends Controller {
     }
 
     public static void players() {
-        List<Player> players = Player.find("order by name asc").fetch();
+        List<Player> playersList = Player.find("order by name asc").fetch();
+        
+        ValuePaginator<Player> players = new ValuePaginator<Player>(playersList);
+        players.setPageSize(40);
+        
         render(players);
     }
 
@@ -104,7 +109,11 @@ public class Application extends Controller {
     }
 
     public static void ktlcs() {
-        List<KTLCEdition> ktlcs = KTLCEdition.find("order by date desc").fetch();
+        List<KTLCEdition> ktlcsList = KTLCEdition.find("order by date desc").fetch();
+        
+        ValuePaginator<KTLCEdition> ktlcs = new ValuePaginator<KTLCEdition>(ktlcsList);
+        ktlcs.setPageSize(40);
+        
         render(ktlcs);
     }
     

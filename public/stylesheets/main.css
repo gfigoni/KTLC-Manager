@@ -243,8 +243,15 @@ td{
 	line-height: 10px;
 }
 
-.map_box td {
+.map_box td,
+.map_box th {
+	text-align: left;
 	min-width: 110px;
+}
+
+.map_box th:last-child,
+.map_box td:last-child {
+	text-align: center;
 }
 
 .player_box td {
