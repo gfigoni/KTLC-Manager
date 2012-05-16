@@ -215,15 +215,15 @@
         <div class="comparatorActions">
             <h2>Possible Actions</h2>
             <p>Bla bla bla</p>
-            <form action="@{Application.compareMappersPost()}" method="POST">
+            <form action="@{stats.StatisticsComparator.compareMappersPost()}" method="POST">
             	<table>
             		<tr>
         				<td>Compare</td>
         				#{if originMapper.isPlayer() && targetMapper.isPlayer()}
-            			<td class="link">#{a @Application.comparePlayers(originMapper.logins[0], targetMapper.logins[0])}Statistics as players#{/a}</td>
+            			<td class="link">#{a @stats.StatisticsComparator.comparePlayers(originMapper.logins[0], targetMapper.logins[0])}Statistics as players#{/a}</td>
             			#{/if}
             			<td>or</td>
-       					<td class="link">#{a @Application.compareMappers(null, null)}Random mappers#{/a}</td>
+       					<td class="link">#{a @stats.StatisticsComparator.compareMappers(null, null)}Random mappers#{/a}</td>
        					<td>or</td>
         				<td class="possibilities"><input class="ui-state-default autocompleteLogin" type="text" name="loginName1" value="${originMapper.logins[0]}" size="15"/> with <input class="ui-state-default autocompleteLogin" type="text" name="loginName2" value="${targetMapper.logins[0]}" size="15" /> <input class="okButton" type="submit" value="OK" /></td>
 		        	</tr>

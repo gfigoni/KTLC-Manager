@@ -193,14 +193,14 @@
         <div class="comparatorActions">
             <h2>Possible Actions</h2>
             <p>Bla bla bla</p>
-            <form action="@{Application.compareMappersPost()}" method="POST">
+            <form action="@{stats.StatisticsComparator.compareMappersPost()}" method="POST">
             	<table>
             		<tr>
             			#{if mapper.isPlayer()}
             			<td class="link">#{a @Application.player(mapper.logins[0])}Go to player statistics#{/a}</td>
             			#{/if}
         				<td ${mapper.isPlayer() ? out.print("class='details'") : out.print("")}>Compare <strong>${mapper.name}</strong> with:</td>
-       					<td class="link">#{a @Application.compareMappers(mapper.logins[0], null)}Random mapper#{/a}</td>
+       					<td class="link">#{a @stats.StatisticsComparator.compareMappers(mapper.logins[0], null)}Random mapper#{/a}</td>
        					<td>or</td>
         				<td class="possibilities"><input class="ui-state-default autocompleteLogin" type="text" name="loginName2" ${mapper.name.equals("Slig") ? out.print("value='grokon'") : out.print("value='slig'")} size="15" /><input type="hidden" name="loginName1" value="${mapper.logins[0]}" /> <input class="okButton" type="submit" value="OK" /></td>
 		        	</tr>

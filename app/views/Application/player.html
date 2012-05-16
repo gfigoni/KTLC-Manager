@@ -595,14 +595,14 @@
         <div class="comparatorActions">
             <h2>Possible Actions</h2>
             <p>Bla bla bla</p>
-            <form action="@{Application.comparePlayersPost()}" method="POST">
+            <form action="@{stats.StatisticsComparator.comparePlayersPost()}" method="POST">
             	<table>
             		<tr>
             			#{if player.isMapper()}
             			<td class="link">#{a @Application.mapper(player.logins[0])}Go to mapper statistics#{/a}</td>
             			#{/if}
         				<td ${player.isMapper() ? out.print("class='details'") : out.print("")}>Compare <strong>${player.name}</strong> with:</td>
-       					<td class="link">#{a @Application.comparePlayers(player.logins[0], null)}Random player#{/a}</td>
+       					<td class="link">#{a @stats.StatisticsComparator.comparePlayers(player.logins[0], null)}Random player#{/a}</td>
        					<td>or</td>
         				<td class="possibilities"><input class="ui-state-default autocompleteLogin" type="text" name="loginName2" ${player.name.equals("Slig") ? out.print("value='grokon'") : out.print("value='slig'")} size="15" /><input type="hidden" name="loginName1" value="${player.logins[0]}" /> <input class="okButton" type="submit" value="OK" /></td>
 		        	</tr>
