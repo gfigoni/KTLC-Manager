@@ -86,6 +86,30 @@
 	
             chartEnviro.write('chartContainerEnviro');         	
         });
+        
+     	// Autocomplete login
+        $(document).ready(function(){
+        	  $('input.autocompleteLogin').each( function() {
+        	    var $input = $(this);
+        	    // Set-up the autocomplete widget.
+        	    $(this).autocomplete({
+        	        minLength: 1,
+        	        source : function(req, resp) {
+        	          $.getJSON("@{Application.getListOfMapperLogins()}", {'term' : req.term}, function(data) {
+         	        	  //alert(data);
+        	            var suggestions = [];
+        	            $.each(data, function(i, val) {
+        	              var obj = {};
+        	              obj.label = val;
+        	              obj.value = val;
+        	              suggestions.push(obj);
+        	            });
+        	            resp(suggestions);
+        	          });
+        	        }
+        	      });
+        	  });
+        	});
     </script>
 #{/set}
 
@@ -201,7 +225,7 @@
             			<td>or</td>
        					<td class="link">#{a @Application.compareMappers(null, null)}Random mappers#{/a}</td>
        					<td>or</td>
-        				<td class="possibilities"><input type="text" name="loginName1" value="${originMapper.logins[0]}" size="15"/> with <input type="text" name="loginName2" value="${targetMapper.logins[0]}" size="15" /> <input class="okButton" type="submit" value="OK" /></td>
+        				<td class="possibilities"><input class="ui-state-default autocompleteLogin" type="text" name="loginName1" value="${originMapper.logins[0]}" size="15"/> with <input class="ui-state-default autocompleteLogin" type="text" name="loginName2" value="${targetMapper.logins[0]}" size="15" /> <input class="okButton" type="submit" value="OK" /></td>
 		        	</tr>
 	        	</table>
         	</form>

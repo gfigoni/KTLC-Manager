@@ -1,7 +1,10 @@
 package models;
 
+import java.util.List;
+
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
+
 import play.data.validation.Required;
 import play.db.jpa.Model;
 
@@ -38,5 +41,9 @@ public class Login extends Model {
     
     public static Login findByName(String name) {
         return find("byName", name).first();
+    }
+    
+    public static List<Login> findByNameLike(String name, int max) {
+    	return Login.find("byNameIlike", name+"%").fetch(max);
     }
 }

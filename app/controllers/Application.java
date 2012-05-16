@@ -8,9 +8,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
 
+import com.google.gson.JsonSerializer;
+
 import models.KTLCEdition;
 import models.KTLCRace;
 import models.KTLCResult;
+import models.Login;
 import models.Player;
 import models.TMMap;
 import models.stats.StatisticConfig;
@@ -399,5 +402,33 @@ public class Application extends Controller {
     	} else {
     		redirect("/" + requestUrl);
     	}
+    }
+    
+    // TODO JAVADOC
+    public static void getListOfPlayerLogins(final String term) {
+    	List<Login> list = Login.findByNameLike(term, 10);
+    	
+    	List<String> listAsString = new ArrayList<String>();
+    	for (Login login : list) {
+    		// only add players
+    		if (login.player.isPlayer()) {
+    			listAsString.add(login.name);
+    		}
+		}    	
+        renderJSON(listAsString);
+    }
+    
+    // TODO JAVADOC
+    public static void getListOfMapperLogins(final String term) {
+    	List<Login> list = Login.findByNameLike(term, 10);
+    	
+    	List<String> listAsString = new ArrayList<String>();
+    	for (Login login : list) {
+    		// only add mappers
+    		if (login.player.isMapper()) {
+    			listAsString.add(login.name);
+    		}
+		}    	
+        renderJSON(listAsString);
     }
 }

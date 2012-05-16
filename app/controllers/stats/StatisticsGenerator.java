@@ -208,9 +208,10 @@ public class StatisticsGenerator {
 		comparison.put("bestEnviroFromAvgRank", compareValues(
 				origin.chart_averageRankByEnviro.get(origin.bestEnviroFromAvgRank.get(0))[0],
 				target.chart_averageRankByEnviro.get(target.bestEnviroFromAvgRank.get(0))[0], false));
+		
 		comparison.put("bestEviroFromPodiums", compareValues(
-				origin.chart_numberPodiumsByEnviro.get(origin.bestEviroFromPodiums.get(0))[3],
-				target.chart_numberPodiumsByEnviro.get(target.bestEviroFromPodiums.get(0))[3], true));		
+				origin.bestEviroFromPodiums != null ? origin.chart_numberPodiumsByEnviro.get(origin.bestEviroFromPodiums.get(0))[3]: 0,
+				target.bestEviroFromPodiums != null ? target.chart_numberPodiumsByEnviro.get(target.bestEviroFromPodiums.get(0))[3]: 0, true));		
 		return comparison;
 	}
 	

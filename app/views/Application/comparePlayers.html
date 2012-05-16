@@ -456,6 +456,30 @@
         function zoomChart() {
             chartKTLC.zoomToIndexes(chartDataKTLC.length - 15, chartDataKTLC.length - 1);
         }
+        
+     	// Autocomplete login
+        $(document).ready(function(){
+        	  $('input.autocompleteLogin').each( function() {
+        	    var $input = $(this);
+        	    // Set-up the autocomplete widget.
+        	    $(this).autocomplete({
+        	        minLength: 1,
+        	        source : function(req, resp) {
+        	          $.getJSON("@{Application.getListOfPlayerLogins()}", {'term' : req.term}, function(data) {
+         	        	  //alert(data);
+        	            var suggestions = [];
+        	            $.each(data, function(i, val) {
+        	              var obj = {};
+        	              obj.label = val;
+        	              obj.value = val;
+        	              suggestions.push(obj);
+        	            });
+        	            resp(suggestions);
+        	          });
+        	        }
+        	      });
+        	  });
+        	});
     </script>
 #{/set}
 
@@ -597,7 +621,7 @@
 	    				</td>
 	    				<td><span class="${originVersus.get("bestEviroFromPodiums")}">${originStats.chart_numberPodiumsByEnviro.get(originStats.bestEviroFromPodiums.get(0))[3]}</span> Podiums</td>
 	    				#{/if}#{else}
-	    				<td>&{'player.stats.noPodium'}</td>
+	    				<td><span class="${originVersus.get("bestEviroFromPodiums")}">&{'player.stats.noPodium'}</span></td>
 	    				<td></td>
 	    				#{/else}
 	    				<td class="comparisonSpacer"></td>
@@ -610,7 +634,7 @@
 	    				</td>
 	    				<td><span class="${targetVersus.get("bestEviroFromPodiums")}">${targetStats.chart_numberPodiumsByEnviro.get(targetStats.bestEviroFromPodiums.get(0))[3]}</span> Podiums</td>
 	    				#{/if}#{else}
-	    				<td>&{'player.stats.noPodium'}</td>
+	    				<td><span class="${targetVersus.get("bestEviroFromPodiums")}">&{'player.stats.noPodium'}</span></td>
 	    				<td></td>
 	    				#{/else}
 	    			</tr>
@@ -761,7 +785,7 @@
             			<td>or</td>
        					<td class="link">#{a @Application.comparePlayers(null, null)}Random players#{/a}</td>
        					<td>or</td>
-        				<td class="possibilities"><input type="text" name="loginName1" value="${originPlayer.logins[0]}" size="15"/> with <input type="text" name="loginName2" value="${targetPlayer.logins[0]}" size="15" /> <input class="okButton" type="submit" value="OK" /></td>
+        				<td class="possibilities"><input class="ui-state-default autocompleteLogin" type="text" name="loginName1" value="${originPlayer.logins[0]}" size="15"/> with <input class="ui-state-default autocompleteLogin" type="text" name="loginName2" value="${targetPlayer.logins[0]}" size="15" /> <input class="okButton" type="submit" value="OK" /></td>
 		        	</tr>
 	        	</table>
         	</form>

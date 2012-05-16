@@ -359,6 +359,30 @@
         function zoomChart() {
             chartKTLC.zoomToIndexes(chartDataKTLC.length - 15, chartDataKTLC.length - 1);
         }
+        
+        // Autocomplete login
+        $(document).ready(function(){
+        	  $('input.autocompleteLogin').each( function() {
+        	    var $input = $(this);
+        	    // Set-up the autocomplete widget.
+        	    $(this).autocomplete({
+        	        minLength: 1,
+        	        source : function(req, resp) {
+        	          $.getJSON("@{Application.getListOfPlayerLogins()}", {'term' : req.term}, function(data) {
+         	        	  //alert(data);
+        	            var suggestions = [];
+        	            $.each(data, function(i, val) {
+        	              var obj = {};
+        	              obj.label = val;
+        	              obj.value = val;
+        	              suggestions.push(obj);
+        	            });
+        	            resp(suggestions);
+        	          });
+        	        }
+        	      });
+        	  });
+        	});
     </script>
 #{/set}
 
@@ -580,7 +604,7 @@
         				<td ${player.isMapper() ? out.print("class='details'") : out.print("")}>Compare <strong>${player.name}</strong> with:</td>
        					<td class="link">#{a @Application.comparePlayers(player.logins[0], null)}Random player#{/a}</td>
        					<td>or</td>
-        				<td class="possibilities"><input type="text" name="loginName2" ${player.name.equals("Slig") ? out.print("value='grokon'") : out.print("value='slig'")} size="15" /><input type="hidden" name="loginName1" value="${player.logins[0]}" /> <input class="okButton" type="submit" value="OK" /></td>
+        				<td class="possibilities"><input class="ui-state-default autocompleteLogin" type="text" name="loginName2" ${player.name.equals("Slig") ? out.print("value='grokon'") : out.print("value='slig'")} size="15" /><input type="hidden" name="loginName1" value="${player.logins[0]}" /> <input class="okButton" type="submit" value="OK" /></td>
 		        	</tr>
 	        	</table>
         	</form>

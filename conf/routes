@@ -15,7 +15,7 @@ GET		/regenStats								stats.StatisticsManager.regenStats
 GET		/manageParameters						stats.StatisticsManager.manageParameters
 GET		/changeLocale							Application.changeLocale
 
-# Comparator
+# Comparators
 GET		/comparePlayers/{loginName1}/{loginName2}	Application.comparePlayers
 GET		/comparePlayers/{loginName1}			Application.comparePlayers
 GET		/comparePlayers							Application.comparePlayers
@@ -25,7 +25,6 @@ GET		/compareMappers/{loginName1}/{loginName2}	Application.compareMappers
 GET		/compareMappers/{loginName1}			Application.compareMappers
 GET		/compareMappers							Application.compareMappers
 POST	/compareMappersPost						Application.compareMappersPost
-
 
 # Ignore favicon requests
 GET     /favicon.ico                            404
