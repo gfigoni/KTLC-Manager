@@ -1,11 +1,14 @@
 title.default = Kill The Last Cup
 title.ktlc = Kill The Last Cup | édition #%s
 title.players = Kill The Last Cup | joueurs
+title.mappers = Kill The Last Cup | mappeurs
 title.player = Kill The Last Cup | %s
 title.stats = Kill The Last Cup | statistiques
+title.comparator = Kill The Last Cup | %1$s vs %2$s
 
 main.home = Accueil
 main.players = Joueurs
+main.mappers = Mappeurs
 main.ktlcs = Editions KTLC
 main.forum = Forum
 main.admin = Administration
@@ -17,6 +20,8 @@ ktlc.number.title = KTLC #
 ktlc.date = Date
 ktlc.size = Joueurs
 ktlc.nbparticipants = %s joueurs
+
+mapper = Mappeur
 
 player = Joueur
 player.login = Login
@@ -62,23 +67,25 @@ player.stats.ktlcResultsbyRank = Résultats par KTLC par position
 player.stats.raceResultsbyRank = Résultats par map par position
 player.stats.avgRankByEnviro = Position moyenne par environnement
 player.stats.numPodiumsByEnviro = Podiums par environnement
-player.stats.createdMaps = Maps créées
-player.stats.mapName = Nom
-player.stats.enviro = Environnement
-player.stats.ktlc = KTLC
-player.stats.mapperStats = Statistiques en tant que mappeur
-player.stats.mapperStats_legend = Ce tableau montre les statistiques en tant que mappeur pour la KTLC.
-player.stats.measures = Mesures
-player.stats.values = Valeurs
-player.stats.numCreated = Nombre de maps créées
-player.stats.numDistinctPlayer = Nombre de joueurs distincts
-player.stats.avgNumPlayer = Nombre moyen de joueurs par map
-player.stats.numRunsOnMaps = Nombre de runs joués sur les maps
-player.stats.numDistinctKtlcs = Nombre de KTLC distinctes en tant que mappeur
-player.stats.favEnviro = Environnement de mapping favori
-player.stats.numMapsByEnviro = Nombre de maps par environnement
 player.stats.Rank = Position
-player.stats.stats = Statistiques
+
+mapper.stats.stats = Statistiques
+mapper.stats.createdMaps = Maps créées
+mapper.stats.mapName = Nom
+mapper.stats.enviro = Environnement
+mapper.stats.ktlc = KTLC
+mapper.stats.mapperStats = Statistiques en tant que mappeur
+mapper.stats.mapperStats_legend = Ce tableau montre les statistiques en tant que mappeur pour la KTLC.
+mapper.stats.measures = Mesures
+mapper.stats.values = Valeurs
+mapper.stats.numCreated = Nombre de maps créées
+mapper.stats.numDistinctPlayer = Nombre de joueurs distincts
+mapper.stats.avgNumPlayer = Nombre moyen de joueurs par map
+mapper.stats.numRunsOnMaps = Nombre de runs joués sur les maps
+mapper.stats.numDistinctKtlcs = Nombre de KTLC distinctes en tant que mappeur
+mapper.stats.favEnviro = Environnement de mapping favori
+mapper.stats.numMapsByEnviro = Nombre de maps par environnement
+
 
 stats.title_generalStats = Statistiques Générales
 stats.title_playerChart = Nombre de joueurs par KTLC
@@ -138,14 +145,18 @@ stats.ranking_worstAvgRank_legend = Top%1$d des joueurs ayant les <strong>Pires 
 stats.ranking_violentMap_title = Maps les Plus Violentes
 stats.ranking_violentMap_legend = Top%1$d des maps ayant éliminés le plus grand nombre de joueurs au cours du <strong>premier tour</strong> (découverte). Le nombre de <em>victimes</em> qui ont échoué au premier tour est montré proportionnellent au nombre total de joueurs.
 stats.ranking_epicFail_title = Nombre "d'Echecs Critiques"
-stats.ranking_epicFail_legend = Montre le classement des joueurs ayant lamentablement échoué au cours d'une KTLC en étant <strong>éliminé au premier tour de toutes les maps</strong> qu'ils ont joué, réalisant ainsi un "Epic Fail", ou "Echec critique". Seuls les joueurs ayant joué au minimum %d maps pendant une KTLC sont comptés.
+stats.ranking_epicFail_legend =  Ce classement montre les joueurs ayant joués plus longtemps durant les tours de chauffe que pendant la KTLC... Plus précisément, il montre le classement des joueurs ayant lamentablement échoué au cours d'une KTLC en étant <strong>éliminé au premier tour de toutes les maps</strong> qu'ils ont joué, réalisant ainsi un "Epic Fail", ou "Echec critique". Seuls les joueurs ayant joué au minimum %d maps pendant une KTLC sont comptés.
 
 error.wrongktlc = Cette KTLC n'existe pas.
 error.noktlc = Pas de KTLC
 error.wrongplayer = Ce joueur n'existe pas.
 error.noplayer = Pas de joueur
+error.wrongmapper = Ce mappeur n'existe pas.
+error.nomapper = Pas de mappeur
 error.wrongStats = Il n'y a pas de statistiques à afficher
 error.noStats = Pas de statistiques
+error.wrongvalidplayers = Les joueurs selectionnés ne sont pas valide pour comparaison.
+error.novalidplayers = Pas de joueurs valides
 
 # administration
 validation.required = %s est obligatoire

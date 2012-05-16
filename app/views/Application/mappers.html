@@ -1,0 +1,61 @@
+#{extends 'main.html' /}
+#{set title:messages.get('title.mappers') /}
+#{set page:'mapper' /}
+
+#{if mappers.size()}
+<div id="content_top">
+    <ul>
+        <li><h1><a>&{'main.mappers'}</a></h1></li>
+    </ul>
+</div>
+<div id="main">
+    <div id="content">
+        <div class="players_box">
+        	#{paginate.controls items:mappers /}
+            <table>
+                <tr>
+                    <th>&{'mapper'}</th>
+                    <th>&{'player.login'}</th>
+                    <th>&{'player.categories'}</th>
+                </tr>
+                #{paginate.list items:mappers, as:'mapper'}
+                #{if mapper.logins}
+                <tr>
+                    <td>#{a @Application.mapper(mapper.logins[0])}${mapper.name}#{/a}</td>
+                    <td>
+                        #{list items:mapper.logins, as:'login'}
+                        <p>${login}</p>
+                        #{if !login_isLast}<br/>#{/if}
+                        #{/list}
+                    </td>
+                    <td>
+                    	#{if mapper.isPlayer()}&{'player.mapper'} / &{'player'}#{/if}
+                   		#{else}&{'player.mapper'}#{/else}
+                    </td>
+                </tr>
+                #{/if}
+                #{/paginate.list}
+                #{else}
+                &{'error.nomapper'}
+                #{/else}
+            </table>
+            #{paginate.summary items:mappers /}
+        </div>
+    </div>
+    <div class="cleaner"></div>
+</div>
+#{/if}
+
+#{else}
+<div id="content_top">
+    <ul>
+        <li><h1><a>&{'error.noplayer'}</a></h1></li>
+    </ul>
+</div>
+<div id="main">
+    <div id="content">
+        <div class="content_box" ></div>
+    </div>
+    <div class="cleaner" ></div>
+</div>
+#{/else}

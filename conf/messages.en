@@ -1,11 +1,14 @@
 title.default = Kill The Last Cup
 title.ktlc = Kill The Last Cup | edition #%s
 title.players = Kill The Last Cup | players
+title.mappers = Kill The Last Cup | mappers
 title.player = Kill The Last Cup | %s
 title.stats = Kill The Last Cup | statistics
+title.comparator = Kill The Last Cup | %1$s vs %2$s
 
 main.home = Home
 main.players = Players
+main.mappers = Mappers
 main.ktlcs = KTLC editions
 main.forum = Forum
 main.admin = Administration
@@ -17,6 +20,8 @@ ktlc.number.title = KTLC #
 ktlc.date = Date
 ktlc.size = Players
 ktlc.nbparticipants = %s players
+
+mapper = Mappeur
 
 player = Player
 player.login = Login
@@ -62,23 +67,24 @@ player.stats.ktlcResultsbyRank = KTLC results by rank
 player.stats.raceResultsbyRank = Map results by rank
 player.stats.avgRankByEnviro = Average rank by environment
 player.stats.numPodiumsByEnviro = Podiums by environment
-player.stats.createdMaps = Created Maps
-player.stats.mapName = name
-player.stats.enviro = Environment
-player.stats.ktlc = KTLC
-player.stats.mapperStats = Mapper statistics
-player.stats.mapperStats_legend = This table shows the statistics of the player as mapper for the KTLC.
-player.stats.measures = Measures
-player.stats.values = Values
-player.stats.numCreated = Number of created maps
-player.stats.numDistinctPlayer = Number of distinct players
-player.stats.avgNumPlayer = Average number of players by maps
-player.stats.numRunsOnMaps = Number of runs played on maps
-player.stats.numDistinctKtlcs = Number of distinct KTLCs as mapper
-player.stats.favEnviro = Favorite mapping environment
-player.stats.numMapsByEnviro = Number of maps by Environment
 player.stats.Rank = Rank
-player.stats.stats = Statistics
+
+mapper.stats.stats = Statistics
+mapper.stats.createdMaps = Created Maps
+mapper.stats.mapName = name
+mapper.stats.enviro = Environment
+mapper.stats.ktlc = KTLC
+mapper.stats.mapperStats = Mapper statistics
+mapper.stats.mapperStats_legend = This table shows the statistics of the player as mapper for the KTLC.
+mapper.stats.measures = Measures
+mapper.stats.values = Values
+mapper.stats.numCreated = Number of created maps
+mapper.stats.numDistinctPlayer = Number of distinct players
+mapper.stats.avgNumPlayer = Average number of players by maps
+mapper.stats.numRunsOnMaps = Number of runs played on maps
+mapper.stats.numDistinctKtlcs = Number of distinct KTLCs as mapper
+mapper.stats.favEnviro = Favorite mapping environment
+mapper.stats.numMapsByEnviro = Number of maps by Environment
 
 stats.title_generalStats = General Statistics
 stats.title_playerChart = Number of Players by KTLC
@@ -138,14 +144,18 @@ stats.ranking_worstAvgRank_legend = Top%1$d of the players with the <strong>Wors
 stats.ranking_violentMap_title = Most Violent Maps
 stats.ranking_violentMap_legend = Top%1$d of the maps that eliminated the highest number of players during the <strong>first round</strong> (discovery lap). The number of <em>victims</em> that failed at first lap is shown with respect to the total number of players.
 stats.ranking_epicFail_title = Number of 'Epic Fails'
-stats.ranking_epicFail_legend = Shows the ranking of all the players that failed miserably during a KTLC, by being <strong>eliminated at first round of each maps</strong> that they played. Only players that played on a minimum of %d maps during a KTLC are counted.
+stats.ranking_epicFail_legend = This ranking shows the players that played a longer time during the warm ups than during the KTLC... More precisely, it shows the ranking of all the players that failed miserably during a KTLC, by being <strong>eliminated at first round of each maps</strong> that they played. Only players that played on a minimum of %d maps during a KTLC are counted.
 
 error.wrongktlc = This KTLC does not exist.
 error.noktlc = No KTLC available
 error.wrongplayer = This player does not exist.
 error.noplayer = No player
-error.wrongStats = There is currently no statistics to display
+error.wrongmapper = This mapper does not exist.
+error.nomapper = No mapper
+error.wrongStats = There is currently no statistics to display.
 error.noStats = No statistics
+error.wrongvalidplayers = The players entered are not valid for comparison.
+error.novalidplayers = No valid players
 
 # administration
 validation.required = %s is required

@@ -90,11 +90,27 @@ td{
 	text-decoration: none;
 }
 
-#menu { position:relative; float:right; width: 760px; height: 40px; margin: 60px 0 0 0; }
-#menu ul { position:absolute; padding: 0; margin: 0; list-style: none; z-index:2; top: 0; right: 50px; }
+#menu { 
+	position:relative; 
+	float:right; 
+	width: 760px; 
+	height: 40px; 
+	margin: 60px 0 0 0; 
+}
+
+#menu ul { 
+	position:absolute; 
+	padding: 0; 
+	margin: 0; 
+	list-style: none; 
+	z-index:2; 
+	top: 0; 
+	right: 50px;
+}
+
 #menu ul li { 
 	float:left;
-	margin: 0 0 0 50px;
+	margin: 0 0 0 30px;
 	padding: 0;
 	text-align: center;	
 
@@ -134,6 +150,11 @@ td{
 #content_top ul li {
 	padding: 0;
 	margin: 0;
+}
+
+#content_top ul h1 {
+	font-size: 14px;
+	color: #b1b1b1;	
 }
 
 #content_top ul li a {
@@ -441,7 +462,7 @@ td{
 	width: 219px;
 	margin: 5px 0;
 	color: #aaa;
-	background: transparent url(img/list.jpg) no-repeat scroll 0 5px;
+	background: transparent url(img/list.png) no-repeat scroll 0 5px;
 }
 
 .racemap ul {
@@ -502,7 +523,7 @@ td{
 }
 .statsSpace hr {
 	color: #FFF;
- 	height: 3px;
+ 	height: 1px;
  	background-color: #b6b6b6;
 }
 
@@ -527,7 +548,8 @@ td{
 }
 
 .content_chartLeft h1,
-.content_chartRight h1 {
+.content_chartRight h1,
+.chartTitle h1 {
 	text-align: center;
 }
 
@@ -548,7 +570,7 @@ td{
 
 .ranking_title {
 	color: #aaa;
-	background: transparent url(img/list.jpg) no-repeat scroll 0 5px;
+	background: transparent url(img/list.png) no-repeat scroll 0 5px;
 }
 
 .ranking_title h2 {
@@ -683,12 +705,19 @@ td{
 /***********************************
 *          MAPPER/PLAYER STATS     *
 ***********************************/
+.comparison_stats table,
 .player_stats table {
 	background-color: #484742;
 	min-width: 225px;
 	margin-bottom: 15px;
 }
 
+.comparison_stats th {
+	background-color: #262626;
+}
+
+.comparison_stats th,
+.comparison_stats td,
 .player_stats th,
 .player_stats td {
 	padding-left: 10px;
@@ -706,22 +735,48 @@ td{
 .player_stats td:nth-child(2) {
 	width: 75px;
 }
-
+ 
 .player_stats th:nth-child(3),
 .player_stats td:nth-child(3) {
 	width: 100px;
 }
 
+.comparison_stats th:FIRST-CHILD,
+.comparison_stats td:FIRST-CHILD {
+	width: 220px;
+	text-align: left;
+}
+
+.comparison_stats th:nth-child(3),
+.comparison_stats td:nth-child(3),
+.comparison_stats th:nth-child(6),
+.comparison_stats td:nth-child(6) {
+	width: 65px;
+}
+
+.comparison_stats th:nth-child(4),
+.comparison_stats td:nth-child(4),
+.comparison_stats th:nth-child(7),
+.comparison_stats td:nth-child(7)  {
+	width: 190px;
+}
+
+.comparison_stats td.details,
 .player_stats td.details {
 	background: transparent url(img/list.png) no-repeat scroll;
 	background-position: 10px 11px;
 	padding-left: 20px;
 }
 
+.comparison_stats tr:nth-child(odd),
 .player_stats tr:nth-child(odd) {
 	background-color: #3D3B37;
 }
+.comparison_stats tr:nth-child(even) {
+	background-color: #484742;
+}
 
+.comparison_stats tr.subtitle,
 .player_stats tr.subtitle {
 	font-weight:bold;
 	font-style: italic;
@@ -730,8 +785,84 @@ td{
 	border-bottom: 1px solid black;
 }
 
+.comparison_stats tr.subtitle td,
 .player_stats tr.subtitle td {
 	color: black;	
+}
+
+.comparison_stats td.comparisonSpacer,
+.comparison_stats th.comparisonSpacer {
+	width: 3px;
+	padding: 0;
+	margin: 0;
+}
+
+.comparison_stats td.comparisonSpacer {
+	border-left: 1px solid black;
+}
+
+.comparison_stats span.equal {
+	color: yellow;
+}
+.comparison_stats span.bigger {
+	color: lime;
+}
+.comparison_stats span.lower {
+	color: red;
+}
+
+/***********************************
+*           Comparator             *
+***********************************/
+
+.comparatorActions {
+	background-color: #3D3B37;
+	border: 1px solid #9DAFB0;
+	margin-top: 15px;
+	padding: 10px;
+}
+
+.comparatorActions h2 {
+	background: transparent url(img/list.png) no-repeat scroll 0 5px;
+	font-size: 16px;
+	padding-left: 10px;
+}
+.comparatorActions p {
+	color: #EEEEEE;
+}
+
+.comparatorActions table {
+	height: 35px;
+	padding: 0;
+}
+
+.comparatorActions td {
+	padding-left: 5px;
+	padding-right: 5px;
+	display: inline-block; 
+	vertical-align: middle;
+}
+
+.comparatorActions td.details {
+	min-width: 275px;
+	text-align: right;
+}
+
+.comparatorActions td.link {
+	margin: 0px;
+	padding: 0px;
+}
+
+.comparatorActions a {
+	display: inline-block;
+	border: 1px solid black;
+	background-color: #484742;
+	padding: 10px;
+}
+
+.comparatorActions a:hover {
+	color: #F39400;
+	border: 1px solid #ffde88;
 }
 
 /***********************************

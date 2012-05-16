@@ -1,0 +1,205 @@
+#{extends 'main.html' /}
+#{set title:messages.get('title.player', mapper?.name) /}
+#{set page:'mapper' /}
+
+#{if mapper}
+
+#{set 'moreScripts'}
+    <script type="text/javascript">
+     	// the chart
+        var chartEnviro;
+     	
+        var chartEnviroData = [
+   			#{list items:stats.chart_numberMapsByEnviro.keySet(), as:'enviro'}
+   				{ enviro: "${enviro.capFirst()}", maps: ${stats.chart_numberMapsByEnviro.get(enviro)} },
+   			#{/list}
+   		];
+        function compareEnviro(a,b) {
+       	  if (a.maps > b.maps)
+       	     return -1;
+       	  if (a.maps < b.maps)
+       	    return 1;
+       	  return 0;
+       	}
+    	chartEnviroData.sort(compareEnviro);
+        
+        AmCharts.ready(function () {           
+         	// CHART Maps/Enviro  ------------------------------------------------------------------
+         	chartEnviro = new AmCharts.AmSerialChart();
+            
+        	chartEnviro.dataProvider = chartEnviroData;
+        	chartEnviro.categoryField = "enviro";
+        	chartEnviro.rotate= true;
+        	chartEnviro.color = "#FEFADC";
+        	chartEnviro.columnWidth = 0.5;
+        	chartEnviro.marginTop = 0;
+            chartEnviro.marginBottom = 0;
+			
+			// Graph
+	        var graphEnviro = new AmCharts.AmGraph();
+	        graphEnviro.balloonText = "[[value]] maps";
+	        graphEnviro.valueField = "maps";
+	        graphEnviro.type = "column";
+	        graphEnviro.lineAlpha = 0;
+	        graphEnviro.fillAlphas = 1;
+	        graphEnviro.fillColors = "#C37700";
+	        
+	        chartEnviro.addGraph(graphEnviro);
+	        
+	     	// Axes
+	     	// category
+            var categoryEnviroAxis = chartEnviro.categoryAxis;
+            categoryEnviroAxis.gridPosition = "start";
+            // value                
+            var valueEnviroAxis = new AmCharts.ValueAxis();
+            valueEnviroAxis.minimum = 0;
+            valueEnviroAxis.integersOnly = true;
+            chartEnviro.addValueAxis(valueEnviroAxis);
+            
+         	// Cursor
+            var chartEnviroCursor = new AmCharts.ChartCursor();
+            chartEnviroCursor.cursorPosition = "middle";
+            chartEnviroCursor.categoryBalloonEnabled = false;
+            chartEnviro.addChartCursor(chartEnviroCursor);
+	
+            chartEnviro.write('chartContainerEnviro');         	
+        });
+        
+        function zoomChart() {
+            chartKTLC.zoomToIndexes(chartDataKTLC.length - 15, chartDataKTLC.length - 1);
+        }
+    </script>
+#{/set}
+
+<div id="content_top">
+    <ul>
+        <li><h1><a>${mapper.name}</a></h1></li>
+    </ul>
+</div>
+<div id="main">
+    <div id="content">	    
+	    <div class="content_generalStats">	    
+	    	<!-- LEFT PART 1 MAPPER  --------------------------------------------------------------------- -->
+		    <div class="content_chartLeft">
+		        <div class="map_box">
+		        	<div class="ranking_title">
+		                <h2>&{'mapper.stats.createdMaps'}</h2>
+		            </div>
+		       		#{paginate.controls items:races /}
+		            <table>
+		                <tr>
+		                    <th>&{'mapper.stats.mapName'}</th>
+		                    <th>&{'mapper.stats.enviro'}</th>
+		                    <th>&{'mapper.stats.ktlc'}</th>
+		                </tr>
+		                #{paginate.list items:races, as:'race'}
+		                <tr>
+		                    <td style="text-align: left;">#{if race.map.name.length() > 25}${race.map.name.substring(0,25)}...#{/if}#{else}${race.map.name}#{/else}</td>
+		                    <td style="text-align: left;">${race.map.environment.capFirst()}</td>
+		                    <td>#{a @Application.ktlc(race.ktlc.number)}&{'ktlc.number', race.ktlc.number}#{/a}</td>
+		                </tr>
+		                #{/paginate.list}
+		            </table>
+		            #{paginate.summary items:races /}
+		        </div>
+	        </div>
+	    
+	    	<!-- RIGHT PART 1 MAPPER  --------------------------------------------------------------------- -->
+	    	<div class="content_chartRight">
+	    		<div class="ranking_title">
+	                <h2>&{'mapper.stats.mapperStats'}</h2>
+	                <p>&{'mapper.stats.mapperStats_legend'}</p>
+	            </div>
+		        <div class="player_stats">
+		    		<table>
+		    			<tr  class="subtitle">
+		    				<td>&{'mapper.stats.stats'}</td>
+		    				<td></td>
+		    				<td></td>
+		    			</tr>
+		    			<tr>
+		    				<td>&{'mapper.stats.numCreated'}</td>
+		    				<td>${stats.createdMaps.value} / ${stats.createdMaps.total}</td>
+		    				<td>${(stats.createdMaps.ratio*100.0).format('0.00')} %</td>
+		    			</tr>
+		    			<tr>
+		    				<td>&{'mapper.stats.numDistinctPlayer'}</td>
+		    				<td>${stats.distinctPlayersOnMaps.value} / ${stats.distinctPlayersOnMaps.total}</td>
+		    				<td>${(stats.distinctPlayersOnMaps.ratio*100.0).format('0.00')} %</td>
+		    			</tr>
+		    			<tr>
+		    				<td>&{'mapper.stats.avgNumPlayer'}</td>
+		    				<td>${stats.averageNumberPlayersOnMaps.format('0.00')}</td>
+		    				<td></td>
+		    			</tr>	    			
+		    			<tr>
+		    				<td>&{'mapper.stats.numRunsOnMaps'}</td>
+		    				<td>${stats.numberRunsOnMaps}</td>
+		    				<td></td>
+		    			</tr>
+		    			<tr>
+		    				<td>&{'mapper.stats.numDistinctKtlcs'}</td>
+		    				<td>${stats.numberDistinctKTLCsAsMapper}</td>
+		    				<td></td>
+		    			</tr>
+		    			<tr>
+		    				<td>&{'mapper.stats.favEnviro'}</td>
+		    				<td>
+								#{list items:stats.favoriteMappingEnviros, as:'enviro'}
+		                        ${enviro.capFirst()}
+		                        #{if !enviro_isLast}<br/>#{/if}
+		                        #{/list}
+		    				</td>
+		    				<td>${stats.chart_numberMapsByEnviro.get(stats.favoriteMappingEnviros.get(0))} maps</td>
+		    			</tr>
+		    		</table>
+	    		</div>
+	    		
+	    		<div class="statsSpace"></div>
+	    		
+	    		<h1>&{'mapper.stats.numMapsByEnviro'}</h1>
+		        <div id="chartContainerEnviro" style="width: 420px; height: 300px;"></div>
+	        </div>
+        </div>
+        
+        <div class="cleaner"></div>
+        <div class="statsSpace"></div>
+        
+        <!-- COMPARATOR --------------------------------------------------------------------- -->
+        <div class="comparatorActions">
+            <h2>Possible Actions</h2>
+            <p>Bla bla bla</p>
+            <form>
+            	<table>
+            		<tr>
+            			#{if mapper.isPlayer()}           
+            			<td class="link">#{a @Application.player(mapper.logins[0])}Go to player statistics#{/a}</td>
+            			#{/if}
+        				<td class="details">Compare with:</td>
+       					<td class="link">#{a @Application.player(mapper.logins[0])}Random mapper#{/a}</td>
+       					<td>or</td>
+        				<td><input type="text" value="Slig" /></td>
+        				<td><input class="okButton" type="submit" value="OK" /></td>
+		        	</tr>
+	        	</table>
+        	</form>
+        </div>
+    </div>
+</div>
+#{/if}
+
+#{else}
+<div id="content_top">
+    <ul>
+        <li><h1><a>&{'error.nomapper'}</a></h1></li>
+    </ul>
+</div>
+<div id="main">
+    <div id="content">
+        <div class="content_box">
+            &{'error.wrongmapper'}
+        </div>
+    </div>
+    <div class="cleaner"></div>
+</div>
+#{/else}

@@ -1,9 +1,12 @@
 package models;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.NoResultException;
 import javax.persistence.OneToMany;
 import play.data.validation.Required;
 import play.db.jpa.Model;
@@ -48,5 +51,30 @@ public class Player extends Model {
     
     public boolean isMapper() {
     	return TMMap.findByPlayer(this).size() > 0;
+    }
+    
+    public static void filterByPlayer(Collection<Player> c) {
+        for (Iterator<Player> it = c.iterator(); it.hasNext(); )
+            if (!(it.next().isPlayer()))
+                it.remove();
+    }
+    
+    public static void filterByMapper(Collection<Player> c) {
+        for (Iterator<Player> it = c.iterator(); it.hasNext(); )
+            if (!(it.next().isMapper()))
+                it.remove();
+    }
+    
+    public static void filterbyPercentageParticipation(Collection<Player> c, int percentage) {
+    	int numberLimit = (int)(KTLCEdition.findAll().size() * (percentage / 100.0));
+    	
+        for (Iterator<Player> it = c.iterator(); it.hasNext(); ) {
+        	Player player = it.next();
+        	int count = KTLCResult.findByPlayer(player).size();
+        	if (count < numberLimit) {
+                it.remove();
+        	}
+        }
+            
     }
 }

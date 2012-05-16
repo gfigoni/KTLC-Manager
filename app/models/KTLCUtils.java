@@ -1,5 +1,7 @@
 package models;
 
+import java.util.Collection;
+import java.util.Iterator;
 import java.util.regex.Pattern;
 
 public class KTLCUtils {

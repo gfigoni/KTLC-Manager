@@ -1,6 +1,5 @@
 package controllers.stats;
 
-import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -8,11 +7,11 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
-import org.hibernate.mapping.Array;
+import controllers.Players;
 
 import models.KTLCEdition;
 import models.KTLCRace;
@@ -24,6 +23,7 @@ import models.TMMap;
 import models.stats.Rank;
 import models.stats.StatisticConfig;
 import models.stats.StatisticGeneral;
+import models.stats.StatisticMapper;
 import models.stats.StatisticPlayer;
 import models.stats.StatsEntry;
 
@@ -99,6 +99,11 @@ public class StatisticsGenerator {
 		return Math.abs(endTime - startTime) / 1000000;
 	}
 	
+	/**
+	 * TODO javadoc generator stats player
+	 * @param player
+	 * @return
+	 */
 	public static StatisticPlayer generateStatisticsPlayer(Player player) {		
 		StatisticPlayer stats = new StatisticPlayer();
 		
@@ -109,75 +114,183 @@ public class StatisticsGenerator {
 		// set the stats
 		stats.player = player;
 		
-		if (player.isPlayer()) {
-			// all the ktlcs
-			List<KTLCEdition> ktlcs = KTLCEdition.find("order by date asc").fetch();
-			// the results of the player on the ktlcs he played
-			List<KTLCResult> ktlcResults = KTLCResult.findByPlayer(player);
-			// the results of the player for all the maps he played
-			List<KTLCRaceResult> raceResults = KTLCRaceResult.findByPlayer(player);
-			// the editions of the ktlcs on which the player played
-			List<KTLCEdition> ktlcPlayed = new ArrayList<KTLCEdition>(ktlcResults.size());
-			for (KTLCResult result : ktlcResults) { ktlcPlayed.add(result.ktlc); }
-			
-			//participations
-			stats.playedKTLCs = new StatsEntry(ktlcResults.size(), ktlcs.size());
-			stats.playedKTLC_TMU = new StatsEntry(calcNumberKTLCTMU(ktlcPlayed), calcNumberKTLCTMU(ktlcs));
-			stats.playedSuperKTLC_TMU = new StatsEntry(calcNumberSuperKTLCTMU(ktlcPlayed), calcNumberSuperKTLCTMU(ktlcs));
-			stats.playedKTLC_TM2 = new StatsEntry(calcNumberKTLCTM2(ktlcPlayed), calcNumberKTLCTM2(ktlcs));
-			
-			// averages
-			stats.averageRank = averageRankByPlayer(player);
-			stats.averageNumberOpponents = calcAverageNumberOpponents(ktlcPlayed);
-			
-			//others
-			stats.numberPlayedRaces = calcNumberMapsPlayed(ktlcResults);
-			stats.numberPlayedRuns = calcTotalNumberRuns(player);
-			stats.numberLastPlaceKTLC = calcNumberLastPlaceKTLC(ktlcResults);
-			stats.numberLastPlaceRace = calcNumberlastPlaceRace(raceResults);
-			stats.perfects = calcPerfects(ktlcResults);
-			stats.epicFails = calcEpicFails(ktlcResults, config.getMinNumberMapsForEpicFail());
-			stats.longestPodiumSerie = calcLongestPodiumSeries(ktlcResults);
-			
-			// charts
-			stats.chart_ranksByKTLCs = ktlcResultsByRanksByPlayer(player, config.getRankLimit());
-			stats.numberPodiumsKTLC = new StatsEntry(
-					stats.chart_ranksByKTLCs[0] + 
-					stats.chart_ranksByKTLCs[1] + 
-					stats.chart_ranksByKTLCs[2], 
-					stats.playedKTLCs.value);
-			
-			stats.chart_ranksByRaces = raceResultsByRanksByPlayer(player, config.getRankLimit());
-			stats.numberPodiumsRace = new StatsEntry(
-					stats.chart_ranksByRaces[0] + 
-					stats.chart_ranksByRaces[1] + 
-					stats.chart_ranksByRaces[2], 
-					stats.numberPlayedRaces);
-			
-			stats.chart_averageRankByEnviro = calcAverageRankByEnviro(raceResults);
-			stats.chart_numberPodiumsByEnviro = calcNumberPodiumsByEnviro(raceResults);
-			
-			// best enviros
-			stats.bestEnviroFromAvgRank = calcBestEnvirofromAvgRank(stats.chart_averageRankByEnviro);
-			stats.bestEviroFromPodiums = calcBestEnviroFromPodiums(stats.chart_numberPodiumsByEnviro);
-		}
+		// all the ktlcs
+		List<KTLCEdition> ktlcs = KTLCEdition.find("order by date asc").fetch();
+		// the results of the player on the ktlcs he played
+		List<KTLCResult> ktlcResults = KTLCResult.findByPlayer(player);
+		// the results of the player for all the maps he played
+		List<KTLCRaceResult> raceResults = KTLCRaceResult.findByPlayer(player);
+		// the editions of the ktlcs on which the player played
+		List<KTLCEdition> ktlcPlayed = new ArrayList<KTLCEdition>(ktlcResults.size());
+		for (KTLCResult result : ktlcResults) { ktlcPlayed.add(result.ktlc); }
 		
-		if (player.isMapper()) {
-			List<TMMap> maps = TMMap.findByPlayer(player);
-			List<KTLCRace> races = new ArrayList<KTLCRace>(maps.size());
-			for (TMMap map : maps) { races.add(KTLCRace.findByMap(map)); }
-			
-			stats.chart_numberMapsByEnviro = calcMapsByEnviro(maps);
-			
-			stats.createdMaps = new StatsEntry(maps.size(), TMMap.findAll().size());
-			stats.distinctPlayersOnMaps = calcNumberDistinctPlayersOnMaps(races);
-			stats.numberRunsOnMaps = calcNumberRunsOnMaps(races);
-			stats.numberDistinctKTLCsAsMapper = calcNumberDistinctKTLCsAsMapper(races);
-			
-			stats.averageNumberPlayersOnMaps = calcAverageNumberPlayersOnMaps(races);
-			
-			stats.favoriteMappingEnviros = calcFavoriteMappingEnviro(stats.chart_numberMapsByEnviro);
+		//participations
+		stats.playedKTLCs = new StatsEntry(ktlcResults.size(), ktlcs.size());
+		stats.playedKTLC_TMU = new StatsEntry(calcNumberKTLCTMU(ktlcPlayed), calcNumberKTLCTMU(ktlcs));
+		stats.playedSuperKTLC_TMU = new StatsEntry(calcNumberSuperKTLCTMU(ktlcPlayed), calcNumberSuperKTLCTMU(ktlcs));
+		stats.playedKTLC_TM2 = new StatsEntry(calcNumberKTLCTM2(ktlcPlayed), calcNumberKTLCTM2(ktlcs));
+		
+		// averages
+		stats.averageRank = averageRankByPlayer(player);
+		stats.averageNumberOpponents = calcAverageNumberOpponents(ktlcPlayed);
+		
+		//others
+		stats.numberPlayedRaces = calcNumberMapsPlayed(ktlcResults);
+		stats.numberPlayedRuns = calcTotalNumberRuns(player);
+		stats.numberLastPlaceKTLC = calcNumberLastPlaceKTLC(ktlcResults);
+		stats.numberLastPlaceRace = calcNumberlastPlaceRace(raceResults);
+		stats.perfects = calcPerfects(ktlcResults);
+		stats.epicFails = calcEpicFails(ktlcResults, config.getMinNumberMapsForEpicFail());
+		stats.longestPodiumSerie = calcLongestPodiumSeries(ktlcResults);
+		
+		// charts
+		stats.chart_ranksByKTLCs = ktlcResultsByRanksByPlayer(player, config.getRankLimit());
+		stats.numberPodiumsKTLC = new StatsEntry(
+				stats.chart_ranksByKTLCs[0] + 
+				stats.chart_ranksByKTLCs[1] + 
+				stats.chart_ranksByKTLCs[2], 
+				stats.playedKTLCs.value);
+		
+		stats.chart_ranksByRaces = raceResultsByRanksByPlayer(player, config.getRankLimit());
+		stats.numberPodiumsRace = new StatsEntry(
+				stats.chart_ranksByRaces[0] + 
+				stats.chart_ranksByRaces[1] + 
+				stats.chart_ranksByRaces[2], 
+				stats.numberPlayedRaces);
+		
+		stats.chart_averageRankByEnviro = calcAverageRankByEnviro(raceResults);
+		stats.chart_numberPodiumsByEnviro = calcNumberPodiumsByEnviro(raceResults);
+		
+		// best enviros
+		stats.bestEnviroFromAvgRank = calcBestEnvirofromAvgRank(stats.chart_averageRankByEnviro);
+		stats.bestEviroFromPodiums = calcBestEnviroFromPodiums(stats.chart_numberPodiumsByEnviro);
+		
+		return stats;
+	}
+	
+	/**
+	 * TODO javadoc comparison stats
+	 * @param origin
+	 * @param target
+	 * @return HashMap with value for each statistic parameter, with "bigger" if origin is better,
+	 * "lower" if target is better and "equal" if the values are equal
+	 */
+	public static HashMap<String,String> compareStatsPlayers(StatisticPlayer origin, StatisticPlayer target) {
+		HashMap<String, String> comparison = new HashMap<String, String>();
+		
+		comparison.put("playedKTLCs.value", compareValues(origin.playedKTLCs.value, target.playedKTLCs.value, true));
+		comparison.put("playedKTLC_TMU.value", compareValues(origin.playedKTLC_TMU.value, target.playedKTLC_TMU.value, true));
+		comparison.put("playedSuperKTLC_TMU.value", compareValues(origin.playedSuperKTLC_TMU.value, target.playedSuperKTLC_TMU.value, true));
+		comparison.put("playedKTLC_TM2.value", compareValues(origin.playedKTLC_TM2.value, target.playedKTLC_TM2.value, true));
+		comparison.put("playedKTLCs.ratio", compareValues(origin.playedKTLCs.ratio, target.playedKTLCs.ratio, true));
+		comparison.put("playedKTLC_TMU.ratio", compareValues(origin.playedKTLC_TMU.ratio, target.playedKTLC_TMU.ratio, true));
+		comparison.put("playedSuperKTLC_TMU.ratio", compareValues(origin.playedSuperKTLC_TMU.ratio, target.playedSuperKTLC_TMU.ratio, true));
+		comparison.put("playedKTLC_TM2.ratio", compareValues(origin.playedKTLC_TM2.ratio, target.playedKTLC_TM2.ratio, true));
+		
+		comparison.put("numberPlayedRaces", compareValues(origin.numberPlayedRaces, target.numberPlayedRaces, true));
+		comparison.put("numberPlayedRuns", compareValues(origin.numberPlayedRuns, target.numberPlayedRuns, true));
+		comparison.put("perfects", compareValues(origin.perfects.size(), target.perfects.size(), true));
+		comparison.put("epicFails", compareValues(origin.epicFails.size(), target.epicFails.size(), false));
+		comparison.put("longestPodiumSerie", compareValues(origin.longestPodiumSerie.size(), target.longestPodiumSerie.size(), true));
+		
+		comparison.put("numberLastPlaceRace.value", compareValues(origin.numberLastPlaceRace.value, target.numberLastPlaceRace.value, false));
+		comparison.put("numberLastPlaceKTLC.value", compareValues(origin.numberLastPlaceKTLC.value, target.numberLastPlaceKTLC.value, false));
+		comparison.put("numberPodiumsRace.value", compareValues(origin.numberPodiumsRace.value, target.numberPodiumsRace.value, true));
+		comparison.put("numberPodiumsKTLC.value", compareValues(origin.numberPodiumsKTLC.value, target.numberPodiumsKTLC.value, true));
+		comparison.put("numberLastPlaceRace.ratio", compareValues(origin.numberLastPlaceRace.ratio, target.numberLastPlaceRace.ratio, false));
+		comparison.put("numberLastPlaceKTLC.ratio", compareValues(origin.numberLastPlaceKTLC.ratio, target.numberLastPlaceKTLC.ratio, false));
+		comparison.put("numberPodiumsRace.ratio", compareValues(origin.numberPodiumsRace.ratio, target.numberPodiumsRace.ratio, true));
+		comparison.put("numberPodiumsKTLC.ratio", compareValues(origin.numberPodiumsKTLC.ratio, target.numberPodiumsKTLC.ratio, true));
+		
+		comparison.put("averageRank", compareValues(origin.averageRank, target.averageRank, false));
+		comparison.put("averageNumberOpponents", compareValues(origin.averageNumberOpponents, target.averageNumberOpponents, true));
+		
+		comparison.put("bestEnviroFromAvgRank", compareValues(
+				origin.chart_averageRankByEnviro.get(origin.bestEnviroFromAvgRank.get(0))[0],
+				target.chart_averageRankByEnviro.get(target.bestEnviroFromAvgRank.get(0))[0], false));
+		comparison.put("bestEviroFromPodiums", compareValues(
+				origin.chart_numberPodiumsByEnviro.get(origin.bestEviroFromPodiums.get(0))[3],
+				target.chart_numberPodiumsByEnviro.get(target.bestEviroFromPodiums.get(0))[3], true));		
+		return comparison;
+	}
+	
+	/**
+	 * TODO javadoc
+	 * @param v1
+	 * @param v2
+	 * @return
+	 */
+	private static String compareValues(int v1, int v2, boolean bigIsBetter) {
+		if(bigIsBetter) {
+			if (v1 > v2) {
+				return "bigger";
+			} else if (v1 < v2) {
+				return "lower";
+			} else {
+				return "equal";
+			}
+		} else {
+			if (v1 > v2) {
+				return "lower";
+			} else if (v1 < v2) {
+				return "bigger";
+			} else {
+				return "equal";
+			}	
 		}
+	}
+	
+	/**
+	 * TODO javadoc
+	 * @param v1
+	 * @param v2
+	 * @return
+	 */
+	private static String compareValues(double v1, double v2,  boolean bigIsBetter) {
+		if(bigIsBetter) {
+			if (v1 > v2) {
+				return "bigger";
+			} else if (v1 < v2) {
+				return "lower";
+			} else {
+				return "equal";
+			}
+		} else {
+			if (v1 > v2) {
+				return "lower";
+			} else if (v1 < v2) {
+				return "bigger";
+			} else {
+				return "equal";
+			}	
+		}
+	}
+	
+	/**
+	 * TODO javadoc generator stats mapper
+	 * @param mapper
+	 * @return
+	 */
+	public static StatisticMapper generateStatisticsMapper(Player mapper) {		
+		StatisticMapper stats = new StatisticMapper();
+
+		// set the stats
+		stats.mapper = mapper;
+		
+		List<TMMap> maps = TMMap.findByPlayer(mapper);
+		List<KTLCRace> races = new ArrayList<KTLCRace>(maps.size());
+		for (TMMap map : maps) { races.add(KTLCRace.findByMap(map)); }
+		
+		stats.chart_numberMapsByEnviro = calcMapsByEnviro(maps);
+		
+		stats.createdMaps = new StatsEntry(maps.size(), TMMap.findAll().size());
+		stats.distinctPlayersOnMaps = calcNumberDistinctPlayersOnMaps(races);
+		stats.numberRunsOnMaps = calcNumberRunsOnMaps(races);
+		stats.numberDistinctKTLCsAsMapper = calcNumberDistinctKTLCsAsMapper(races);
+		
+		stats.averageNumberPlayersOnMaps = calcAverageNumberPlayersOnMaps(races);
+		
+		stats.favoriteMappingEnviros = calcFavoriteMappingEnviro(stats.chart_numberMapsByEnviro);
 		
 		return stats;
 	}

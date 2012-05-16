@@ -13,7 +13,6 @@ public class StatisticPlayer {
 	
 	public Player player;
 	
-	// stats player	
 	public StatsEntry playedKTLCs;
 	public StatsEntry playedKTLC_TMU;
 	public StatsEntry playedSuperKTLC_TMU;
@@ -40,16 +39,4 @@ public class StatisticPlayer {
 	
 	public HashMap<TMEnvironment, Double[]> chart_averageRankByEnviro;
 	public HashMap<TMEnvironment, int[]> chart_numberPodiumsByEnviro;
-	
-	// stats mapper
-	public HashMap<TMEnvironment, Integer> chart_numberMapsByEnviro;
-	
-	public StatsEntry createdMaps;
-	public StatsEntry distinctPlayersOnMaps;
-	public int numberRunsOnMaps;
-	public int numberDistinctKTLCsAsMapper;
-	
-	public List<TMEnvironment> favoriteMappingEnviros;
-	
-	public double averageNumberPlayersOnMaps;
 }

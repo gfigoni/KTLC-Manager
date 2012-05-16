@@ -46,9 +46,10 @@
                 <div id="logo"></div>
                 <div id="menu">
                     <ul>
-                        <li ${ ("home".equals(page)) ? out.print("class='current'") : "" }><a href="@{Application.index()}">&{'main.home'}</a></li>
+                        <li ${ ("home".equals(page) || !("ktlc".equals(page) || "player".equals(page) || "mapper".equals(page) || "statistics".equals(page))) ? out.print("class='current'") : "" }><a href="@{Application.index()}">&{'main.home'}</a></li>
                         <li ${ ("ktlc".equals(page)) ? out.print("class='current'") : "" }><a href="@{Application.ktlcs()}">&{'main.ktlcs'}</a></li>
                         <li ${ ("player".equals(page)) ? out.print("class='current'") : "" }><a href="@{Application.players()}">&{'main.players'}</a></li>
+                        <li ${ ("mapper".equals(page)) ? out.print("class='current'") : "" }><a href="@{Application.mappers()}">&{'main.mappers'}</a></li>
                         <li ${ ("statistics".equals(page)) ? out.print("class='current'") : "" }><a href="@{Application.statistics()}">&{'main.stats'}</a></li>
                         <li><a href="http://forum.lsd-team.net">&{'main.forum'}</a></li>
                     </ul>
@@ -61,7 +62,7 @@
         </div>
         <div id="footer_wrapper">
             <div id="footer">
-                <a href="@{Application.index()}">&{'main.home'}</a> | <a href="@{Application.ktlcs()}">&{'main.ktlcs'}</a> | <a href="@{Application.players()}">&{'main.players'}</a> | <a href="@{Application.statistics()}">&{'main.stats'}</a> | <a href="http://forum.lsd-team.net">&{'main.forum'}</a> | <a href="@{CRUD.index()}">&{'main.admin'}</a> | #{a @Application.changeLocale("en", request.url)}EN#{/a}/#{a @Application.changeLocale("fr", request.url)}FR#{/a}
+                <a href="@{Application.index()}">&{'main.home'}</a> | <a href="@{Application.ktlcs()}">&{'main.ktlcs'}</a> | <a href="@{Application.players()}">&{'main.players'}</a> | <a href="@{Application.mappers()}">&{'main.mappers'}</a> | <a href="@{Application.statistics()}">&{'main.stats'}</a> | <a href="http://forum.lsd-team.net">&{'main.forum'}</a> | <a href="@{CRUD.index()}">&{'main.admin'}</a> | #{a @Application.changeLocale("en", request.url)}EN#{/a}/#{a @Application.changeLocale("fr", request.url)}FR#{/a}
                 <div class="cleaner h10"></div>
                 Copyright © 2012 <a href="http://www.lsd-team.net">lsd-team.net</a>
                 <div class="cleaner"></div>
