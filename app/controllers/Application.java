@@ -23,6 +23,7 @@ import models.stats.StatisticPlayer;
 import play.i18n.Lang;
 import play.modules.paginate.ValuePaginator;
 import play.mvc.Controller;
+import controllers.stats.StatisticsComparator;
 import controllers.stats.StatisticsGenerator;
 
 public class Application extends Controller {
@@ -88,12 +89,13 @@ public class Application extends Controller {
 	        
 	        // get the stats
 	        if (currentPlayerStats == null || !player.equals(currentPlayerStats.player)) {
-	        	currentPlayerStats = StatisticsGenerator.generateStatisticsPlayer(player);
+	        	int minPercentage = StatisticConfig.loadStatsConfig().getMinPercentageParticipations();
+	        	currentPlayerStats = StatisticsGenerator.generateStatisticsPlayer(player, minPercentage);
 	        }
 	        stats = currentPlayerStats;	        
         }
         
-        if (!player.isPlayer()) {
+        if (player != null && !player.isPlayer()) {
         	player = null;
         }
         
@@ -146,12 +148,12 @@ public class Application extends Controller {
 	        
 	        // get the stats
 	        if (currentMapperStats == null || !mapper.equals(currentMapperStats.mapper)) {
-	        	currentMapperStats = StatisticsGenerator.generateStatisticsMapper(mapper);
+	        	currentMapperStats = StatisticsGenerator.generateStatisticsMapper(mapper, StatisticsComparator.minPercentageMapper);
 	        }
 	        stats = currentMapperStats;	        
         }
         
-        if(!mapper.isMapper()) {
+        if(mapper != null && !mapper.isMapper()) {
         	mapper = null;
         }
         

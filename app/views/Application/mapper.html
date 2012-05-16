@@ -92,6 +92,17 @@
         	      });
         	  });
         	});
+     	
+        function clickclear(thisfield, defaulttext) {
+        	if (thisfield.value == defaulttext) {
+        		thisfield.value = "";
+        	}
+        }
+       	function clickrecall(thisfield, defaulttext) {
+        	if (thisfield.value == "") {
+        		thisfield.value = defaulttext;
+        	}
+       	}
     </script>
 #{/set}
 
@@ -201,8 +212,18 @@
             			#{/if}
         				<td ${mapper.isPlayer() ? out.print("class='details'") : out.print("")}>Compare <strong>${mapper.name}</strong> with:</td>
        					<td class="link">#{a @stats.StatisticsComparator.compareMappers(mapper.logins[0], null)}Random mapper#{/a}</td>
-       					<td>or</td>
-        				<td class="possibilities"><input class="ui-state-default autocompleteLogin" type="text" name="loginName2" ${mapper.name.equals("Slig") ? out.print("value='grokon'") : out.print("value='slig'")} size="15" /><input type="hidden" name="loginName1" value="${mapper.logins[0]}" /> <input class="okButton" type="submit" value="OK" /></td>
+       					<td class="possibilities">
+        					<input 
+        						class="ui-state-default autocompleteLogin" 
+        						type="text" 
+        						name="loginName2" 
+        						${mapper.name.equals("Slig") ? out.print("value='grokon'") : out.print("value='slig'")} 
+        						size="15" 
+        						onclick="clickclear(this, '${mapper.name.equals("Slig") ? out.print('grokon') : out.print('slig')}')" 
+        						onblur="clickrecall(this,'${mapper.name.equals("Slig") ? out.print('grokon') : out.print('slig')}')" />
+        					<input type="hidden" name="loginName1" value="${mapper.logins[0]}" /> 
+        					<input class="okButton" type="submit" value="OK" />
+       					</td>
 		        	</tr>
 	        	</table>
         	</form>

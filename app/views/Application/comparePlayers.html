@@ -480,6 +480,17 @@
         	      });
         	  });
         	});
+     	
+        function clickclear(thisfield, defaulttext) {
+        	if (thisfield.value == defaulttext) {
+        		thisfield.value = "";
+        	}
+        }
+       	function clickrecall(thisfield, defaulttext) {
+        	if (thisfield.value == "") {
+        		thisfield.value = defaulttext;
+        	}
+       	}
     </script>
 #{/set}
 
@@ -774,18 +785,43 @@
         <!-- COMPARATOR --------------------------------------------------------------------- -->
         <div class="comparatorActions">
             <h2>Possible Actions</h2>
-            <p>Bla bla bla</p>
+            <p>
+            	You can choose to compare two players by entering their <strong>logins</strong> in the two text fields and clicking <em>OK</em>. 
+            	The autocompletion will propose you logins of possible players after typing the first character.
+            	You also have to possibility to compare two <strong>random players</strong> with a minimum percentage of participation to the KTLC of <strong>${originStats.MIN_PERCENTAGE}%</strong>. 
+           	</p>
+            #{if originPlayer.isMapper() && targetPlayer.isMapper()}
+            <p>If the two selected players proposed tracks to the KTLC, it is possible to compare their <strong>statistics as mappers</strong>.</p>
+            #{/if}
             <form action="@{stats.StatisticsComparator.comparePlayersPost()}" method="POST">
             	<table>
             		<tr>
         				<td>Compare</td>
         				#{if originPlayer.isMapper() && targetPlayer.isMapper()}
             			<td class="link">#{a @stats.StatisticsComparator.compareMappers(originPlayer.logins[0], targetPlayer.logins[0])}Statistics as mappers#{/a}</td>
-            			#{/if}
             			<td>or</td>
+            			#{/if}
        					<td class="link">#{a @stats.StatisticsComparator.comparePlayers(null, null)}Random players#{/a}</td>
        					<td>or</td>
-        				<td class="possibilities"><input class="ui-state-default autocompleteLogin" type="text" name="loginName1" value="${originPlayer.logins[0]}" size="15"/> with <input class="ui-state-default autocompleteLogin" type="text" name="loginName2" value="${targetPlayer.logins[0]}" size="15" /> <input class="okButton" type="submit" value="OK" /></td>
+        				<td class="possibilities">
+        					<input 
+        						class="ui-state-default autocompleteLogin" 
+        						type="text" 
+        						name="loginName1" 
+        						value="${originPlayer.logins[0]}" 
+        						size="15"
+        						onclick="clickclear(this, '${originPlayer.logins[0]}')" 
+        						onblur="clickrecall(this, '${originPlayer.logins[0]}')" /> with 
+        					<input 
+        						class="ui-state-default autocompleteLogin" 
+        						type="text" 
+        						name="loginName2" 
+        						value="${targetPlayer.logins[0]}" 
+        						size="15"
+        						onclick="clickclear(this, '${targetPlayer.logins[0]}')" 
+        						onblur="clickrecall(this, '${targetPlayer.logins[0]}')" /> 
+        					<input class="okButton" type="submit" value="OK" />
+       					</td>
 		        	</tr>
 	        	</table>
         	</form>

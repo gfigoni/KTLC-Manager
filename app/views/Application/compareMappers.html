@@ -110,6 +110,17 @@
         	      });
         	  });
         	});
+     	
+        function clickclear(thisfield, defaulttext) {
+        	if (thisfield.value == defaulttext) {
+        		thisfield.value = "";
+        	}
+        }
+       	function clickrecall(thisfield, defaulttext) {
+        	if (thisfield.value == "") {
+        		thisfield.value = defaulttext;
+        	}
+       	}
     </script>
 #{/set}
 
@@ -221,11 +232,29 @@
         				<td>Compare</td>
         				#{if originMapper.isPlayer() && targetMapper.isPlayer()}
             			<td class="link">#{a @stats.StatisticsComparator.comparePlayers(originMapper.logins[0], targetMapper.logins[0])}Statistics as players#{/a}</td>
-            			#{/if}
             			<td>or</td>
+            			#{/if}
        					<td class="link">#{a @stats.StatisticsComparator.compareMappers(null, null)}Random mappers#{/a}</td>
        					<td>or</td>
-        				<td class="possibilities"><input class="ui-state-default autocompleteLogin" type="text" name="loginName1" value="${originMapper.logins[0]}" size="15"/> with <input class="ui-state-default autocompleteLogin" type="text" name="loginName2" value="${targetMapper.logins[0]}" size="15" /> <input class="okButton" type="submit" value="OK" /></td>
+        				<td class="possibilities">
+        					<input 
+        						class="ui-state-default autocompleteLogin" 
+        						type="text" 
+        						name="loginName1" 
+        						value="${originMapper.logins[0]}" 
+        						size="15"
+        						onclick="clickclear(this, '${originMapper.logins[0]}')" 
+        						onblur="clickrecall(this, '${originMapper.logins[0]}')" /> with 
+        					<input 
+        						class="ui-state-default autocompleteLogin" 
+        						type="text" 
+        						name="loginName2" 
+        						value="${targetMapper.logins[0]}" 
+        						size="15"
+        						onclick="clickclear(this, '${targetMapper.logins[0]}')" 
+        						onblur="clickrecall(this, '${targetMapper.logins[0]}')" /> 
+        					<input class="okButton" type="submit" value="OK" />
+       					</td>
 		        	</tr>
 	        	</table>
         	</form>

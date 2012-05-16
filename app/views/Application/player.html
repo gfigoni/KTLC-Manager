@@ -383,6 +383,17 @@
         	      });
         	  });
         	});
+        
+        function clickclear(thisfield, defaulttext) {
+        	if (thisfield.value == defaulttext) {
+        		thisfield.value = "";
+        	}
+        }
+       	function clickrecall(thisfield, defaulttext) {
+        	if (thisfield.value == "") {
+        		thisfield.value = defaulttext;
+        	}
+       	}
     </script>
 #{/set}
 
@@ -594,7 +605,14 @@
         <!-- COMPARATOR --------------------------------------------------------------------- -->
         <div class="comparatorActions">
             <h2>Possible Actions</h2>
-            <p>Bla bla bla</p>
+            <p>
+            	You can choose to compare the player with another one by entering his <strong>login</strong> in the text field and clicking <em>OK</em>. 
+            	The autocompletion will propose you logins of possible players after typing the first character.
+            	You also have to possibility to compare him  with a <strong>random player</strong> with a minimum percentage of participation to the KTLC of <strong>${stats.MIN_PERCENTAGE}%</strong>. 
+           	</p>
+            #{if player.isMapper()}
+            <p>If the player proposed tracks to the KTLC, it is possible to inspect his <strong>statistics as mapper</strong>.</p>
+            #{/if}
             <form action="@{stats.StatisticsComparator.comparePlayersPost()}" method="POST">
             	<table>
             		<tr>
@@ -604,7 +622,18 @@
         				<td ${player.isMapper() ? out.print("class='details'") : out.print("")}>Compare <strong>${player.name}</strong> with:</td>
        					<td class="link">#{a @stats.StatisticsComparator.comparePlayers(player.logins[0], null)}Random player#{/a}</td>
        					<td>or</td>
-        				<td class="possibilities"><input class="ui-state-default autocompleteLogin" type="text" name="loginName2" ${player.name.equals("Slig") ? out.print("value='grokon'") : out.print("value='slig'")} size="15" /><input type="hidden" name="loginName1" value="${player.logins[0]}" /> <input class="okButton" type="submit" value="OK" /></td>
+        				<td class="possibilities">
+        					<input 
+        						class="ui-state-default autocompleteLogin" 
+        						type="text" 
+        						name="loginName2" 
+        						${player.name.equals("Slig") ? out.print("value='grokon'") : out.print("value='slig'")} 
+        						size="15" 
+        						onclick="clickclear(this, '${player.name.equals("Slig") ? out.print('grokon') : out.print('slig')}')" 
+        						onblur="clickrecall(this, '${player.name.equals("Slig") ? out.print('grokon') : out.print('slig')}')" />
+        					<input type="hidden" name="loginName1" value="${player.logins[0]}" /> 
+        					<input class="okButton" type="submit" value="OK" />
+       					</td>
 		        	</tr>
 	        	</table>
         	</form>

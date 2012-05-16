@@ -7,8 +7,10 @@ GET     /                                       Application.index
 GET     /ktlc/{number}                          Application.ktlc
 GET     /ktlc									Application.ktlcs
 GET     /player/{loginName}                     Application.player
+GET		/player/ 								Application.players
 GET		/player 								Application.players
 GET		/mapper/{loginName}						Application.mapper
+GET		/mapper/ 								Application.mappers
 GET		/mapper									Application.mappers
 GET		/statistics								Application.statistics
 GET		/regenStats								stats.StatisticsManager.regenStats
@@ -17,12 +19,16 @@ GET		/changeLocale							Application.changeLocale
 
 # Comparators
 GET		/comparePlayers/{loginName1}/{loginName2}	stats.StatisticsComparator.comparePlayers
+GET		/comparePlayers/{loginName1}/			stats.StatisticsComparator.comparePlayers
 GET		/comparePlayers/{loginName1}			stats.StatisticsComparator.comparePlayers
+GET		/comparePlayers/						stats.StatisticsComparator.comparePlayers
 GET		/comparePlayers							stats.StatisticsComparator.comparePlayers
 POST	/comparePlayersPost						stats.StatisticsComparator.comparePlayersPost
 
 GET		/compareMappers/{loginName1}/{loginName2}	stats.StatisticsComparator.compareMappers
+GET		/compareMappers/{loginName1}/			stats.StatisticsComparator.compareMappers
 GET		/compareMappers/{loginName1}			stats.StatisticsComparator.compareMappers
+GET		/compareMappers/						stats.StatisticsComparator.compareMappers
 GET		/compareMappers							stats.StatisticsComparator.compareMappers
 POST	/compareMappersPost						stats.StatisticsComparator.compareMappersPost
 

@@ -10,6 +10,7 @@ import models.TMEnvironment;
 public class StatisticPlayer {
 	
 	public int RANK_LIMIT;
+	public int MIN_PERCENTAGE;
 	
 	public Player player;
 	

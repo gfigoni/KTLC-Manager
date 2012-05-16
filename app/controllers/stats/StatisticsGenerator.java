@@ -104,12 +104,13 @@ public class StatisticsGenerator {
 	 * @param player
 	 * @return
 	 */
-	public static StatisticPlayer generateStatisticsPlayer(Player player) {		
+	public static StatisticPlayer generateStatisticsPlayer(Player player, int minPercentage) {		
 		StatisticPlayer stats = new StatisticPlayer();
 		
 		// set the parameters from the config
 		config = StatisticConfig.loadStatsConfig();
 		stats.RANK_LIMIT = config.getRankLimit();
+		stats.MIN_PERCENTAGE = minPercentage;
 
 		// set the stats
 		stats.player = player;
@@ -298,11 +299,12 @@ public class StatisticsGenerator {
 	 * @param mapper
 	 * @return
 	 */
-	public static StatisticMapper generateStatisticsMapper(Player mapper) {		
+	public static StatisticMapper generateStatisticsMapper(Player mapper, int minPercentage) {		
 		StatisticMapper stats = new StatisticMapper();
 
 		// set the stats
 		stats.mapper = mapper;
+		stats.MIN_PERCENTAGE = minPercentage;
 		
 		List<TMMap> maps = TMMap.findByPlayer(mapper);
 		List<KTLCRace> races = new ArrayList<KTLCRace>(maps.size());

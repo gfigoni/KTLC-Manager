@@ -9,6 +9,7 @@ import models.TMEnvironment;
 public class StatisticMapper {
 	
 	public Player mapper;
+	public int MIN_PERCENTAGE;
 
 	public HashMap<TMEnvironment, Integer> chart_numberMapsByEnviro;
 
