@@ -65,7 +65,7 @@ public class Player extends Model {
                 it.remove();
     }
     
-    public static void filterbyPercentageParticipation(Collection<Player> c, int percentage) {
+    public static void filterPlayersByPercentageParticipation(Collection<Player> c, int percentage) {
     	int numberLimit = (int)(KTLCEdition.findAll().size() * (percentage / 100.0));
     	
         for (Iterator<Player> it = c.iterator(); it.hasNext(); ) {
@@ -75,6 +75,17 @@ public class Player extends Model {
                 it.remove();
         	}
         }
-            
+    }
+    
+    public static void filterMappersByPercentageParticipation(Collection<Player> c, int percentage) {
+    	int numberLimit = (int)(TMMap.findAll().size() * (percentage / 100.0));
+    	
+        for (Iterator<Player> it = c.iterator(); it.hasNext(); ) {
+        	Player player = it.next();
+        	int count = TMMap.findByPlayer(player).size();
+        	if (count < numberLimit) {
+                it.remove();
+        	}
+        }
     }
 }

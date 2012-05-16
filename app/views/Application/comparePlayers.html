@@ -526,19 +526,19 @@
 	    			<tr>
 	    				<td>&{'player.stats.numRaces'}</td>
 	    				<td class="comparisonSpacer"></td>
-	    				<td><span class="${originVersus.get("numberPlayedRaces")}">${originStats.numberPlayedRaces}</span></td>
+	    				<td><span class="${originVersus.get("numberPlayedRaces")}">${originStats.numberPlayedRaces.format('#,##0')}</span></td>
 	    				<td></td>
 	    				<td class="comparisonSpacer"></td>
-	    				<td><span class="${targetVersus.get("numberPlayedRaces")}">${targetStats.numberPlayedRaces}</span></td>
+	    				<td><span class="${targetVersus.get("numberPlayedRaces")}">${targetStats.numberPlayedRaces.format('#,##0')}</span></td>
 	    				<td></td>
 	    			</tr>
 	    			<tr>
 	    				<td>&{'player.stats.numRuns'}</td>
 	    				<td class="comparisonSpacer"></td>
-	    				<td><span class="${originVersus.get("numberPlayedRuns")}">${originStats.numberPlayedRuns}</span></td>
+	    				<td><span class="${originVersus.get("numberPlayedRuns")}">${originStats.numberPlayedRuns.format('#,##0')}</span></td>
 	    				<td></td>
 	    				<td class="comparisonSpacer"></td>
-	    				<td><span class="${targetVersus.get("numberPlayedRuns")}">${targetStats.numberPlayedRuns}</span></td>
+	    				<td><span class="${targetVersus.get("numberPlayedRuns")}">${targetStats.numberPlayedRuns.format('#,##0')}</span></td>
 	    				<td></td>
 	    			</tr>
 	    			<tr>
@@ -746,6 +746,28 @@
         </div>
         
         <div class="cleaner"></div>
+        
+        <!-- COMPARATOR --------------------------------------------------------------------- -->
+        <div class="comparatorActions">
+            <h2>Possible Actions</h2>
+            <p>Bla bla bla</p>
+            <form action="@{Application.comparePlayersPost()}" method="POST">
+            	<table>
+            		<tr>
+        				<td>Compare</td>
+        				#{if originPlayer.isMapper() && targetPlayer.isMapper()}
+            			<td class="link">#{a @Application.compareMappers(originPlayer.logins[0], targetPlayer.logins[0])}Statistics as mappers#{/a}</td>
+            			#{/if}
+            			<td>or</td>
+       					<td class="link">#{a @Application.comparePlayers(null, null)}Random players#{/a}</td>
+       					<td>or</td>
+        				<td class="possibilities"><input type="text" name="loginName1" value="${originPlayer.logins[0]}" size="15"/> with <input type="text" name="loginName2" value="${targetPlayer.logins[0]}" size="15" /> <input class="okButton" type="submit" value="OK" /></td>
+		        	</tr>
+	        	</table>
+        	</form>
+        </div>
+        
+        <div class="cleaner"></div>
         <div class="statsSpace"><hr></div>
         
         <!-- WIDE PART 1 PLAYER --------------------------------------------------------------------- -->
@@ -796,13 +818,13 @@
 #{else}
 <div id="content_top">
     <ul>
-        <li><h1><a>&{'error.novalidplayers'}</a></h1></li>
+        <li><h1><a>&{'error.noValidPlayers'}</a></h1></li>
     </ul>
 </div>
 <div id="main">
     <div id="content">
         <div class="content_box">
-            &{'error.wrongvalidplayers'}
+            &{'error.wrongValidPlayers'}
         </div>
     </div>
     <div class="cleaner"></div>

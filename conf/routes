@@ -8,16 +8,23 @@ GET     /ktlc/{number}                          Application.ktlc
 GET     /ktlc									Application.ktlcs
 GET     /player/{loginName}                     Application.player
 GET		/player 								Application.players
-GET		/comparePlayers/{loginName1}/{loginName2}	Application.comparePlayers
-GET		/comparePlayers/{loginName1}			Application.comparePlayers
-GET		/comparePlayers							Application.comparePlayers
-POST	/comparePlayersPost						Application.comparePlayersPost
 GET		/mapper/{loginName}						Application.mapper
 GET		/mapper									Application.mappers
 GET		/statistics								Application.statistics
 GET		/regenStats								stats.StatisticsManager.regenStats
 GET		/manageParameters						stats.StatisticsManager.manageParameters
 GET		/changeLocale							Application.changeLocale
+
+# Comparator
+GET		/comparePlayers/{loginName1}/{loginName2}	Application.comparePlayers
+GET		/comparePlayers/{loginName1}			Application.comparePlayers
+GET		/comparePlayers							Application.comparePlayers
+POST	/comparePlayersPost						Application.comparePlayersPost
+
+GET		/compareMappers/{loginName1}/{loginName2}	Application.compareMappers
+GET		/compareMappers/{loginName1}			Application.compareMappers
+GET		/compareMappers							Application.compareMappers
+POST	/compareMappersPost						Application.compareMappersPost
 
 
 # Ignore favicon requests

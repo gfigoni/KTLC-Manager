@@ -154,8 +154,10 @@ error.wrongmapper = This mapper does not exist.
 error.nomapper = No mapper
 error.wrongStats = There is currently no statistics to display.
 error.noStats = No statistics
-error.wrongvalidplayers = The players entered are not valid for comparison.
-error.novalidplayers = No valid players
+error.wrongValidPlayers = The players entered are not valid for comparison.
+error.noValidPlayers = No valid players
+error.wrongValidMappers = The mappers entered are not valid for comparison.
+error.noValidMappers = No valid mappers
 
 # administration
 validation.required = %s is required

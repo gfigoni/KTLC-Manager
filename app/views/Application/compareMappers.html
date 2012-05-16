@@ -1,0 +1,239 @@
+#{extends 'main.html' /}
+#{set title:messages.get('title.comparator', originMapper?.name, targetMapper?.name) /}
+#{set page:'mapper' /}
+
+#{if originMapper && targetMapper}
+
+#{set 'moreScripts'}
+    <script type="text/javascript">
+     	// the chart
+        var chartEnviro;
+     	
+        var chartEnviroData = [
+   			#{list items:originStats.chart_numberMapsByEnviro.keySet(), as:'enviro'}
+   				{ 
+   					enviro: "${enviro.capFirst()}", 
+   					originMaps: ${originStats.chart_numberMapsByEnviro.get(enviro)},
+   					targetMaps: ${targetStats.chart_numberMapsByEnviro.get(enviro)}
+   				},
+   			#{/list}
+   		];
+        function compareEnviro(a,b) {
+       	  if (a.originMaps > b.originMaps)
+       	     return -1;
+       	  if (a.originMaps < b.originMaps)
+       	    return 1;
+       	  return 0;
+       	}
+    	chartEnviroData.sort(compareEnviro);
+        
+        AmCharts.ready(function () {           
+         	// CHART Maps/Enviro  ------------------------------------------------------------------
+         	chartEnviro = new AmCharts.AmSerialChart();
+            
+        	chartEnviro.dataProvider = chartEnviroData;
+        	chartEnviro.categoryField = "enviro";
+        	chartEnviro.rotate= true;
+        	chartEnviro.color = "#FEFADC";
+        	chartEnviro.columnWidth = 0.85;
+        	chartEnviro.marginTop = 0;
+            chartEnviro.marginBottom = 0;
+			
+			// Graph origin mapper
+	        var graphEnviro = new AmCharts.AmGraph();
+	        graphEnviro.balloonText = "(${originMapper.name}) [[value]] maps";
+	        graphEnviro.valueField = "originMaps";
+	        graphEnviro.title = "${originMapper.name}"
+	        graphEnviro.type = "column";
+	        graphEnviro.lineAlpha = 0;
+	        graphEnviro.fillAlphas = 1;
+	        graphEnviro.fillColors = "#C37700";
+	        chartEnviro.addGraph(graphEnviro);
+	        // Graph target mapper
+	        graphEnviro = new AmCharts.AmGraph();
+	        graphEnviro.balloonText = "(${targetMapper.name}) [[value]] maps";
+	        graphEnviro.valueField = "targetMaps";
+	        graphEnviro.title = "${targetMapper.name}"
+	        graphEnviro.type = "column";
+	        graphEnviro.lineAlpha = 0;
+	        graphEnviro.fillAlphas = 1;
+	        graphEnviro.fillColors = "#9DAFB0";
+	        chartEnviro.addGraph(graphEnviro);
+	        
+	     	// Axes
+	     	// category
+            var categoryEnviroAxis = chartEnviro.categoryAxis;
+            categoryEnviroAxis.gridPosition = "start";
+            // value                
+            var valueEnviroAxis = new AmCharts.ValueAxis();
+            valueEnviroAxis.minimum = 0;
+            valueEnviroAxis.integersOnly = true;
+            chartEnviro.addValueAxis(valueEnviroAxis);
+            
+         	// Cursor
+            var chartEnviroCursor = new AmCharts.ChartCursor();
+            chartEnviroCursor.cursorPosition = "middle";
+            chartEnviroCursor.valueBalloonsEnabled = false;
+            chartEnviro.addChartCursor(chartEnviroCursor);
+            
+         	// Legend
+            var legend = new AmCharts.AmLegend();
+            legend.autoMargins = false;
+            legend.color = "#FEFADC";
+            legend.align = "center";
+            legend.position = "top";
+            chartEnviro.addLegend(legend);
+	
+            chartEnviro.write('chartContainerEnviro');         	
+        });
+    </script>
+#{/set}
+
+<div id="content_top">
+    <ul>
+        <li><h1><a>${originMapper.name}</a> vs. <a>${targetMapper.name}</a></h1></li>
+    </ul>
+</div>
+<div id="main">
+	<div id="content">                
+        <div class="content_generalStats">
+        	<div class="ranking_title">
+                <h2>Statistic comparison (I18N)</h2>
+                <p>Bla bla bla (I18N)</p>
+            </div>
+            <div class="comparison_stats">
+	    		<table>
+	    			<tr>
+	    				<th></th>
+	    				<th class="comparisonSpacer"></th>
+	    				<th colspan="2">#{a @Application.mapper(originMapper.logins[0])}${originMapper.name}#{/a}</th>
+	    				<th class="comparisonSpacer"></th>
+	    				<th colspan="2">#{a @Application.mapper(targetMapper.logins[0])}${targetMapper.name}#{/a}</th>
+	    			</tr>
+	    			<tr class="subtitle">
+	    				<td>&{'mapper.stats.stats'}</td>
+	    				<td class="comparisonSpacer"></td>
+	    				<td colspan="2"></td>
+	    				<td class="comparisonSpacer"></td>
+	    				<td colspan="2"></td>
+	    			</tr>
+	    			<tr>
+	    				<td>&{'mapper.stats.numCreated'}</td>
+	    				<td class="comparisonSpacer"></td>
+	    				<td><span class="${originVersus.get("createdMaps.value")}">${originStats.createdMaps.value}</span> / ${originStats.createdMaps.total}</td>
+	    				<td><span class="${originVersus.get("createdMaps.ratio")}">${(originStats.createdMaps.ratio*100.0).format('0.00')}</span> %</td>
+	    				<td class="comparisonSpacer"></td>
+	    				<td><span class="${targetVersus.get("createdMaps.value")}">${targetStats.createdMaps.value}</span> / ${targetStats.createdMaps.total}</td>
+	    				<td><span class="${targetVersus.get("createdMaps.ratio")}">${(targetStats.createdMaps.ratio*100.0).format('0.00')}</span> %</td>
+	    			</tr>
+	    			<tr>
+	    				<td>&{'mapper.stats.numDistinctPlayer'}</td>
+	    				<td class="comparisonSpacer"></td>
+	    				<td><span class="${originVersus.get("distinctPlayersOnMaps.value")}">${originStats.distinctPlayersOnMaps.value}</span> / ${originStats.distinctPlayersOnMaps.total}</td>
+	    				<td><span class="${originVersus.get("distinctPlayersOnMaps.ratio")}">${(originStats.distinctPlayersOnMaps.ratio*100.0).format('0.00')}</span> %</td>
+	    				<td class="comparisonSpacer"></td>
+	    				<td><span class="${targetVersus.get("distinctPlayersOnMaps.value")}">${targetStats.distinctPlayersOnMaps.value}</span> / ${targetStats.distinctPlayersOnMaps.total}</td>
+	    				<td><span class="${targetVersus.get("distinctPlayersOnMaps.ratio")}">${(targetStats.distinctPlayersOnMaps.ratio*100.0).format('0.00')}</span> %</td>
+	    			</tr>
+	    			<tr>
+	    				<td>&{'mapper.stats.avgNumPlayer'}</td>
+	    				<td class="comparisonSpacer"></td>
+	    				<td><span class="${originVersus.get("averageNumberPlayersOnMaps")}">${originStats.averageNumberPlayersOnMaps.format('0.00')}</span></td>
+	    				<td></td>
+	    				<td class="comparisonSpacer"></td>
+	    				<td><span class="${targetVersus.get("averageNumberPlayersOnMaps")}">${targetStats.averageNumberPlayersOnMaps.format('0.00')}</span></td>
+	    				<td></td>
+	    			</tr>
+	    			<tr>
+	    				<td>&{'mapper.stats.numRunsOnMaps'}</td>
+	    				<td class="comparisonSpacer"></td>
+	    				<td><span class="${originVersus.get("numberRunsOnMaps")}">${originStats.numberRunsOnMaps.format('#,##0')}</span></td>
+	    				<td></td>
+	    				<td class="comparisonSpacer"></td>
+	    				<td><span class="${targetVersus.get("numberRunsOnMaps")}">${targetStats.numberRunsOnMaps.format('#,##0')}</span></td>
+	    				<td></td>
+	    			</tr>
+	    			<tr>
+	    				<td>&{'mapper.stats.numDistinctKtlcs'}</td>
+	    				<td class="comparisonSpacer"></td>
+	    				<td><span class="${originVersus.get("numberDistinctKTLCsAsMapper")}">${originStats.numberDistinctKTLCsAsMapper}</span></td>
+	    				<td></td>
+	    				<td class="comparisonSpacer"></td>
+	    				<td><span class="${targetVersus.get("numberDistinctKTLCsAsMapper")}">${targetStats.numberDistinctKTLCsAsMapper}</span></td>
+	    				<td></td>
+	    			</tr>
+	    			<tr>
+	    				<td>&{'mapper.stats.favEnviro'}</td>
+	    				<td class="comparisonSpacer"></td>
+	    				<td>
+							#{list items:originStats.favoriteMappingEnviros, as:'enviro'}
+	                        ${enviro.capFirst()}
+	                        #{if !enviro_isLast}<br/>#{/if}
+	                        #{/list}
+	    				</td>
+	    				<td><span class="${originVersus.get("favoriteMappingEnviros")}">${originStats.chart_numberMapsByEnviro.get(originStats.favoriteMappingEnviros.get(0))}</span> maps</td>
+	    				<td class="comparisonSpacer"></td>
+	    				<td>
+							#{list items:targetStats.favoriteMappingEnviros, as:'enviro'}
+	                        ${enviro.capFirst()}
+	                        #{if !enviro_isLast}<br/>#{/if}
+	                        #{/list}
+	    				</td>
+	    				<td><span class="${targetVersus.get("favoriteMappingEnviros")}">${targetStats.chart_numberMapsByEnviro.get(targetStats.favoriteMappingEnviros.get(0))}</span> maps</td>
+	    			</tr>
+	    		</table>
+    		</div>
+        </div>
+        
+        <div class="cleaner"></div>
+        
+        <!-- COMPARATOR --------------------------------------------------------------------- -->
+        <div class="comparatorActions">
+            <h2>Possible Actions</h2>
+            <p>Bla bla bla</p>
+            <form action="@{Application.compareMappersPost()}" method="POST">
+            	<table>
+            		<tr>
+        				<td>Compare</td>
+        				#{if originMapper.isPlayer() && targetMapper.isPlayer()}
+            			<td class="link">#{a @Application.comparePlayers(originMapper.logins[0], targetMapper.logins[0])}Statistics as players#{/a}</td>
+            			#{/if}
+            			<td>or</td>
+       					<td class="link">#{a @Application.compareMappers(null, null)}Random mappers#{/a}</td>
+       					<td>or</td>
+        				<td class="possibilities"><input type="text" name="loginName1" value="${originMapper.logins[0]}" size="15"/> with <input type="text" name="loginName2" value="${targetMapper.logins[0]}" size="15" /> <input class="okButton" type="submit" value="OK" /></td>
+		        	</tr>
+	        	</table>
+        	</form>
+        </div>
+        
+        <div class="cleaner"></div>
+        <div class="statsSpace"><hr></div>
+        
+	    <div class="content_generalStats">
+	    	<div class="chartTitle">
+        		<h1>&{'mapper.stats.numMapsByEnviro'}</h1>
+        	</div>
+        	<div id="chartContainerEnviro" style="width: 420px; height: 450px; margin: auto;"></div>
+	    </div>
+	     
+	    <div class="cleaner"></div>
+    </div>
+</div>
+#{/if}
+
+#{else}
+<div id="content_top">
+    <ul>
+        <li><h1><a>&{'error.noValidMappers'}</a></h1></li>
+    </ul>
+</div>
+<div id="main">
+    <div id="content">
+        <div class="content_box">
+            &{'error.wrongValidMappers'}
+        </div>
+    </div>
+    <div class="cleaner"></div>
+</div>
+#{/else}

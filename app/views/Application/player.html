@@ -432,12 +432,12 @@
 		    			</tr>
 		    			<tr>
 		    				<td>&{'player.stats.numRaces'}</td>
-		    				<td>${stats.numberPlayedRaces}</td>
+		    				<td>${stats.numberPlayedRaces.format('#,##0')}</td>
 		    				<td></td>
 		    			</tr>
 		    			<tr>
 		    				<td>&{'player.stats.numRuns'}</td>
-		    				<td>${stats.numberPlayedRuns}</td>
+		    				<td>${stats.numberPlayedRuns.format('#,##0')}</td>
 		    				<td></td>
 		    			</tr>
 		    			<tr>
@@ -567,7 +567,6 @@
         
         <div class="cleaner"></div>
         
-        
         <!-- COMPARATOR --------------------------------------------------------------------- -->
         <div class="comparatorActions">
             <h2>Possible Actions</h2>
@@ -578,11 +577,10 @@
             			#{if player.isMapper()}
             			<td class="link">#{a @Application.mapper(player.logins[0])}Go to mapper statistics#{/a}</td>
             			#{/if}
-        				<td #{if player.isMapper()}class="details"#{/if}>Compare <strong>${player.name}</strong> with:</td>
+        				<td ${player.isMapper() ? out.print("class='details'") : out.print("")}>Compare <strong>${player.name}</strong> with:</td>
        					<td class="link">#{a @Application.comparePlayers(player.logins[0], null)}Random player#{/a}</td>
        					<td>or</td>
-        				<td><input type="text" name="loginName2" value="Slig" /><input type="hidden" name="loginName1" value="${player.logins[0]}"> </td>
-        				<td><input class="okButton" type="submit" value="OK" /></td>
+        				<td class="possibilities"><input type="text" name="loginName2" ${player.name.equals("Slig") ? out.print("value='grokon'") : out.print("value='slig'")} size="15" /><input type="hidden" name="loginName1" value="${player.logins[0]}" /> <input class="okButton" type="submit" value="OK" /></td>
 		        	</tr>
 	        	</table>
         	</form>

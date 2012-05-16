@@ -857,11 +857,23 @@ td{
 	display: inline-block;
 	border: 1px solid black;
 	background-color: #484742;
-	padding: 10px;
+	padding-left: 10px;
+	padding-right: 10px;
+	padding-top: 14px;
+	padding-bottom: 13px;
 }
 
 .comparatorActions a:hover {
 	color: #F39400;
+	border: 1px solid #ffde88;
+}
+
+.comparatorActions td.possibilities {
+	border: 1px solid black;
+	background-color: #484742;
+}
+
+.comparatorActions td.possibilities:hover {
 	border: 1px solid #ffde88;
 }
 

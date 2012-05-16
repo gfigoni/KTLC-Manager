@@ -110,23 +110,26 @@ public class Application extends Controller {
     
     public static void comparePlayers(String loginName1, String loginName2) {  	
     	Player originPlayer = null;
-    	Player targetPlayer = null;    	
+    	Player targetPlayer = null;
+    	
     	if (loginName1 == null && loginName2 == null) {
-    		// TODO error no entered players at all
-    		render(null, null, null, null); // redirection with null
+    		// compare two random if both null
+    		compareTwoRandomPlayers();
     	} else if (loginName1 == null && loginName2 != null) {
     		// TODO error no entered player origin
     		render(null, null, null, null); // redirection with null
     	} else if (loginName1 != null && loginName2 == null) {
-           comparePlayerWithRandom(loginName1);
+            comparePlayerWithRandom(loginName1);
     	} else {
     		// origin player
             originPlayer = Player.findByLogin(loginName1);
     		// target player
             targetPlayer = Player.findByLogin(loginName2);
             
-            // generate stats for both players
-            if (originPlayer != null && originPlayer.isPlayer() 
+            if (originPlayer.equals(targetPlayer)) {
+            	// TODO error same player
+            	render(null, null, null, null); // redirection with null
+            } else if (originPlayer != null && originPlayer.isPlayer() 
             		&& targetPlayer != null && targetPlayer.isPlayer()) {
             	compareTwoPlayers(originPlayer, targetPlayer);
             } else {
@@ -152,6 +155,7 @@ public class Application extends Controller {
     }
     
     private static void comparePlayerWithRandom(String origin) {
+    	Random generator = new Random(new Date().getTime());
         Player targetPlayer = null;
 
     	StatisticConfig config = StatisticConfig.loadStatsConfig();
@@ -160,12 +164,35 @@ public class Application extends Controller {
     	// remove the player to avoid comparison with self
         playersList.remove(Player.findByLogin(origin));
         // remove player that did not reach the minimum percentage of participation
-        Player.filterbyPercentageParticipation(playersList, config.getMinPercentageParticipations());
+        Player.filterPlayersByPercentageParticipation(playersList, config.getMinPercentageParticipations());
         
-        Random generator = new Random(new Date().getTime());
         targetPlayer = playersList.get(generator.nextInt(playersList.size()));
     	
         redirect("/comparePlayers/" + origin + "/" + targetPlayer.logins.get(0).name);
+    }
+    
+    private static void compareTwoRandomPlayers() {
+    	Random generator = new Random(new Date().getTime());
+    	Player originPlayer = null;
+        Player targetPlayer = null;
+
+    	StatisticConfig config = StatisticConfig.loadStatsConfig();
+    	
+    	List<Player> playersList = Player.find("order by name asc").fetch();
+        // remove player that did not reach the minimum percentage of participation
+        Player.filterPlayersByPercentageParticipation(playersList, config.getMinPercentageParticipations());
+        
+        // get the 1st player
+        originPlayer = playersList.get(generator.nextInt(playersList.size()));
+        
+        // remove the player to avoid comparison with self
+        playersList.remove(originPlayer);
+        
+        // get the 2nd player
+        targetPlayer = playersList.get(generator.nextInt(playersList.size()));
+        
+    	
+        redirect("/comparePlayers/" + originPlayer.logins.get(0).name + "/" + targetPlayer.logins.get(0).name);
     }
     
     private static void compareTwoPlayers(Player originPlayer, Player targetPlayer) {
@@ -240,6 +267,101 @@ public class Application extends Controller {
         mappers.setPageSize(40);
         
         render(mappers);
+    }
+    
+    public static void compareMappers(String loginName1, String loginName2) {  	
+    	Player originMapper = null;
+    	Player targetMapper = null;    	
+    	if (loginName1 == null && loginName2 == null) {
+    		// compare two random if both null
+    		compareTwoRandomMappers();
+    	} else if (loginName1 == null && loginName2 != null) {
+    		// TODO error no entered player origin
+    		render(null, null, null, null); // redirection with null
+    	} else if (loginName1 != null && loginName2 == null) {
+           compareMapperWithRandom(loginName1);
+    	} else {
+    		// origin player
+            originMapper = Player.findByLogin(loginName1);
+    		// target player
+            targetMapper = Player.findByLogin(loginName2);
+            
+            if (originMapper.equals(targetMapper)) {
+            	// TODO error same player
+            	render(null, null, null, null); // redirection with null
+            } else if  (originMapper != null && originMapper.isMapper() 
+            		&& targetMapper != null && targetMapper.isMapper()) {
+            	compareTwoMappers(originMapper, targetMapper);
+            } else {
+            	// TODO other errors...
+            	render(null, null, null, null); // redirection with null
+            }
+    	}
+    }
+    
+    public static void compareMappersPost(String loginName1, String loginName2) {  	
+    	Player originMapper = null;
+    	Player targetMapper = Player.findByLogin(loginName2);    	
+    	
+    	if (loginName1 != null && (loginName2 == null || loginName2.isEmpty() || targetMapper == null)) {
+    		// TODO flash error exist pas
+           redirect("/mapper/" + loginName1);
+    	} else {
+    		// origin player
+            originMapper = Player.findByLogin(loginName1);
+            
+            redirect("/compareMappers/" + originMapper.logins.get(0).name + "/" + targetMapper.logins.get(0).name);
+    	}
+    }
+    
+    private static void compareMapperWithRandom(String origin) {
+    	Random generator = new Random(new Date().getTime());
+    	Player targetMapper = null;
+    	
+    	List<Player> mappersList = Player.find("order by name asc").fetch();
+    	// remove the player to avoid comparison with self
+        mappersList.remove(Player.findByLogin(origin));
+        // remove player that did not reach the minimum percentage of participation (1%)
+        Player.filterMappersByPercentageParticipation(mappersList, 1);
+        
+        targetMapper = mappersList.get(generator.nextInt(mappersList.size()));
+    	
+        redirect("/compareMappers/" + origin + "/" + targetMapper.logins.get(0).name);
+    }
+    
+    private static void compareTwoRandomMappers() {
+    	Random generator = new Random(new Date().getTime());
+    	Player originMapper = null;
+        Player targetMapper = null;
+    	
+    	List<Player> mappersList = Player.find("order by name asc").fetch();
+        // remove mapper that did not build enough map (1%)
+        Player.filterMappersByPercentageParticipation(mappersList, 1);
+        
+        // get the 1st player
+        originMapper = mappersList.get(generator.nextInt(mappersList.size()));
+        
+        // remove the player to avoid comparison with self
+        mappersList.remove(originMapper);
+        
+        // get the 2nd player
+        targetMapper = mappersList.get(generator.nextInt(mappersList.size()));
+        
+    	
+        redirect("/compareMappers/" + originMapper.logins.get(0).name + "/" + targetMapper.logins.get(0).name);
+    }
+    
+    private static void compareTwoMappers(Player originMapper, Player targetMapper) {
+
+    	// origin player
+        StatisticMapper originStats = StatisticsGenerator.generateStatisticsMapper(originMapper);
+        // target player
+        StatisticMapper targetStats = StatisticsGenerator.generateStatisticsMapper(targetMapper);
+        
+        HashMap<String, String> originVersus = StatisticsGenerator.compareStatsMappers(originStats, targetStats);
+        HashMap<String, String> targetVersus = StatisticsGenerator.compareStatsMappers(targetStats, originStats);
+
+        render(originMapper, originStats, originVersus, targetMapper, targetStats, targetVersus);
     }
 
     public static void ktlc(Integer number) {
