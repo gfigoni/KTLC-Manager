@@ -173,7 +173,9 @@ public class Application extends Controller {
 
     public static void ktlc(Integer number) {
         KTLCEdition ktlc = KTLCEdition.findByNumber(number);
-        render(ktlc);
+        KTLCEdition prevKTLC = ktlc.findPreviousKTLC();
+        KTLCEdition nextKTLC = ktlc.findNextKTLC();
+        render(ktlc, prevKTLC, nextKTLC);
     }
 
     public static void ktlcs() {
@@ -193,6 +195,11 @@ public class Application extends Controller {
     	render(statistics);
     }
     
+    /**
+     * Change the locale of KTLC Manager
+     * @param lang the new lang
+     * @param requestUrl the url from the request to redirect to the correct page
+     */
     public static void changeLocale(String lang, String requestUrl) {
     	String currentLang = Lang.get();
     	
@@ -209,8 +216,8 @@ public class Application extends Controller {
     }
     
     /**
-     * TODO javadoc list player login
-     * @param term
+     * Find 15 logins of players starting like the term, sorted alphabetically 
+     * @param term the term of research
      */
     public static void getListOfPlayerLogins(final String term) {
     	List<Login> list = Login.findByNameLike(term);
@@ -230,8 +237,8 @@ public class Application extends Controller {
     }
     
     /**
-     * TODO javadoc list mapper login
-     * @param term
+     * Find 15 logins of mappers starting like the term, sorted alphabetically 
+     * @param term the term of research
      */
     public static void getListOfMapperLogins(final String term) {
     	List<Login> list = Login.findByNameLike(term);

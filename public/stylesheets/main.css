@@ -183,6 +183,27 @@ td{
 	color: #f39400;
 }
 
+#content_top .left_top,
+#content_top .middle_top {
+	float:left;
+}
+
+#content_top .middle_top {
+	margin-left: 10px;
+}
+
+#content_top .left_top {
+	width:20px;
+	padding-top: 30px;
+}
+
+#content_top .right_top {
+	float: right;
+	width: auto;
+	padding-top: 30px;
+	margin-left: auto;
+}
+
 #main {
 	width: 900px;
 	padding: 0 30px;
@@ -804,10 +825,10 @@ td{
 .comparison_stats span.equal {
 	color: yellow;
 }
-.comparison_stats span.bigger {
+.comparison_stats span.better {
 	color: lime;
 }
-.comparison_stats span.lower {
+.comparison_stats span.worse {
 	color: red;
 }
 

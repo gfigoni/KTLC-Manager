@@ -207,6 +207,22 @@ public class KTLCEdition extends Model {
 
         return logins;
     }
+    
+    /**
+     * Find the first KTLC that occured BEFORE in time of the current KTLC
+     * @return the previous KTLCEdition or null if none
+     */
+    public KTLCEdition findPreviousKTLC() { 
+    	return find("date < ? ORDER BY date DESC", this.date).first();
+    }
+    
+    /**
+     * Find the first KTLC that occured AFTER in time of the current KTLC
+     * @return the next KTLCEdition or null if none
+     */
+    public KTLCEdition findNextKTLC() { 
+    	return find("date > ? ORDER BY date ASC", this.date).first();
+    }
 
     public static KTLCEdition findByNumber(Integer number) {
         return find("byNumber", number).first();

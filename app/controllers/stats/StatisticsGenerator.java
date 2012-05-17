@@ -103,8 +103,9 @@ public class StatisticsGenerator {
 	}
 	
 	/**
-	 * TODO javadoc generator stats player
-	 * @param player
+	 * Generate the statistics for the player
+	 * @param mapper the player to study
+	 * @param minPercentage the minPercentage to use for comparison, actually not used for stats
 	 * @return
 	 */
 	public static StatisticPlayer generateStatisticsPlayer(Player player, int minPercentage) {		
@@ -173,11 +174,13 @@ public class StatisticsGenerator {
 	}
 	
 	/**
-	 * TODO javadoc comparison stats
-	 * @param origin
-	 * @param target
-	 * @return HashMap with value for each statistic parameter, with "bigger" if origin is better,
-	 * "lower" if target is better and "equal" if the values are equal
+	 * Compare all the statistics of two players and assign to each attribute a tag "better", 
+	 * "worse" or "equal", directly inserted in a HasMap with the name of the attribute as key.
+	 * Used for efficient styling of comparison
+	 * @param origin the player statistics of the origin player
+	 * @param target the player statistics of the target player
+	 * @return HashMap with value for each statistic parameter, with "better" if origin is better,
+	 * "worse" if target is better and "equal" if the values are equal
 	 */
 	public static HashMap<String,String> compareStatsPlayers(StatisticPlayer origin, StatisticPlayer target) {
 		HashMap<String, String> comparison = new HashMap<String, String>();
@@ -220,8 +223,9 @@ public class StatisticsGenerator {
 	}
 	
 	/**
-	 * TODO javadoc generator stats mapper
-	 * @param mapper
+	 * Generate the statistics for the mapper
+	 * @param mapper the mapper to study
+	 * @param minPercentage the minPercentage to use for comparison, actually not used for stats
 	 * @return
 	 */
 	public static StatisticMapper generateStatisticsMapper(Player mapper, int minPercentage) {		
@@ -250,11 +254,13 @@ public class StatisticsGenerator {
 	}
 	
 	/**
-	 * TODO javadoc comparison stats
-	 * @param origin
-	 * @param target
-	 * @return HashMap with value for each statistic parameter, with "bigger" if origin is better,
-	 * "lower" if target is better and "equal" if the values are equal
+	 * Compare all the statistics of two mappers and assign to each attribute a tag "better", 
+	 * "worse" or "equal", directly inserted in a HasMap with the name of the attribute as key.
+	 * Used for efficient styling of comparison
+	 * @param origin the player statistics of the origin mapper
+	 * @param target the player statistics of the target mapper
+	 * @return HashMap with value for each statistic parameter, with "better" if origin is better,
+	 * "worse" if target is better and "equal" if the values are equal
 	 */
 	public static HashMap<String,String> compareStatsMappers(StatisticMapper origin, StatisticMapper target) {
 		HashMap<String, String> comparison = new HashMap<String, String>();
@@ -1582,25 +1588,27 @@ public class StatisticsGenerator {
 	}
 	
 	/**
-	 * TODO javadoc compareValue
+	 * Compare two integer values and tell if its better, worse or equal textually, use to compare 
+	 * stats and assign correct style. Some time its better to have a bigger value.
 	 * @param v1
 	 * @param v2
-	 * @return
+	 * @param bigIsBetter invert the logic
+	 * @return 
 	 */
 	private static String compareValues(int v1, int v2, boolean bigIsBetter) {
 		if(bigIsBetter) {
 			if (v1 > v2) {
-				return "bigger";
+				return "better";
 			} else if (v1 < v2) {
-				return "lower";
+				return "worse";
 			} else {
 				return "equal";
 			}
 		} else {
 			if (v1 > v2) {
-				return "lower";
+				return "worse";
 			} else if (v1 < v2) {
-				return "bigger";
+				return "better";
 			} else {
 				return "equal";
 			}	
@@ -1608,25 +1616,27 @@ public class StatisticsGenerator {
 	}
 	
 	/**
-	 * TODO javadoc compareValue
+	 * Compare two double values and tell if its better, worse or equal textually, use to compare 
+	 * stats and assign correct style. Some time its better to have a bigger value.
 	 * @param v1
 	 * @param v2
-	 * @return
+	 * @param bigIsBetter invert the logic
+	 * @return 
 	 */
 	private static String compareValues(double v1, double v2,  boolean bigIsBetter) {
 		if(bigIsBetter) {
 			if (v1 > v2) {
-				return "bigger";
+				return "better";
 			} else if (v1 < v2) {
-				return "lower";
+				return "worse";
 			} else {
 				return "equal";
 			}
 		} else {
 			if (v1 > v2) {
-				return "lower";
+				return "worse";
 			} else if (v1 < v2) {
-				return "bigger";
+				return "better";
 			} else {
 				return "equal";
 			}	

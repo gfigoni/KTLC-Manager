@@ -9,11 +9,24 @@
 
 #{if ktlc}
 <div id="content_top">
-    <ul>
-        <li>#{a @Application.ktlc(ktlc.number)}&{'ktlc.number', ktlc.number}
-            <span>${ktlc.date.format()} - &{'ktlc.nbparticipants',ktlc.results.size()}</span>#{/a}
-        </li>
-    </ul>
+	<div class="left_top">
+		#{if prevKTLC}
+		#{a @Application.ktlc(prevKTLC.number)}<img src="@{'/public/stylesheets/img/nav_previous.png'}" alt="&{'ktlc.prev'}" />#{/a}
+		#{/if}
+	</div>
+	<div class="middle_top">
+	    <ul>
+	        <li>#{a @Application.ktlc(ktlc.number)}&{'ktlc.number', ktlc.number}
+	            <span>${ktlc.date.format()} - &{'ktlc.nbparticipants',ktlc.results.size()}</span>#{/a}
+	        </li>
+	    </ul>
+    </div>
+    <div class="right_top">
+    	#{if nextKTLC}
+    	#{a @Application.ktlc(nextKTLC.number)}<img src="@{'/public/stylesheets/img/nav_next.png'}" alt="&{'ktlc.next'}" />#{/a}
+    	#{/if}
+    </div>
+    <div class="cleaner"></div>
 </div>
 <div id="main">
     <div id="content">

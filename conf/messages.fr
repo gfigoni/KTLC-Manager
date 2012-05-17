@@ -20,6 +20,8 @@ ktlc.number.title = KTLC #
 ktlc.date = Date
 ktlc.size = Joueurs
 ktlc.nbparticipants = %s joueurs
+ktlc.next = KTLC suivante
+ktlc.prev = KTLC précédente
 
 mapper = Mappeur
 
