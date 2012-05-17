@@ -202,16 +202,20 @@
         
         <!-- COMPARATOR --------------------------------------------------------------------- -->
         <div class="comparatorActions">
-            <h2>Possible Actions</h2>
-            <p>Bla bla bla</p>
+        	<h2>&{'comparator.possibleActions'}</h2>
+            <p>&{'comparator.mapper.onlyMapper', stats.MIN_PERCENTAGE}</p>
+            #{if mapper.isPlayer()}
+            <p>&{'comparator.mapper.alsoPlayer'}</p>
+            #{/if}
             <form action="@{stats.StatisticsComparator.compareMappersPost()}" method="POST">
             	<table>
             		<tr>
             			#{if mapper.isPlayer()}
-            			<td class="link">#{a @Application.player(mapper.logins[0])}Go to player statistics#{/a}</td>
+            			<td class="link">#{a @Application.player(mapper.logins[0])}&{'comparator.mapper.toPlayerStats'}#{/a}</td>
             			#{/if}
-        				<td ${mapper.isPlayer() ? out.print("class='details'") : out.print("")}>Compare <strong>${mapper.name}</strong> with:</td>
-       					<td class="link">#{a @stats.StatisticsComparator.compareMappers(mapper.logins[0], null)}Random mapper#{/a}</td>
+        				<td ${mapper.isPlayer() ? out.print("class='details'") : out.print("")}>&{'comparator.compareWith', mapper.name}</td>
+       					<td class="link">#{a @stats.StatisticsComparator.compareMappers(mapper.logins[0], null)}&{'comparator.mapper.randomMapper'}#{/a}</td>
+       					<td>&{'comparator.or'}</td>
        					<td class="possibilities">
         					<input 
         						class="ui-state-default autocompleteLogin" 

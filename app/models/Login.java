@@ -44,6 +44,10 @@ public class Login extends Model {
     }
     
     public static List<Login> findByNameLike(String name, int max) {
-    	return Login.find("byNameIlike", name+"%").fetch(max);
+    	return Login.find("byNameIlike", name+"%%").fetch(max);
+    }
+    
+    public static List<Login> findByNameLike(String name) {
+    	return Login.find("byNameIlike", name+"%%").fetch();
     }
 }

@@ -208,9 +208,12 @@ public class Application extends Controller {
     	}
     }
     
-    // TODO JAVADOC
+    /**
+     * TODO javadoc list player login
+     * @param term
+     */
     public static void getListOfPlayerLogins(final String term) {
-    	List<Login> list = Login.findByNameLike(term, 10);
+    	List<Login> list = Login.findByNameLike(term);
     	
     	List<String> listAsString = new ArrayList<String>();
     	for (Login login : list) {
@@ -218,13 +221,20 @@ public class Application extends Controller {
     		if (login.player.isPlayer()) {
     			listAsString.add(login.name);
     		}
-		}    	
+    		if (listAsString.size() > 15) {
+    			break;
+    		}
+		}
+    	Collections.sort(listAsString);
         renderJSON(listAsString);
     }
     
-    // TODO JAVADOC
+    /**
+     * TODO javadoc list mapper login
+     * @param term
+     */
     public static void getListOfMapperLogins(final String term) {
-    	List<Login> list = Login.findByNameLike(term, 10);
+    	List<Login> list = Login.findByNameLike(term);
     	
     	List<String> listAsString = new ArrayList<String>();
     	for (Login login : list) {
@@ -232,7 +242,11 @@ public class Application extends Controller {
     		if (login.player.isMapper()) {
     			listAsString.add(login.name);
     		}
-		}    	
+    		if (listAsString.size() > 15) {
+    			break;
+    		}
+		}
+    	Collections.sort(listAsString);
         renderJSON(listAsString);
     }
 }

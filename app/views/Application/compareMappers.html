@@ -132,10 +132,6 @@
 <div id="main">
 	<div id="content">                
         <div class="content_generalStats">
-        	<div class="ranking_title">
-                <h2>Statistic comparison (I18N)</h2>
-                <p>Bla bla bla (I18N)</p>
-            </div>
             <div class="comparison_stats">
 	    		<table>
 	    			<tr>
@@ -224,40 +220,64 @@
         
         <!-- COMPARATOR --------------------------------------------------------------------- -->
         <div class="comparatorActions">
-            <h2>Possible Actions</h2>
-            <p>Bla bla bla</p>
-            <form action="@{stats.StatisticsComparator.compareMappersPost()}" method="POST">
-            	<table>
-            		<tr>
-        				<td>Compare</td>
-        				#{if originMapper.isPlayer() && targetMapper.isPlayer()}
-            			<td class="link">#{a @stats.StatisticsComparator.comparePlayers(originMapper.logins[0], targetMapper.logins[0])}Statistics as players#{/a}</td>
-            			<td>or</td>
-            			#{/if}
-       					<td class="link">#{a @stats.StatisticsComparator.compareMappers(null, null)}Random mappers#{/a}</td>
-       					<td>or</td>
-        				<td class="possibilities">
-        					<input 
-        						class="ui-state-default autocompleteLogin" 
-        						type="text" 
-        						name="loginName1" 
-        						value="${originMapper.logins[0]}" 
-        						size="15"
-        						onclick="clickclear(this, '${originMapper.logins[0]}')" 
-        						onblur="clickrecall(this, '${originMapper.logins[0]}')" /> with 
-        					<input 
+            <div #{if originMapper.isPlayer() && targetMapper.isPlayer()}class="comparatorExplanation"#{/if}>
+            	<h2>&{'comparator.possibleActions'}</h2>
+	            <p>&{'comparator.mappers.onlyMappers', originStats.MIN_PERCENTAGE}</p>
+	           	#{if originMapper.isPlayer() && targetMapper.isPlayer()}
+	           	<p>&{'comparator.mappers.alsoPlayers'}</p>
+	           	#{/if}
+	           	<h2>&{'comparator.compare'}</h2>
+           	</div>
+           	
+           	#{if originMapper.isPlayer() && targetMapper.isPlayer()}
+           	<div class="comparatorMore">
+           		<p>#{a @stats.StatisticsComparator.comparePlayers(originMapper.logins[0], targetMapper.logins[0])}&{'comparator.mappers.toPlayerStats'}#{/a}</p>
+           	</div>
+           	#{/if}
+           	
+           	<div class="cleaner"></div>
+           	
+           	<table>
+           		<tr>
+  					<td class="link">#{a @stats.StatisticsComparator.compareMappers(null, null)}&{'comparator.mappers.randomMappers'}#{/a}</td>
+  					<td>&{'comparator.or'}</td>
+   					<td class="withRandom">
+      					<form action="@{stats.StatisticsComparator.compareMappersPost()}" method="POST">
+      						<table>
+      							<tr>
+	       							<td><input type="radio" value="${originMapper.logins[0]}" name="loginName1" checked="checked" />${originMapper.name}</td>
+	       							<td rowspan="2"><input class="okButton" type="submit" value="&{'comparator.mappers.withARandomMapper'}" /></td>
+       							</tr>
+       							<tr>
+   									<td><input type="radio" value="${targetMapper.logins[0]}" name="loginName1" />${targetMapper.name}</td>
+   								</tr>
+   							</table>
+    					</form>
+      				</td>
+  					<td>&{'comparator.or'}</td>
+       				<td class="possibilities">
+       					<form action="@{stats.StatisticsComparator.compareMappersPost()}" method="POST">
+   							<input 
+	       						class="ui-state-default autocompleteLogin" 
+	       						type="text" 
+	       						name="loginName1" 
+	       						value="${originMapper.logins[0]}" 
+	       						size="15"
+	       						onclick="clickclear(this, '${originMapper.logins[0]}')" 
+	       						onblur="clickrecall(this, '${originMapper.logins[0]}')" /> &{'comparator.with'}
+	        				<input 
         						class="ui-state-default autocompleteLogin" 
         						type="text" 
         						name="loginName2" 
         						value="${targetMapper.logins[0]}" 
         						size="15"
         						onclick="clickclear(this, '${targetMapper.logins[0]}')" 
-        						onblur="clickrecall(this, '${targetMapper.logins[0]}')" /> 
-        					<input class="okButton" type="submit" value="OK" />
-       					</td>
-		        	</tr>
-	        	</table>
-        	</form>
+        						onblur="clickrecall(this, '${targetMapper.logins[0]}')" />
+       						<input class="okButton" type="submit" value="OK" />
+       					</form>
+   					</td>
+	        	</tr>
+        	</table>   			
         </div>
         
         <div class="cleaner"></div>

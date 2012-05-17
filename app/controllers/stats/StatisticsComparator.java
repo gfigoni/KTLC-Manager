@@ -72,7 +72,8 @@ public class StatisticsComparator extends Controller {
 			// error if two invalid players
 			render("Application/comparePlayers.html");
 		} else if (originPlayer != null && targetPlayer == null && originPlayer.isPlayer()) {
-			redirect("/player/" + loginName1);
+			// compare with random
+			comparePlayerWithRandom(loginName1);
 		} else if (originPlayer == null && targetPlayer != null && targetPlayer.isPlayer()) {
 			redirect("/player/" + loginName2);
 		} else {

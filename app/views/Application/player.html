@@ -476,6 +476,15 @@
 		    				<td></td>
 		    			</tr>
 		    			<tr>
+		    				<td class="details">&{'player.stats.estimatedTime'}</td>
+		    				<td>%{
+							   duration = stats.timeFromRounds();
+							   out.print(duration[0] + ' ' + messages.get('player.stats.days') + ' ' + duration[1] + ' ' + messages.get('player.stats.hours') + ' ' + duration[2] + ' ' + messages.get('player.stats.minutes'));
+							}%</td>
+							<td></td>
+		    			</tr>
+
+		    			<tr>
 		    				<td>&{'player.stats.avgRankKTLC'}</td>
 		    				<td>${stats.averageRank.format('0.00')}</td>
 		    				<td></td>
@@ -604,24 +613,20 @@
         
         <!-- COMPARATOR --------------------------------------------------------------------- -->
         <div class="comparatorActions">
-            <h2>Possible Actions</h2>
-            <p>
-            	You can choose to compare the player with another one by entering his <strong>login</strong> in the text field and clicking <em>OK</em>. 
-            	The autocompletion will propose you logins of possible players after typing the first character.
-            	You also have to possibility to compare him  with a <strong>random player</strong> with a minimum percentage of participation to the KTLC of <strong>${stats.MIN_PERCENTAGE}%</strong>. 
-           	</p>
+            <h2>&{'comparator.possibleActions'}</h2>
+            <p>&{'comparator.player.onlyPlayer', stats.MIN_PERCENTAGE}</p>
             #{if player.isMapper()}
-            <p>If the player proposed tracks to the KTLC, it is possible to inspect his <strong>statistics as mapper</strong>.</p>
+            <p>&{'comparator.player.alsoMapper'}</p>
             #{/if}
             <form action="@{stats.StatisticsComparator.comparePlayersPost()}" method="POST">
             	<table>
             		<tr>
             			#{if player.isMapper()}
-            			<td class="link">#{a @Application.mapper(player.logins[0])}Go to mapper statistics#{/a}</td>
+            			<td class="link">#{a @Application.mapper(player.logins[0])}&{'comparator.player.toMapperStats'}#{/a}</td>
             			#{/if}
-        				<td ${player.isMapper() ? out.print("class='details'") : out.print("")}>Compare <strong>${player.name}</strong> with:</td>
-       					<td class="link">#{a @stats.StatisticsComparator.comparePlayers(player.logins[0], null)}Random player#{/a}</td>
-       					<td>or</td>
+        				<td ${player.isMapper() ? out.print("class='details'") : out.print("")}>&{'comparator.compareWith', player.name}</td>
+       					<td class="link">#{a @stats.StatisticsComparator.comparePlayers(player.logins[0], null)}&{'comparator.player.randomPlayer'}#{/a}</td>
+       					<td>&{'comparator.or'}</td>
         				<td class="possibilities">
         					<input 
         						class="ui-state-default autocompleteLogin" 
@@ -645,7 +650,7 @@
         <!-- WIDE PART 1 PLAYER --------------------------------------------------------------------- -->
         <div class="content_generalStats">
         	<div class="chartTitle">
-        		<h1>Results by KTLC</h1>
+        		<h1>&{'player.stats.resultKTLC'}</h1>
         	</div>
         	<div id="chartContainerKTLC" style="width: 820px; height: 400px;"></div>
         </div>

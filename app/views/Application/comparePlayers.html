@@ -21,6 +21,7 @@
   	        	originRank: ${ktlc.getResult(originPlayer) ? ktlc.getResult(originPlayer).rank : 0},
   	        	targetRatio: #{if ktlc.getRatio(targetPlayer) == 0}"absent"#{/if}#{else}"${ktlc.getRatio(targetPlayer)}"#{/else},
   	        	targetRank: ${ktlc.getResult(targetPlayer) ? ktlc.getResult(targetPlayer).rank : 0},
+  	        	max: #{if ktlc.getRatio(originPlayer) >= ktlc.getRatio(targetPlayer)}${ktlc.getRatio(originPlayer)}#{/if}#{else}${ktlc.getRatio(targetPlayer)}#{/else},
   	        	total: ${ktlc.results.size()}
   	        },
   	        #{/list}
@@ -502,10 +503,6 @@
 <div id="main">
 	<div id="content">                
         <div class="content_generalStats">
-        	<div class="ranking_title">
-                <h2>Statistic comparison (I18N)</h2>
-                <p>Bla bla bla (I18N)</p>
-            </div>
             <div class="comparison_stats">
 	    		<table>
 	    			<tr>
@@ -576,6 +573,26 @@
 	    				<td><span class="${targetVersus.get("numberPlayedRuns")}">${targetStats.numberPlayedRuns.format('#,##0')}</span></td>
 	    				<td></td>
 	    			</tr>
+	    			<tr>
+		    			<td class="details">&{'player.stats.estimatedTime'}</td>
+		    			<td class="comparisonSpacer"></td>
+	    				<td>%{
+						   	duration = originStats.timeFromRounds();
+						   	out.print(
+						   		' <span class="' + originVersus.get("numberPlayedRuns") + '">' + duration[0] + '</span> ' + messages.get('player.stats.days') + 
+						   		' <span class="' + originVersus.get("numberPlayedRuns") + '">' + duration[1] + '</span> ' + messages.get('player.stats.hours') + 
+						   		' <span class="' + originVersus.get("numberPlayedRuns") + '">' + duration[2] + '</span> ' + messages.get('player.stats.minutes'));
+						}%</td>
+	    				<td></td>
+	    				<td class="comparisonSpacer"></td>
+	    				<td>%{
+						   	duration = targetStats.timeFromRounds();
+						   	out.print(
+						   		' <span class="' + targetVersus.get("numberPlayedRuns") + '">' + duration[0] + '</span> ' + messages.get('player.stats.days') + 
+						   		' <span class="' + targetVersus.get("numberPlayedRuns") + '">' + duration[1] + '</span> ' + messages.get('player.stats.hours') + 
+						   		' <span class="' + targetVersus.get("numberPlayedRuns") + '">' + duration[2] + '</span> ' + messages.get('player.stats.minutes'));
+						}%</td>
+	    				<td></td>
 	    			<tr>
 	    				<td>&{'player.stats.avgRankKTLC'}</td>
 	    				<td class="comparisonSpacer"></td>
@@ -784,47 +801,64 @@
         
         <!-- COMPARATOR --------------------------------------------------------------------- -->
         <div class="comparatorActions">
-            <h2>Possible Actions</h2>
-            <p>
-            	You can choose to compare two players by entering their <strong>logins</strong> in the two text fields and clicking <em>OK</em>. 
-            	The autocompletion will propose you logins of possible players after typing the first character.
-            	You also have to possibility to compare two <strong>random players</strong> with a minimum percentage of participation to the KTLC of <strong>${originStats.MIN_PERCENTAGE}%</strong>. 
-           	</p>
-            #{if originPlayer.isMapper() && targetPlayer.isMapper()}
-            <p>If the two selected players proposed tracks to the KTLC, it is possible to compare their <strong>statistics as mappers</strong>.</p>
-            #{/if}
-            <form action="@{stats.StatisticsComparator.comparePlayersPost()}" method="POST">
-            	<table>
-            		<tr>
-        				<td>Compare</td>
-        				#{if originPlayer.isMapper() && targetPlayer.isMapper()}
-            			<td class="link">#{a @stats.StatisticsComparator.compareMappers(originPlayer.logins[0], targetPlayer.logins[0])}Statistics as mappers#{/a}</td>
-            			<td>or</td>
-            			#{/if}
-       					<td class="link">#{a @stats.StatisticsComparator.comparePlayers(null, null)}Random players#{/a}</td>
-       					<td>or</td>
-        				<td class="possibilities">
-        					<input 
-        						class="ui-state-default autocompleteLogin" 
-        						type="text" 
-        						name="loginName1" 
-        						value="${originPlayer.logins[0]}" 
-        						size="15"
-        						onclick="clickclear(this, '${originPlayer.logins[0]}')" 
-        						onblur="clickrecall(this, '${originPlayer.logins[0]}')" /> with 
-        					<input 
+            <div #{if originPlayer.isMapper() && targetPlayer.isMapper()}class="comparatorExplanation"#{/if}>
+            	<h2>&{'comparator.possibleActions'}</h2>
+	            <p>&{'comparator.players.onlyPlayers', originStats.MIN_PERCENTAGE}</p>
+	           	#{if originPlayer.isMapper() && targetPlayer.isMapper()}
+	           	<p>&{'comparator.players.alsoMappers'}</p>
+	           	#{/if}
+	           	<h2>&{'comparator.compare'}</h2>
+           	</div>
+           	
+           	#{if originPlayer.isMapper() && targetPlayer.isMapper()}
+           	<div class="comparatorMore">
+           		<p>#{a @stats.StatisticsComparator.compareMappers(originPlayer.logins[0], targetPlayer.logins[0])}&{'comparator.players.toMappersStats'}#{/a}</p>
+           	</div>
+           	#{/if}
+           	
+           	<div class="cleaner"></div>
+           	
+           	<table>
+           		<tr>
+  					<td class="link">#{a @stats.StatisticsComparator.comparePlayers(null, null)}&{'comparator.players.randomPlayers'}#{/a}</td>
+  					<td>&{'comparator.or'}</td>
+   					<td class="withRandom">
+      					<form action="@{stats.StatisticsComparator.comparePlayersPost()}" method="POST">
+      						<table>
+      							<tr>
+	       							<td><input type="radio" value="${originPlayer.logins[0]}" name="loginName1" checked="checked" />${originPlayer.name}</td>
+	       							<td rowspan="2"><input class="okButton" type="submit" value="&{'comparator.players.withARandomPlayer'}" /></td>
+       							</tr>
+       							<tr>
+   									<td><input type="radio" value="${targetPlayer.logins[0]}" name="loginName1" />${targetPlayer.name}</td>
+   								</tr>
+   							</table>
+    					</form>
+      				</td>
+  					<td>&{'comparator.or'}</td>
+       				<td class="possibilities">
+       					<form action="@{stats.StatisticsComparator.comparePlayersPost()}" method="POST">
+   							<input 
+	       						class="ui-state-default autocompleteLogin" 
+	       						type="text" 
+	       						name="loginName1" 
+	       						value="${originPlayer.logins[0]}" 
+	       						size="15"
+	       						onclick="clickclear(this, '${originPlayer.logins[0]}')" 
+	       						onblur="clickrecall(this, '${originPlayer.logins[0]}')" /> &{'comparator.with'}
+	        				<input 
         						class="ui-state-default autocompleteLogin" 
         						type="text" 
         						name="loginName2" 
         						value="${targetPlayer.logins[0]}" 
         						size="15"
         						onclick="clickclear(this, '${targetPlayer.logins[0]}')" 
-        						onblur="clickrecall(this, '${targetPlayer.logins[0]}')" /> 
-        					<input class="okButton" type="submit" value="OK" />
-       					</td>
-		        	</tr>
-	        	</table>
-        	</form>
+        						onblur="clickrecall(this, '${targetPlayer.logins[0]}')" />
+       						<input class="okButton" type="submit" value="OK" />
+       					</form>
+   					</td>
+	        	</tr>
+        	</table>   			
         </div>
         
         <div class="cleaner"></div>
@@ -833,7 +867,7 @@
         <!-- WIDE PART 1 PLAYER --------------------------------------------------------------------- -->
         <div class="content_generalStats">
         	<div class="chartTitle">
-        		<h1>Results by KTLC</h1>
+        		<h1>&{'player.stats.resultKTLC'}</h1>
         	</div>
         	<div id="chartContainerKTLC" style="width: 820px; height: 450px;"></div>
         </div>

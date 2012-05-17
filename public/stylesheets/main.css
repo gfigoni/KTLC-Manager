@@ -733,7 +733,7 @@ td{
 
 .player_stats th:nth-child(2),
 .player_stats td:nth-child(2) {
-	width: 75px;
+	width: 90px;
 }
  
 .player_stats th:nth-child(3),
@@ -743,7 +743,7 @@ td{
 
 .comparison_stats th:FIRST-CHILD,
 .comparison_stats td:FIRST-CHILD {
-	width: 220px;
+	width: 160px;
 	text-align: left;
 }
 
@@ -751,7 +751,7 @@ td{
 .comparison_stats td:nth-child(3),
 .comparison_stats th:nth-child(6),
 .comparison_stats td:nth-child(6) {
-	width: 65px;
+	width: 90px;
 }
 
 .comparison_stats th:nth-child(4),
@@ -825,9 +825,12 @@ td{
 	background: transparent url(img/list.png) no-repeat scroll 0 5px;
 	font-size: 16px;
 	padding-left: 10px;
+	margin-bottom: 8px;
 }
 .comparatorActions p {
 	color: #EEEEEE;
+	margin: 0;
+	margin-bottom: 5px;
 }
 
 .comparatorActions table {
@@ -840,16 +843,6 @@ td{
 	padding-right: 5px;
 	display: inline-block; 
 	vertical-align: middle;
-}
-
-.comparatorActions td.details {
-	min-width: 275px;
-	text-align: right;
-}
-
-.comparatorActions td.link {
-	margin: 0px;
-	padding: 0px;
 }
 
 .comparatorActions a {
@@ -876,6 +869,51 @@ td{
 	border: 1px solid #ffde88;
 }
 
+.comparatorActions td.details {
+	min-width: 250px;
+	text-align: right;
+}
+
+.comparatorActions td.link {
+	margin: 0px;
+	padding: 0px;
+}
+
+.comparatorActions td.withRandom {
+	padding: 2px;
+	margin: 0;
+	border: 1px solid black;
+	background-color: #484742;
+}
+
+.comparatorActions td.withRandom:hover {
+	border: 1px solid #ffde88;
+}
+
+.comparatorActions td.withRandom td {
+	padding: 0px;
+	margin: 0px;
+	display: table-cell;
+	text-align: left;
+	padding-right: 15px;
+}
+
+.comparatorExplanation {
+	float: left;
+	width: 80%;
+}
+	
+.comparatorMore {
+	float: right;
+	margin-left: auto;
+	width: 15%;
+}
+
+.comparatorMore a {
+	display: inline-block;
+	text-align: center;
+	padding: 5px;
+}
 /***********************************
 *           Autocomplete           *
 ***********************************/

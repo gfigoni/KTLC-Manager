@@ -3,6 +3,8 @@ package models.stats;
 import java.util.HashMap;
 import java.util.List;
 
+import org.bouncycastle.util.test.NumberParsing;
+
 import models.KTLCEdition;
 import models.Player;
 import models.TMEnvironment;
@@ -40,4 +42,23 @@ public class StatisticPlayer {
 	
 	public HashMap<TMEnvironment, Double[]> chart_averageRankByEnviro;
 	public HashMap<TMEnvironment, int[]> chart_numberPodiumsByEnviro;
+	
+	public int[] timeFromRounds(){
+		if(numberPlayedRuns > 0) {
+			int minsByDay = 60 * 24;
+			int minsByHour = 60;
+			
+			int mnumberMinutes = numberPlayedRuns;
+			
+			int numberDays = mnumberMinutes / minsByDay;
+			mnumberMinutes = mnumberMinutes % minsByDay;
+			
+			int numberHours = mnumberMinutes / minsByHour;
+			mnumberMinutes = mnumberMinutes % minsByHour;
+			
+			return new int[]{numberDays, numberHours, mnumberMinutes};
+		} else {
+			return null;
+		}
+	}
 }

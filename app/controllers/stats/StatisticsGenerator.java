@@ -1,5 +1,6 @@
 package controllers.stats;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -10,6 +11,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
+
+import play.i18n.Messages;
 
 import controllers.Players;
 
@@ -217,84 +220,6 @@ public class StatisticsGenerator {
 	}
 	
 	/**
-	 * TODO javadoc comparison stats
-	 * @param origin
-	 * @param target
-	 * @return HashMap with value for each statistic parameter, with "bigger" if origin is better,
-	 * "lower" if target is better and "equal" if the values are equal
-	 */
-	public static HashMap<String,String> compareStatsMappers(StatisticMapper origin, StatisticMapper target) {
-		HashMap<String, String> comparison = new HashMap<String, String>();
-		
-		comparison.put("createdMaps.value", compareValues(origin.createdMaps.value, target.createdMaps.value, true));
-		comparison.put("distinctPlayersOnMaps.value", compareValues(origin.distinctPlayersOnMaps.value, target.distinctPlayersOnMaps.value, true));
-		comparison.put("createdMaps.ratio", compareValues(origin.createdMaps.ratio, target.createdMaps.ratio, true));
-		comparison.put("distinctPlayersOnMaps.ratio", compareValues(origin.distinctPlayersOnMaps.ratio, target.distinctPlayersOnMaps.ratio, true));
-		
-		comparison.put("numberRunsOnMaps", compareValues(origin.numberRunsOnMaps, target.numberRunsOnMaps, true));
-		comparison.put("numberDistinctKTLCsAsMapper", compareValues(origin.numberDistinctKTLCsAsMapper, target.numberDistinctKTLCsAsMapper, true));
-		comparison.put("averageNumberPlayersOnMaps", compareValues(origin.averageNumberPlayersOnMaps, target.averageNumberPlayersOnMaps, true));
-		
-		comparison.put("favoriteMappingEnviros", compareValues(
-				origin.chart_numberMapsByEnviro.get(origin.favoriteMappingEnviros.get(0)),
-				target.chart_numberMapsByEnviro.get(target.favoriteMappingEnviros.get(0)), true));
-		
-		return comparison;
-	}
-	
-	/**
-	 * TODO javadoc
-	 * @param v1
-	 * @param v2
-	 * @return
-	 */
-	private static String compareValues(int v1, int v2, boolean bigIsBetter) {
-		if(bigIsBetter) {
-			if (v1 > v2) {
-				return "bigger";
-			} else if (v1 < v2) {
-				return "lower";
-			} else {
-				return "equal";
-			}
-		} else {
-			if (v1 > v2) {
-				return "lower";
-			} else if (v1 < v2) {
-				return "bigger";
-			} else {
-				return "equal";
-			}	
-		}
-	}
-	
-	/**
-	 * TODO javadoc
-	 * @param v1
-	 * @param v2
-	 * @return
-	 */
-	private static String compareValues(double v1, double v2,  boolean bigIsBetter) {
-		if(bigIsBetter) {
-			if (v1 > v2) {
-				return "bigger";
-			} else if (v1 < v2) {
-				return "lower";
-			} else {
-				return "equal";
-			}
-		} else {
-			if (v1 > v2) {
-				return "lower";
-			} else if (v1 < v2) {
-				return "bigger";
-			} else {
-				return "equal";
-			}	
-		}
-	}
-	
-	/**
 	 * TODO javadoc generator stats mapper
 	 * @param mapper
 	 * @return
@@ -322,6 +247,32 @@ public class StatisticsGenerator {
 		stats.favoriteMappingEnviros = calcFavoriteMappingEnviro(stats.chart_numberMapsByEnviro);
 		
 		return stats;
+	}
+	
+	/**
+	 * TODO javadoc comparison stats
+	 * @param origin
+	 * @param target
+	 * @return HashMap with value for each statistic parameter, with "bigger" if origin is better,
+	 * "lower" if target is better and "equal" if the values are equal
+	 */
+	public static HashMap<String,String> compareStatsMappers(StatisticMapper origin, StatisticMapper target) {
+		HashMap<String, String> comparison = new HashMap<String, String>();
+		
+		comparison.put("createdMaps.value", compareValues(origin.createdMaps.value, target.createdMaps.value, true));
+		comparison.put("distinctPlayersOnMaps.value", compareValues(origin.distinctPlayersOnMaps.value, target.distinctPlayersOnMaps.value, true));
+		comparison.put("createdMaps.ratio", compareValues(origin.createdMaps.ratio, target.createdMaps.ratio, true));
+		comparison.put("distinctPlayersOnMaps.ratio", compareValues(origin.distinctPlayersOnMaps.ratio, target.distinctPlayersOnMaps.ratio, true));
+		
+		comparison.put("numberRunsOnMaps", compareValues(origin.numberRunsOnMaps, target.numberRunsOnMaps, true));
+		comparison.put("numberDistinctKTLCsAsMapper", compareValues(origin.numberDistinctKTLCsAsMapper, target.numberDistinctKTLCsAsMapper, true));
+		comparison.put("averageNumberPlayersOnMaps", compareValues(origin.averageNumberPlayersOnMaps, target.averageNumberPlayersOnMaps, true));
+		
+		comparison.put("favoriteMappingEnviros", compareValues(
+				origin.chart_numberMapsByEnviro.get(origin.favoriteMappingEnviros.get(0)),
+				target.chart_numberMapsByEnviro.get(target.favoriteMappingEnviros.get(0)), true));
+		
+		return comparison;
 	}
 	
 	/**
@@ -1628,5 +1579,57 @@ public class StatisticsGenerator {
 			}
 		}		
 		return editions;
+	}
+	
+	/**
+	 * TODO javadoc compareValue
+	 * @param v1
+	 * @param v2
+	 * @return
+	 */
+	private static String compareValues(int v1, int v2, boolean bigIsBetter) {
+		if(bigIsBetter) {
+			if (v1 > v2) {
+				return "bigger";
+			} else if (v1 < v2) {
+				return "lower";
+			} else {
+				return "equal";
+			}
+		} else {
+			if (v1 > v2) {
+				return "lower";
+			} else if (v1 < v2) {
+				return "bigger";
+			} else {
+				return "equal";
+			}	
+		}
+	}
+	
+	/**
+	 * TODO javadoc compareValue
+	 * @param v1
+	 * @param v2
+	 * @return
+	 */
+	private static String compareValues(double v1, double v2,  boolean bigIsBetter) {
+		if(bigIsBetter) {
+			if (v1 > v2) {
+				return "bigger";
+			} else if (v1 < v2) {
+				return "lower";
+			} else {
+				return "equal";
+			}
+		} else {
+			if (v1 > v2) {
+				return "lower";
+			} else if (v1 < v2) {
+				return "bigger";
+			} else {
+				return "equal";
+			}	
+		}
 	}
 }
