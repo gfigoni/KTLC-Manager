@@ -2,15 +2,50 @@
 #{set title:messages.get('title.mappers') /}
 #{set page:'mapper' /}
 
-#{if mappers.size()}
+#{set 'moreScripts'}
+    <script type="text/javascript">
+        function clickclear(thisfield, defaulttext) {
+        	if (thisfield.value == defaulttext) {
+        		thisfield.value = "";
+        	}
+        }
+       	function clickrecall(thisfield, defaulttext) {
+        	if (thisfield.value == "") {
+        		thisfield.value = defaulttext;
+        	}
+       	}
+    </script>
+#{/set}
+
 <div id="content_top">
-    <ul>
-        <li><h1><a>&{'main.mappers'}</a></h1></li>
+	<ul>
+        <li><h1><a>#{if mappers}&{'main.mappers'}#{/if}#{else}&{'error.nomapper'}#{/else}</a></h1></li>
     </ul>
 </div>
 <div id="main">
     <div id="content">
+    	<div id="search_box">
+    		<form action="@{Application.searchMappers()}" method="GET">
+    			<table>
+    				<tr>
+    					<td>&{'search.mapper.searchMapper'}</td>
+    					<td>
+    						<input type="text" name="term" size="30" 
+	    						value="${ term ? term : messages.get('search.mapper.mapperOrLogin')}" 
+	    						onclick="clickclear(this, '&{'search.mapper.mapperOrLogin'}')" 
+	    						onblur="clickrecall(this, '&{'search.mapper.mapperOrLogin'}')" />
+    					</td>
+    					<td><input type="submit" value="&{'search.search'}"></td>
+    					#{if errors}<td><span class="error">#{error 'term' /}</span></td>#{/if}
+   					</tr>
+    			</table>
+    		</form>
+    	</div>
+    	
+    	<div class="cleaner"></div>
+    	
         <div class="players_box">
+        	#{if mappers}
         	#{paginate.controls items:mappers /}
             <table>
                 <tr>
@@ -19,7 +54,6 @@
                     <th>&{'player.categories'}</th>
                 </tr>
                 #{paginate.list items:mappers, as:'mapper'}
-                #{if mapper.logins}
                 <tr>
                     <td>#{a @Application.mapper(mapper.logins[0])}${mapper.name}#{/a}</td>
                     <td>
@@ -33,29 +67,21 @@
                    		#{else}&{'player.mapper'}#{/else}
                     </td>
                 </tr>
-                #{/if}
                 #{/paginate.list}
-                #{else}
-                &{'error.nomapper'}
-                #{/else}
             </table>
             #{paginate.summary items:mappers /}
+            #{/if}
         </div>
+        
+        <div class="cleaner"></div>
+        <div class="statsSpace_small"></div>
+        
+        #{if term}
+	    <div class="link_button">
+	    	<a href="@{Application.mappers()}">&{'search.mapper.backToMappers'}</a>
+	    </div>
+	    #{/if}
     </div>
+
     <div class="cleaner"></div>
 </div>
-#{/if}
-
-#{else}
-<div id="content_top">
-    <ul>
-        <li><h1><a>&{'error.noplayer'}</a></h1></li>
-    </ul>
-</div>
-<div id="main">
-    <div id="content">
-        <div class="content_box" ></div>
-    </div>
-    <div class="cleaner" ></div>
-</div>
-#{/else}

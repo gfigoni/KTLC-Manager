@@ -16,6 +16,8 @@ GET		/statistics								Application.statistics
 GET		/regenStats								stats.StatisticsManager.regenStats
 GET		/manageParameters						stats.StatisticsManager.manageParameters
 GET		/changeLocale							Application.changeLocale
+GET		/searchPlayer							Application.searchPlayers
+GET		/searchMapper							Application.searchMappers
 
 # Comparators
 GET		/comparePlayers/{loginName1}/{loginName2}	stats.StatisticsComparator.comparePlayers

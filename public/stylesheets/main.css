@@ -536,12 +536,53 @@ td{
 }
 
 /***********************************
+*           SEARCH BOX             *
+***********************************/
+#search_box {
+	border: 1px solid black;
+	padding: 0px 10px;
+}
+#search_box:hover {
+	border: 1px solid #ffde88;
+}
+
+#search_box span.error {
+	background: transparent url(img/list.png) no-repeat scroll 0 3px;
+	padding-left: 10px;
+	color: #F39400;
+}
+
+/***********************************
+*           link button            *
+***********************************/
+.link_button a {
+	display: inline-block;
+	border: 1px solid black;
+	background-color: #484742;
+	padding-left: 10px;
+	padding-right: 10px;
+	padding-top: 14px;
+	padding-bottom: 13px;
+}
+
+.link_button a:hover {
+	color: #F39400;
+	border: 1px solid #ffde88;
+}
+
+/***********************************
 *         GENERAL STATS            *
 ***********************************/
 .statsSpace {
 	padding-top: 20px;
 	padding-bottom: 20px;
 }
+
+.statsSpace_small {
+	padding-top: 10px;
+	padding-bottom: 10px;
+}
+
 .statsSpace hr {
 	color: #FFF;
  	height: 1px;

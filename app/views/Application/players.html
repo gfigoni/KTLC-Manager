@@ -2,15 +2,50 @@
 #{set title:messages.get('title.players') /}
 #{set page:'player' /}
 
-#{if players.size()}
+#{set 'moreScripts'}
+    <script type="text/javascript">
+        function clickclear(thisfield, defaulttext) {
+        	if (thisfield.value == defaulttext) {
+        		thisfield.value = "";
+        	}
+        }
+       	function clickrecall(thisfield, defaulttext) {
+        	if (thisfield.value == "") {
+        		thisfield.value = defaulttext;
+        	}
+       	}
+    </script>
+#{/set}
+
 <div id="content_top">
     <ul>
-        <li><h1><a>&{'main.players'}</a></h1></li>
+        <li><h1><a>#{if players}&{'main.players'}#{/if}#{else}&{'error.noplayer'}#{/else}</a></h1></li>
     </ul>
 </div>
 <div id="main">
     <div id="content">
+    	<div id="search_box">
+    		<form action="@{Application.searchPlayers()}" method="GET">
+    			<table>
+    				<tr>
+    					<td>&{'search.player.searchPlayer'}</td>
+    					<td>
+    						<input type="text" name="term" size="30" 
+	    						value="${ term ? term : messages.get('search.player.playerOrLogin')}" 
+	    						onclick="clickclear(this, '&{'search.player.playerOrLogin'}')" 
+	    						onblur="clickrecall(this, '&{'search.player.playerOrLogin'}')" />
+    					</td>
+    					<td><input type="submit" value="&{'search.search'}"></td>
+    					#{if errors}<td><span class="error">#{error 'term' /}</span></td>#{/if}
+   					</tr>
+    			</table>
+    		</form>
+    	</div>
+    	
+    	<div class="cleaner"></div>
+    	
         <div class="players_box">
+        	#{if players}
         	#{paginate.controls items:players /}
             <table>
                 <tr>
@@ -19,7 +54,6 @@
                     <th>&{'player.categories'}</th>
                 </tr>
                 #{paginate.list items:players, as:'player'}
-                #{if player.logins}
                 <tr>
                     <td>#{a @Application.player(player.logins[0])}${player.name}#{/a}</td>
                     <td>
@@ -29,35 +63,24 @@
                         #{/list}
                     </td>
                     <td>
-                    	#{if player.isPlayer() && !player.isMapper()}&{'player'}#{/if}
-                   		#{elseif !player.isPlayer() && player.isMapper()}&{'player.mapper'}#{/elseif}
-                   		#{elseif player.isPlayer() && player.isMapper()}&{'player'} / &{'player.mapper'}#{/elseif}
-                   		#{else}Unknown#{/else}
+                    	#{if player.isMapper()}&{'player'} / &{'player.mapper'}#{/if}
+                   		#{else}&{'player'}#{/else}
                     </td>
                 </tr>
-                #{/if}
                 #{/paginate.list}
-                #{else}
-                &{'error.noplayer'}
-                #{/else}
             </table>
             #{paginate.summary items:players /}
+            #{/if}
         </div>
+        
+        <div class="cleaner"></div>
+        <div class="statsSpace_small"></div>
+        
+        #{if term}
+        <div class="link_button">
+        	<a href="@{Application.players()}">&{'search.player.backToPlayers'}</a>
+        </div>
+        #{/if}
     </div>
     <div class="cleaner"></div>
 </div>
-#{/if}
-
-#{else}
-<div id="content_top">
-    <ul>
-        <li><h1><a>&{'error.noplayer'}</a></h1></li>
-    </ul>
-</div>
-<div id="main">
-    <div id="content">
-        <div class="content_box" ></div>
-    </div>
-    <div class="cleaner" ></div>
-</div>
-#{/else}

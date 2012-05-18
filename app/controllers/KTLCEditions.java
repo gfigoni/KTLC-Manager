@@ -7,10 +7,13 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import models.KTLCEdition;
+import models.KTLCResult;
 import models.Player;
 import models.UnknownLoginException;
 import play.Logger;
@@ -53,7 +56,7 @@ public class KTLCEditions extends CRUD {
             }
             if (unknownLogins != null && unknownLogins.size() > 0) {
                 // il manque des joueurs
-                List<Player> allPlayers = Player.findAll();
+                List<Player> allPlayers = Player.find("order by name asc").fetch();
                 render("Logins/unknown.html", unknownLogins, allPlayers, number, date, url);
             } else {
                 // tous les joueurs de la log sont déjà identifiés

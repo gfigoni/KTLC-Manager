@@ -23,8 +23,6 @@ ktlc.nbparticipants = %s players
 ktlc.next = Next KTLC
 ktlc.prev = Previous KTLC
 
-mapper = Mappeur
-
 player = Player
 player.login = Login
 player.rank = Rank
@@ -76,6 +74,7 @@ player.stats.days = d
 player.stats.hours = h
 player.stats.minutes = m
 
+mapper = Mapper
 mapper.stats.stats = Statistics
 mapper.stats.createdMaps = Created Maps
 mapper.stats.mapName = name
@@ -176,6 +175,18 @@ comparator.mappers.alsoPlayers = If the two selected mappers also participated t
 comparator.mappers.toPlayerStats = Compare players
 comparator.mappers.randomMappers = Random mappers
 comparator.mappers.withARandomMapper = With a random mapper
+
+search.search = Search
+search.mapper.searchMapper = Search a mapper:
+search.mapper.mapperOrLogin = Mapper name or Login
+search.mapper.backToMappers = Back to the mappers
+search.player.searchPlayer = Search a player:
+search.player.playerOrLogin = Player name or Login
+search.player.backToPlayers = Back to the players
+search.error.required = You must enter a name or a login!
+search.error.minChars = You must enter at least %d characters!
+search.error.player.noResults = No player found!
+search.error.mapper.noResults = No mapper found!
 
 error.wrongktlc = This KTLC does not exist.
 error.noktlc = No KTLC available

@@ -1,14 +1,13 @@
 package controllers;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Random;
 
-import com.google.gson.JsonSerializer;
+import org.postgresql.translation.messages_bg;
 
 import models.KTLCEdition;
 import models.KTLCRace;
@@ -20,7 +19,10 @@ import models.stats.StatisticConfig;
 import models.stats.StatisticGeneral;
 import models.stats.StatisticMapper;
 import models.stats.StatisticPlayer;
+import play.data.validation.MaxSize;
+import play.data.validation.Required;
 import play.i18n.Lang;
+import play.i18n.Messages;
 import play.modules.paginate.ValuePaginator;
 import play.mvc.Controller;
 import controllers.stats.StatisticsComparator;
@@ -108,9 +110,79 @@ public class Application extends Controller {
         Player.filterByPlayer(playersList);
         
         ValuePaginator<Player> players = new ValuePaginator<Player>(playersList);
-        players.setPageSize(40);
+        players.setPageSize(30);
         
         render(players);
+    }
+    
+    public static void searchPlayers(String term) {
+    	searchPlayersOrMappers(term, true);
+    }
+    
+    public static void searchMappers(String term) {
+    	searchPlayersOrMappers(term, false);
+    }
+    
+    private static void searchPlayersOrMappers(String term, Boolean searchingPlayers) {   	
+    	List<Player> playersList = null;
+    	
+    	int minCharacters = 2;
+    	
+    	validation.required("term", term).message(Messages.get("search.error.required"));
+    	validation.minSize(term, minCharacters).message(Messages.get("search.error.minChars", minCharacters));
+
+    	if (term != null && 
+    			(term.equalsIgnoreCase(Messages.get("search.player.playerOrLogin")) 
+    					|| term.equalsIgnoreCase(Messages.get("search.mapper.mapperOrLogin")))) {
+    		validation.addError("term", Messages.get("search.error.required"));
+    		term = null;
+    	}    	
+    	
+    	if(!validation.hasError("term")) {
+	    	//search in the players
+	    	playersList = Player.find("byNameIlike", "%"+term+"%").fetch();
+	    	//search in the logins
+	    	List<Login> loginsList = Login.find("byNameIlike", "%"+term+"%").fetch();
+	    	// add the new player from the login in the list
+	    	for (Login login : loginsList) {
+				Player p = Player.findByLogin(login.name);
+				if (!playersList.contains(p)) {
+					playersList.add(p);
+				}
+			}
+	    	
+	    	// sort the players by ASCENDING name
+			Collections.sort(playersList, new Comparator<Player>() {
+		        @Override
+		        public int compare(Player p1, Player p2) {
+		            return p1.name.toLowerCase().compareTo(p2.name.toLowerCase());
+		        }
+		    });
+    	} else {
+    		// load all the players
+    		playersList = Player.find("order by name asc").fetch();
+    	}
+    	
+    	// depending of the request, return mappers or players
+    	if(searchingPlayers) {
+    		if (playersList.size() == 0) {
+    			validation.addError("term", Messages.get("search.error.player.noResults"));
+    		}
+    		
+    		Player.filterByPlayer(playersList);
+    		ValuePaginator<Player> players = new ValuePaginator<Player>(playersList);
+            players.setPageSize(30);
+        	renderTemplate("Application/players.html", players, term);
+    	} else {
+    		if (playersList.size() == 0) {
+    			validation.addError("term", Messages.get("search.error.mapper.noResults"));
+    		}
+    		
+    		Player.filterByMapper(playersList);
+    		ValuePaginator<Player> mappers = new ValuePaginator<Player>(playersList);
+    		mappers.setPageSize(30);
+        	renderTemplate("Application/mappers.html", mappers, term);
+    	}
     }
     
     public static void mapper(String loginName) {
@@ -166,7 +238,7 @@ public class Application extends Controller {
         Player.filterByMapper(mappersList);
         
         ValuePaginator<Player> mappers = new ValuePaginator<Player>(mappersList);
-        mappers.setPageSize(40);
+        mappers.setPageSize(30);
         
         render(mappers);
     }

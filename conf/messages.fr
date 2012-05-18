@@ -23,8 +23,6 @@ ktlc.nbparticipants = %s joueurs
 ktlc.next = KTLC suivante
 ktlc.prev = KTLC précédente
 
-mapper = Mappeur
-
 player = Joueur
 player.login = Login
 player.rank = Place
@@ -76,6 +74,7 @@ player.stats.days = j
 player.stats.hours = h
 player.stats.minutes = m
 
+mapper = Mappeur
 mapper.stats.stats = Statistiques
 mapper.stats.createdMaps = Maps créées
 mapper.stats.mapName = Nom
@@ -92,7 +91,6 @@ mapper.stats.numRunsOnMaps = Nombre de runs joués sur les maps
 mapper.stats.numDistinctKtlcs = Nombre de KTLC distinctes en tant que mappeur
 mapper.stats.favEnviro = Environnement de mapping favori
 mapper.stats.numMapsByEnviro = Nombre de maps par environnement
-
 
 stats.title_generalStats = Statistiques Générales
 stats.title_playerChart = Nombre de joueurs par KTLC
@@ -177,6 +175,18 @@ comparator.mappers.alsoPlayers = Si les deux mappeurs ont également participé 
 comparator.mappers.toPlayerStats = Comparer les joueurs
 comparator.mappers.randomMappers = Mappeurs aléatoires
 comparator.mappers.withARandomMapper = Avec un mappeur aléatoire
+
+search.search = Rechercher
+search.mapper.searchMapper = Rechercher un mappeur:
+search.mapper.mapperOrLogin = Nom du mappeur ou Login
+search.mapper.backToMappers = Retour aux mappeurs
+search.player.searchPlayer = Rechercher un joueur:
+search.player.playerOrLogin = Nom du joueur ou Login
+search.player.backToPlayers = Retour aux joueurs
+search.error.required = Vous devez entrer un nom ou un login!
+search.error.minChars = Vous devez entrer au moins %d caractères!
+search.error.player.noResults = Aucun joueur trouvé!
+search.error.mapper.noResults = Aucun mappeur trouvé!
 
 error.wrongktlc = Cette KTLC n'existe pas.
 error.noktlc = Pas de KTLC
