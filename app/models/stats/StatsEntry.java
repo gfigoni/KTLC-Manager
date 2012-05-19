@@ -25,7 +25,11 @@ public class StatsEntry {
 	public StatsEntry(int value, int total) {
 		this.value = value;
 		this.total = total;
-		this.ratio = this.value / (double)this.total;
+		if (value != 0 && total != 0) {
+			this.ratio = this.value / (double)this.total;
+		} else {
+			this.ratio = 0;
+		}
 	}
 
 }

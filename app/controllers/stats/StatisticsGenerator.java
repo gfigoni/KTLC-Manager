@@ -45,57 +45,59 @@ public class StatisticsGenerator {
 	public static Long updateAllGeneralStatistics() {
 		Long startTime = System.nanoTime();
 		
-		StatisticGeneral stats = StatisticGeneral.getUniqueInstance();
-		
-		config = StatisticConfig.loadStatsConfig();
-		
-		stats.LENGTH_TOP = config.getLengthTop();
-		stats.RANK_INTEREST = config.getRankInterest();
-		stats.MIN_PERCENTAGE_PARTICIPATIONS = config.getMinPercentageParticipations();
-		stats.MIN_NUMBER_MAPS_FOR_EPIC_FAIL = config.getMinNumberMapsForEpicFail();
-		
 		List<KTLCEdition> ktlcs = KTLCEdition.find("order by date asc").fetch();
 		List<Player> players = Player.find("order by name asc").fetch();
 		List<TMMap> maps = TMMap.find("order by environment desc").fetch();
 		
-		// Stats		
-		stats.stats_numberKTLCs = ktlcs.size();
-		stats.stats_numberKTLC_TMU = calcNumberKTLCTMU(ktlcs);
-		stats.stats_numberSuperKTLC_TMU = calcNumberSuperKTLCTMU(ktlcs);
-		stats.stats_numberKTLC_TM2 = calcNumberKTLCTM2(ktlcs);
-		stats.stats_numberPlayers = players.size();
-		stats.stats_numberPlayersPercentage = calcNumberPlayerByPercentage(players, config.getMinPercentageParticipations());
-		stats.stats_numberMaps = maps.size();
-		stats.stats_numberRuns = calcTotalNumberRuns();
-		stats.stats_averageNumberPlayersByKTLC = calcAverageNumberPlayersByKTLC(ktlcs);
-		stats.stats_averageNumberMapsByKTLC = calcAverageNumberMapsByKTLC(ktlcs);
-		
-		// charts
-		stats.chart_numberMapsByEnviro = calcMapsByEnviro(maps);
-		stats.chart_numberPlayersByKTLC = calcNumberPlayersByKTLC(ktlcs);
-		
-		// particular KTLC
-		stats.smallestKTLC = calcMinNumberPlayers(ktlcs);
-		stats.biggestKTLC = calcMaxNumberPlayers(ktlcs);
-		
-		// rankings - hall of fame
-		stats.ranking_numberParticipation = calcRankingParticipatioRatio(players, config.getLengthTop());
-		stats.ranking_bestAverageRank = calcRankingBestAverageRank(players, config.getLengthTop(), config.getMinPercentageParticipations());
-		stats.ranking_numberMaps = calcRankingNumberMaps(players, config.getLengthTop());
-		stats.ranking_numberPodiumsKTLC = calcRankingNumberPodiumsKTLC(players, config.getLengthTop(), config.getRankInterest());
-		stats.ranking_numberPodiumsRace = calcRankingNumberPodiumsRace(players, config.getLengthTop(), config.getRankInterest());
-		stats.ranking_numberPerfect = calcRankingNumberPerfect();
-		
-		// ranking - hall of shame
-		List<KTLCRace> races = KTLCRace.findAll();
-		stats.ranking_violentMaps = calcRankingViolentMaps(races, config.getLengthTop());
-		stats.ranking_numberLastPlaceKTLC = calcRankingNumberlastPlaceKTLC(players, config.getLengthTop(), config.getMinPercentageParticipations());
-		stats.ranking_numberLastPlaceRace = calcRankingNumberlastPlaceRace(players, config.getLengthTop());
-		stats.ranking_worstAverageRank = calcRankingWorstAverageRank(players, config.getLengthTop(), config.getMinPercentageParticipations());
-		stats.ranking_numberEpicFail = calcRankingNumberEpicFail(config.getMinNumberMapsForEpicFail());
-		
-		// change the status
-		stats.setInitialized(true);
+		if (!(ktlcs.isEmpty() || players.isEmpty() || maps.isEmpty())) {
+			config = StatisticConfig.loadStatsConfig();
+			
+			StatisticGeneral stats = StatisticGeneral.getUniqueInstance();
+			
+			stats.LENGTH_TOP = config.getLengthTop();
+			stats.RANK_INTEREST = config.getRankInterest();
+			stats.MIN_PERCENTAGE_PARTICIPATIONS = config.getMinPercentageParticipations();
+			stats.MIN_NUMBER_MAPS_FOR_EPIC_FAIL = config.getMinNumberMapsForEpicFail();
+			
+			// Stats		
+			stats.stats_numberKTLCs = ktlcs.size();
+			stats.stats_numberKTLC_TMU = calcNumberKTLCTMU(ktlcs);
+			stats.stats_numberSuperKTLC_TMU = calcNumberSuperKTLCTMU(ktlcs);
+			stats.stats_numberKTLC_TM2 = calcNumberKTLCTM2(ktlcs);
+			stats.stats_numberPlayers = players.size();
+			stats.stats_numberPlayersPercentage = calcNumberPlayerByPercentage(players, config.getMinPercentageParticipations());
+			stats.stats_numberMaps = maps.size();
+			stats.stats_numberRuns = calcTotalNumberRuns();
+			stats.stats_averageNumberPlayersByKTLC = calcAverageNumberPlayersByKTLC(ktlcs);
+			stats.stats_averageNumberMapsByKTLC = calcAverageNumberMapsByKTLC(ktlcs);
+			
+			// charts
+			stats.chart_numberMapsByEnviro = calcMapsByEnviro(maps);
+			stats.chart_numberPlayersByKTLC = calcNumberPlayersByKTLC(ktlcs);
+			
+			// particular KTLC
+			stats.smallestKTLC = calcMinNumberPlayers(ktlcs);
+			stats.biggestKTLC = calcMaxNumberPlayers(ktlcs);
+			
+			// rankings - hall of fame
+			stats.ranking_numberParticipation = calcRankingParticipatioRatio(players, config.getLengthTop());
+			stats.ranking_bestAverageRank = calcRankingBestAverageRank(players, config.getLengthTop(), config.getMinPercentageParticipations());
+			stats.ranking_numberMaps = calcRankingNumberMaps(players, config.getLengthTop());
+			stats.ranking_numberPodiumsKTLC = calcRankingNumberPodiumsKTLC(players, config.getLengthTop(), config.getRankInterest());
+			stats.ranking_numberPodiumsRace = calcRankingNumberPodiumsRace(players, config.getLengthTop(), config.getRankInterest());
+			stats.ranking_numberPerfect = calcRankingNumberPerfect();
+			
+			// ranking - hall of shame
+			List<KTLCRace> races = KTLCRace.findAll();
+			stats.ranking_violentMaps = calcRankingViolentMaps(races, config.getLengthTop());
+			stats.ranking_numberLastPlaceKTLC = calcRankingNumberlastPlaceKTLC(players, config.getLengthTop(), config.getMinPercentageParticipations());
+			stats.ranking_numberLastPlaceRace = calcRankingNumberlastPlaceRace(players, config.getLengthTop());
+			stats.ranking_worstAverageRank = calcRankingWorstAverageRank(players, config.getLengthTop(), config.getMinPercentageParticipations());
+			stats.ranking_numberEpicFail = calcRankingNumberEpicFail(config.getMinNumberMapsForEpicFail());
+			
+			// change the status
+			stats.setInitialized(true);
+		}
 		
 		Long endTime = System.nanoTime();
 		

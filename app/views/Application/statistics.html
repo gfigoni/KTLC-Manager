@@ -2,7 +2,7 @@
 #{set title:messages.get('title.stats') /}
 #{set page:'statistics' /}
 
-#{if statistics}
+#{if statistics.isInitialized() }
 #{set 'moreScripts'}
     <script type="text/javascript">
     	var chartEnviroData = [
@@ -245,6 +245,7 @@
 		                        <th>&{'stats.perfects'}</th>
 		                        <th class="spacer_left">KTLC(s)</th>
 		                    </tr>
+		                    #{if statistics.ranking_numberPerfect.size() > 0}
 		                    #{list items:0..statistics.ranking_numberPerfect.size() - 1, as:'i'}
 		                    <tr>
 		                        #{if i < 3 }<td class="podium_${i + 1}"></td>#{/if}#{else}<td>${i + 1}</td>#{/else}
@@ -259,6 +260,7 @@
 		                        </td>
 		                    </tr>
 		                    #{/list}
+		                    #{/if}
 		                </table>
 		            </div>
 		        </div>
@@ -550,6 +552,7 @@
 	                        <th>&{'stats.epicFails'}</th>
 	                        <th class="spacer_left">KTLC(s)</th>
 	                    </tr>
+	                    #{if statistics.ranking_numberEpicFail.size() > 0}
 	                    #{list items:0..statistics.ranking_numberEpicFail.size() - 1, as:'i'}
 	                    <tr>
 	                        #{if i < 3 }<td class="podium_${i + 1}"></td>#{/if}#{else}<td>${i + 1}</td>#{/else}
@@ -564,6 +567,7 @@
 	                        </td>
 	                    </tr>
 	                    #{/list}
+	                    #{/if}
 	                </table>
 	            </div>
 	        </div>
