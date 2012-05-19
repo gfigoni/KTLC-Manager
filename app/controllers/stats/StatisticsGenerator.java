@@ -45,14 +45,15 @@ public class StatisticsGenerator {
 	public static Long updateAllGeneralStatistics() {
 		Long startTime = System.nanoTime();
 		
+		StatisticGeneral stats = StatisticGeneral.getUniqueInstance();
+		stats.reset();
+		
 		List<KTLCEdition> ktlcs = KTLCEdition.find("order by date asc").fetch();
 		List<Player> players = Player.find("order by name asc").fetch();
 		List<TMMap> maps = TMMap.find("order by environment desc").fetch();
 		
 		if (!(ktlcs.isEmpty() || players.isEmpty() || maps.isEmpty())) {
 			config = StatisticConfig.loadStatsConfig();
-			
-			StatisticGeneral stats = StatisticGeneral.getUniqueInstance();
 			
 			stats.LENGTH_TOP = config.getLengthTop();
 			stats.RANK_INTEREST = config.getRankInterest();

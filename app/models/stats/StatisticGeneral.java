@@ -94,5 +94,9 @@ public class StatisticGeneral {
 	public Date getCreationDate() {
 		return creationDate;
 	}
+	
+	public void reset() {
+		uniqueInstance = null;
+	}
  
 }
