@@ -823,7 +823,12 @@ public class StatisticsGenerator {
 		for (Player player : players) {
 			int numberParticipation = KTLCResult.findByPlayer(player).size();
 			participationRatiosByPlayerID[currentIndex][0] = (double)player.id;
-			participationRatiosByPlayerID[currentIndex][1] = (double)numberParticipation / (double)numberKTLCs;
+			
+			if (numberParticipation == 0 || numberKTLCs == 0) {
+				participationRatiosByPlayerID[currentIndex][1] = 0.0;
+			} else {
+				participationRatiosByPlayerID[currentIndex][1] = (double)numberParticipation / (double)numberKTLCs;
+			}
 			currentIndex++;
 		}
 		
@@ -1050,7 +1055,12 @@ public class StatisticsGenerator {
 			
 			int[] podiums = Arrays.copyOfRange(numberPodiumByPlayerID[index], 1, rankInterest + 1);
 			int totalPodium = podiums[0] + podiums[1] + podiums[2];
-			double ratio = (double)totalPodium / (double)participation;
+			double ratio;
+			if (totalPodium == 0 || participation == 0) {
+				 ratio = 0;
+			} else {
+				ratio = (double)totalPodium / (double)participation;
+			}
 			
 			Rank<int[]> r = new Rank<int[]>(player, participation, ratio, podiums);
 			ranking.add(i, r);
@@ -1108,7 +1118,12 @@ public class StatisticsGenerator {
 			
 			int[] podiums = Arrays.copyOfRange(numberPodiumByPlayerID[index], 1, rankInterest + 1);
 			int totalPodium = podiums[0] + podiums[1] + podiums[2];
-			double ratio = (double)totalPodium / (double)participation;
+			double ratio;
+			if (totalPodium == 0 || participation == 0) {
+				 ratio = 0;
+			} else {
+				ratio = (double)totalPodium / (double)participation;
+			}
 			
 			Rank<int[]> r = new Rank<int[]>(player, participation, ratio, podiums);
 			ranking.add(i, r);
@@ -1223,7 +1238,13 @@ public class StatisticsGenerator {
 			int participation = KTLCRaceResult.findByPlayer(player).size();
 			
 			Integer numberLastPlace = numberLastPlaceByPlayerID[i][1];
-			double ratio = (double)numberLastPlace / (double)participation;
+			
+			double ratio;
+			if (numberLastPlace == 0 || participation == 0) {
+				ratio = 0;
+			} else {
+				ratio = (double)numberLastPlace / (double)participation;
+			}
 			
 			Rank<Integer> r = new Rank<Integer>(player, participation, ratio, numberLastPlace);
 			ranking.add(currentCount, r);
@@ -1284,7 +1305,13 @@ public class StatisticsGenerator {
 			int participation = KTLCResult.findByPlayer(player).size();
 			
 			Integer numberLastPlace = numberLastPlaceByPlayerID[i][1];
-			double ratio = (double)numberLastPlace / (double)participation;
+			
+			double ratio;
+			if (numberLastPlace == 0 || participation == 0) {
+				ratio = 0;
+			} else {
+				ratio = (double)numberLastPlace / (double)participation;
+			}
 			
 			if (participation >= (minPercentage*0.01*numberKTLC)) {
 				Rank<Integer> r = new Rank<Integer>(player, participation, ratio, numberLastPlace);
