@@ -22,6 +22,8 @@ ktlc.size = Players
 ktlc.nbparticipants = %s players
 ktlc.next = Next KTLC
 ktlc.prev = Previous KTLC
+ktlc.highlightPlayer = Highlight %s
+ktlc.highlight = Highlight
 
 player = Player
 player.login = Login

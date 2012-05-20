@@ -843,7 +843,7 @@ public class StatisticsGenerator {
         });
 		
 		// Add the best results to the ranking create the structure for holding results
-		for (int i = 0; i < lengthTop; i++) {
+		for (int i = 0; i < lengthTop; i++) {			
 			int index = players.size() - 1 - i;
 			
 			Player player = Player.findById(participationRatiosByPlayerID[index][0].longValue());
@@ -852,6 +852,10 @@ public class StatisticsGenerator {
 			
 			Rank r = new Rank(player, participation, ratio);
 			ranking.add(r);
+			
+			if(i == players.size() - 1) {
+				break;
+			}
 		}
 		
 		return ranking;
@@ -1001,6 +1005,10 @@ public class StatisticsGenerator {
 			// numberParticipation & ratio are not used nor calculated
 			Rank r = new Rank<Integer>(player, -1, -1, numberMaps);
 			ranking.add(i, r);
+			
+			if(i == players.size() - 1) {
+				break;
+			}
 		}
 		
 		return ranking;
@@ -1064,6 +1072,10 @@ public class StatisticsGenerator {
 			
 			Rank<int[]> r = new Rank<int[]>(player, participation, ratio, podiums);
 			ranking.add(i, r);
+			
+			if(i == players.size() - 1) {
+				break;
+			}
 		}
 		
 		return ranking;
@@ -1127,6 +1139,10 @@ public class StatisticsGenerator {
 			
 			Rank<int[]> r = new Rank<int[]>(player, participation, ratio, podiums);
 			ranking.add(i, r);
+			
+			if(i == players.size() - 1) {
+				break;
+			}
 		}
 		
 		return ranking;

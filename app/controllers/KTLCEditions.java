@@ -66,7 +66,7 @@ public class KTLCEditions extends CRUD {
                 try {
                     r = new BufferedReader(new InputStreamReader(is));
                     KTLCEdition.createKTLCEdition(number, date, r);
-                    Application.ktlc(number);
+                    Application.ktlc(number, null);
                 } catch (UnknownLoginException upe) {
                     // malgré le check, un joueur est inconnu...
                     // remonter un message d'erreur

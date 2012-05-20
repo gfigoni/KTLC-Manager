@@ -534,6 +534,22 @@ td{
 .raceresult ul li.player {
 	width: 74px;
 }
+/***********************************
+*            HIGHLIGHT             *
+***********************************/
+tr.highlighted_Player td {
+ 	background-color: #d7cdb4;
+	color: black;
+	font-weight: bold;
+}
+
+tr.highlighted_Player a {
+	color: #F39400;
+}
+
+tr.highlighted_Player a:hover {
+	color: #ca8212;
+}
 
 /***********************************
 *           SEARCH BOX             *

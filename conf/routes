@@ -4,6 +4,7 @@
 
 # Home page
 GET     /                                       Application.index
+GET		/ktlc/{number}/{loginName}				Application.ktlc
 GET     /ktlc/{number}                          Application.ktlc
 GET     /ktlc									Application.ktlcs
 GET     /player/{loginName}                     Application.player

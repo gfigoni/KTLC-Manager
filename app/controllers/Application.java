@@ -36,7 +36,12 @@ public class Application extends Controller {
 
     public static void index() {
         KTLCEdition ktlc = KTLCEdition.find("order by date desc").first();
-        render(ktlc);
+        
+        // redirect to the last KTLC...
+        ktlc(ktlc.number, null);
+        
+        // old index page with half details KTLC.
+        //render(ktlc);
     }
 
     public static void player(String loginName) {
@@ -243,11 +248,18 @@ public class Application extends Controller {
         render(mappers);
     }
 
-    public static void ktlc(Integer number) {
+    public static void ktlc(Integer number, String loginName) {
         KTLCEdition ktlc = KTLCEdition.findByNumber(number);
         KTLCEdition prevKTLC = ktlc.findPreviousKTLC();
         KTLCEdition nextKTLC = ktlc.findNextKTLC();
-        render(ktlc, prevKTLC, nextKTLC);
+        
+        Player highlightedPlayer = null;        
+        if (loginName != null) {
+	        // the selected player for highlight
+	        highlightedPlayer = Player.findByLogin(loginName);
+        }
+        
+        render(ktlc, prevKTLC, nextKTLC, highlightedPlayer);
     }
 
     public static void ktlcs() {

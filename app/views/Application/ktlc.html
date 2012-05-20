@@ -59,13 +59,30 @@
                         <th>&{'player'}</th>
                         <th>&{'player.score'}</th>
                         <th>&{'player.nbraces'}</th>
+                        <th>&{'ktlc.highlight'}</th>
                     </tr>
                     #{list ktlc.results, as:'result'}
-                    <tr>
+                    
+                    #{if highlightedPlayer}
+                    	#{if highlightedPlayer.name.equals(result.login.player.name)}
+                    	<tr class="highlighted_Player">
+                    	#{/if}
+                    #{/if}#{else}
+                    	<tr>
+                    #{/else}
                         <td>${result.rank}</td>
                         <td>#{a @Application.player(result.login)}${result.login.player.name}#{/a}</td>
                         <td>${result.score}</td>
                         <td>${result.nbRaces}</td>
+                        #{if highlightedPlayer}
+	                    	#{if highlightedPlayer.name.equals(result.login.player.name)}
+	                    	<td><img src="@{'/public/stylesheets/img/nav_highlight_2_disabled.png'}" alt="&{'ktlc.highlightPlayer', result.login.player.name}" /></tr>
+	                    	#{/if}#{else}
+                        	<td>#{a @Application.ktlc(ktlc.number, result.login)}<img src="@{'/public/stylesheets/img/nav_highlight_2_enabled.png'}" alt="&{'ktlc.highlightPlayer', result.login.player.name}" />#{/a}</tr>
+                       	#{/else}
+                    	#{/if}#{else}
+                        	<td>#{a @Application.ktlc(ktlc.number, result.login)}<img src="@{'/public/stylesheets/img/nav_highlight_2_enabled.png'}" alt="&{'ktlc.highlightPlayer', result.login.player.name}" />#{/a}</tr>
+                       	#{/else}
                     </tr>
                     #{/list}
                 </table>
@@ -94,7 +111,14 @@
                         <th>&{'player.rounds'}</th>
                     </tr>
                     #{list race.results, as:'result'}
-                    <tr>
+                    
+                    #{if highlightedPlayer}
+                    	#{if highlightedPlayer.name.equals(result.login.player.name)}
+                    	<tr class="highlighted_Player">
+                    	#{/if}
+                    #{/if}#{else}
+                    	<tr>
+                    #{/else}
                         <td>${result.rank}</td>
                         <td>#{a @Application.player(result.login)}${result.login.player.name}#{/a}</td>
                         <td>${result.score}</td>
