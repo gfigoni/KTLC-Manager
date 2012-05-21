@@ -1,21 +1,15 @@
 package controllers.stats;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
 
 import models.KTLCEdition;
-import models.KTLCRace;
 import models.Player;
-import models.TMMap;
 import models.stats.StatisticConfig;
 import models.stats.StatisticMapper;
 import models.stats.StatisticPlayer;
-import play.modules.paginate.ValuePaginator;
 import play.mvc.Controller;
 
 public class StatisticsComparator extends Controller {

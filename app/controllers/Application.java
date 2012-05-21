@@ -1,13 +1,11 @@
 package controllers;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
-import org.postgresql.translation.messages_bg;
 
 import models.KTLCEdition;
 import models.KTLCRace;
@@ -19,8 +17,6 @@ import models.stats.StatisticConfig;
 import models.stats.StatisticGeneral;
 import models.stats.StatisticMapper;
 import models.stats.StatisticPlayer;
-import play.data.validation.MaxSize;
-import play.data.validation.Required;
 import play.i18n.Lang;
 import play.i18n.Messages;
 import play.modules.paginate.ValuePaginator;

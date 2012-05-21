@@ -1,7 +1,5 @@
 package models.stats;
 
-import java.util.List;
-
 import models.Player;
 
 /**

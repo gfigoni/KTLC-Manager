@@ -1,18 +1,12 @@
 package models.stats;
 
-import java.text.DateFormat;
-import java.util.Calendar;
 import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
-import java.util.TimeZone;
 
 import models.KTLCEdition;
 import models.KTLCRace;
-import models.Player;
 import models.TMEnvironment;
-import models.TMMap;
 
 /**
  * 
