@@ -9,7 +9,7 @@ import java.util.List;
  */
 public enum TMEnvironment {
 
-    STADIUM, BAY, ISLAND, COAST, RALLY, SPEED, ALPINE, CANYON;
+    STADIUM, BAY, ISLAND, COAST, RALLY, SPEED, ALPINE, CANYON, VALLEY;
 
     public static TMEnvironment getEnvironment(String name) {
         return TMEnvironment.valueOf(name.toUpperCase());
@@ -36,6 +36,7 @@ public enum TMEnvironment {
     public static List<TMEnvironment> getEnvironmentsTM2() {
     	List<TMEnvironment> enviros = new ArrayList<TMEnvironment>();
     	enviros.add(CANYON);
+    	enviros.add(VALLEY);
     	
     	return enviros;
     }
